@@ -101,7 +101,6 @@ export function addDimensionLine({
     transparent: true,
   });
   const sprite = new THREE.Sprite(spriteMat);
-  sprite.scale.set(1.5, 0.4, 1);
   sprite.position.copy(mid);
   scene.add(sprite);
 }
