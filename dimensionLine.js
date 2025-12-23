@@ -87,14 +87,14 @@ export function addDimensionLine({
 
   // Add label as a sprite
   const canvas = document.createElement("canvas");
-  canvas.width = 256;
+  canvas.width = 64;
   canvas.height = 64;
   const ctx = canvas.getContext("2d");
   ctx.font = `${textSize}px Arial`;
   ctx.fillStyle = textColor;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(label, 128, 32);
+  ctx.fillText(label, canvas.width*0.5, canvas.height*0.5);
   const texture = new THREE.CanvasTexture(canvas);
   const spriteMat = new THREE.SpriteMaterial({
     map: texture,
