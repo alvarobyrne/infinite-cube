@@ -16,7 +16,11 @@ const dimension1 = tansversalBlockSize * 5;
 const width = dimension1,
   height = tansversalBlockSize,
   depth = tansversalBlockSize;
-const block1Dimensions = { width, height, depth };
+const block1Dimensions = {
+  width: dimension1,
+  height: tansversalBlockSize,
+  depth: tansversalBlockSize,
+};
 const { scene, renderer, camera } = setupScene();
 const block1 = createBlock(block1Dimensions);
 scene.add(block1);
