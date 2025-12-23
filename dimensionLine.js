@@ -11,6 +11,10 @@ import * as THREE from "three/webgpu";
  * @param {number} [options.tickSize=0.2] - Length of the perpendicular ticks.
  * @param {string} [options.textColor='#000'] - CSS color for the label text.
  * @param {number} [options.textSize=32] - Font size in px for the label text.
+ * @param {number} [options.gap=0.4] - Gap in the middle of the line for the label.
+ * @param {number} [options.lengthThreshold=0.8] - Minimum length to show the line segments.
+ * @param {number} [options.arrowHeadLength=0.1] - Length of the arrow head.
+ * @param {number} [options.arrowHeadWidth=0.05] - Width of the arrow head.
  */
 export function addDimensionLine({
   scene,
@@ -21,6 +25,10 @@ export function addDimensionLine({
   tickSize = 0.2,
   textColor = "#000",
   textSize = 32,
+  gap = 0.4,
+  lengthThreshold = 0.8,
+  arrowHeadLength = 0.1,
+  arrowHeadWidth = 0.05,
 }) {
   // Calculate direction and midpoint
   const dir = new THREE.Vector3().subVectors(end, start).normalize();
@@ -34,13 +42,11 @@ export function addDimensionLine({
   perp.cross(dir).normalize();
 
   // Split line into two segments (interrupted in the middle)
-  const gap = 0.6; // gap for the label
   const half = length / 2 - gap / 2;
   const p1 = start.clone();
   const p2 = start.clone().add(dir.clone().multiplyScalar(half));
   const p3 = end.clone();
   const p4 = end.clone().add(dir.clone().multiplyScalar(-half));
-  const lengthThreshold = 1;
   const lengthConditon = length > lengthThreshold;
 
   // Draw the two line segments
@@ -61,8 +67,6 @@ export function addDimensionLine({
     const arrowOrigin = point;
     const arrowLength = 0;
     const arrowColor = color;
-    const arrowHeadLength = 0.2;
-    const arrowHeadWidth = 0.1;
     const arrow = new THREE.ArrowHelper(
       arrowDir,
       arrowOrigin,
@@ -94,7 +98,7 @@ export function addDimensionLine({
   ctx.fillStyle = textColor;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(label, canvas.width*0.5, canvas.height*0.5);
+  ctx.fillText(label, canvas.width * 0.5, canvas.height * 0.5);
   const texture = new THREE.CanvasTexture(canvas);
   const spriteMat = new THREE.SpriteMaterial({
     map: texture,
