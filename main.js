@@ -45,6 +45,7 @@ const x = width,
   y = height,
   z = depth;
 const dimensionLineOffset = 0.4;
+const textSize = 16;
 
 // X dimension (along +Y, above the cube)
 addDimensionLine({
@@ -54,7 +55,7 @@ addDimensionLine({
   label: x.toString(),
   color: 0xff0000,
   textColor: "#f00",
-  textSize: 32,
+  textSize,
 });
 
 // Y dimension (along +X, right of the cube)
@@ -65,7 +66,7 @@ addDimensionLine({
   label: y.toString(),
   color: 0x00ff00,
   textColor: "#0a0",
-  textSize: 32,
+  textSize,
 });
 
 // Z dimension (along +Y, in front of the cube)
@@ -76,7 +77,7 @@ addDimensionLine({
   label: z.toString(),
   color: 0x0000ff,
   textColor: "#00f",
-  textSize: 32,
+  textSize,
 });
 
 // Add vertices at cube corners
