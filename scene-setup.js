@@ -1,0 +1,48 @@
+import * as THREE from "three/webgpu";
+
+/**
+ * Create and setup the scene with camera, renderer, and lighting
+ */
+export function setupScene() {
+  const scene = new THREE.Scene();
+  const renderer = new THREE.WebGPURenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.z = 5;
+  camera.position.y = 5;
+  camera.position.x = 5;
+  camera.lookAt(0, 0, 0);
+  scene.add(camera);
+
+  scene.add(new THREE.AxesHelper(10));
+
+  return { scene, renderer, camera };
+}
+
+/**
+ * Create the cube geometry and materials
+ */
+export function createCube() {
+  const geometry = new THREE.BoxGeometry(5, 1, 1);
+
+  // Create an array of materials for each face:
+  // [right, left, top, bottom, front, back]
+  const materials = [
+    new THREE.MeshBasicMaterial({ color: 0x0000ff }), // +X (right)  -> blue (zx plane)
+    new THREE.MeshBasicMaterial({ color: 0x0000ff }), // -X (left)   -> blue (zx plane)
+    new THREE.MeshBasicMaterial({ color: 0xff0000 }), // +Y (top)    -> red  (xy plane)
+    new THREE.MeshBasicMaterial({ color: 0xff0000 }), // -Y (bottom) -> red  (xy plane)
+    new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // +Z (front)  -> green (yz plane)
+    new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // -Z (back)   -> green (yz plane)
+  ];
+
+  const cube = new THREE.Mesh(geometry, materials);
+  return cube;
+}
