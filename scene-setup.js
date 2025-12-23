@@ -28,9 +28,12 @@ export function setupScene() {
 
 /**
  * Create the cube geometry and materials
+ * @param {number} width - Width of the cube
+ * @param {number} height - Height of the cube
+ * @param {number} depth - Depth of the cube
  */
-export function createCube() {
-  const geometry = new THREE.BoxGeometry(5, 1, 1);
+export function createCube(width = 5, height = 1, depth = 1) {
+  const geometry = new THREE.BoxGeometry(width, height, depth);
 
   // Create an array of materials for each face:
   // [right, left, top, bottom, front, back]

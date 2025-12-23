@@ -3,21 +3,21 @@ import * as THREE from "three/webgpu";
 /**
  * Add vertex points at each corner of the cube
  * @param {THREE.Scene} scene - The scene to add vertices to
- * @param {number} x - Width of the cube
- * @param {number} y - Height of the cube
- * @param {number} z - Depth of the cube
+ * @param {number} width - Width of the cube
+ * @param {number} height - Height of the cube
+ * @param {number} depth - Depth of the cube
  */
-export function addVertices(scene, x, y, z) {
+export function addVertices(scene, width, height, depth) {
   const vertices = [
-    // x, y, z for each corner
-    [-x / 2, -y / 2, -z / 2],
-    [-x / 2, -y / 2, z / 2],
-    [-x / 2, y / 2, -z / 2],
-    [-x / 2, y / 2, z / 2],
-    [x / 2, -y / 2, -z / 2],
-    [x / 2, -y / 2, z / 2],
-    [x / 2, y / 2, -z / 2],
-    [x / 2, y / 2, z / 2],
+    // width, height, depth for each corner
+    [-width / 2, -height / 2, -depth / 2],
+    [-width / 2, -height / 2, depth / 2],
+    [-width / 2, height / 2, -depth / 2],
+    [-width / 2, height / 2, depth / 2],
+    [width / 2, -height / 2, -depth / 2],
+    [width / 2, -height / 2, depth / 2],
+    [width / 2, height / 2, -depth / 2],
+    [width / 2, height / 2, depth / 2],
   ];
 
   vertices.forEach(([vx, vy, vz]) => {

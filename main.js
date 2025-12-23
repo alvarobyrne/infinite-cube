@@ -8,8 +8,13 @@ import { addVertices } from "./vertices.js";
 
 console.log("Hello, World!", Math.random());
 
+// Cube dimensions
+const width = 5,
+  height = 1,
+  depth = 1;
+
 const { scene, renderer, camera } = setupScene();
-const cube = createCube();
+const cube = createCube(width, height, depth);
 scene.add(cube);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -36,9 +41,9 @@ async function init() {
 init();
 
 // Cube dimensions
-const x = 5,
-  y = 1,
-  z = 1;
+const x = width,
+  y = height,
+  z = depth;
 const dimensionLineOffset = 0.4;
 
 // X dimension (along +Y, above the cube)
