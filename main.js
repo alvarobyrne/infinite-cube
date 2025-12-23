@@ -1,21 +1,25 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
-import { setupScene, createCube } from "./scene-setup.js";
+import { setupScene, createBlock } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 
 console.log("Hello, World!", Math.random());
 
-// Cube dimensions
-const width = 5,
-  height = 1,
-  depth = 1;
+const tansversalBlockSize = 1;
 
+const dimension1 = tansversalBlockSize * 5;
+
+// Cube dimensions
+const width = dimension1,
+  height = tansversalBlockSize,
+  depth = tansversalBlockSize;
+const block1Dimensions = { width, height, depth };
 const { scene, renderer, camera } = setupScene();
-const cube = createCube(width, height, depth);
-scene.add(cube);
+const block1 = createBlock(block1Dimensions);
+scene.add(block1);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
