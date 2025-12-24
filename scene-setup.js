@@ -21,7 +21,7 @@ export function setupScene() {
   camera.lookAt(0, 0, 0);
   scene.add(camera);
 
-  scene.add(new THREE.AxesHelper(10));
+  // scene.add(new THREE.AxesHelper(10));
 
   return { scene, renderer, camera };
 }
@@ -33,7 +33,18 @@ export function setupScene() {
  * @param {number} params.height - Height of the cube
  * @param {number} params.depth - Depth of the cube
  */
-export function createBlock({ width = 5, height = 1, depth = 1 } = {}) {
+export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff } = {}) {
+  const geometry = new THREE.BoxGeometry(width, height, depth);
+
+  // Create an array of materials for each face:
+  // [right, left, top, bottom, front, back]
+  const material = new THREE.MeshBasicMaterial({ color });
+
+  const cube = new THREE.Mesh(geometry, material);
+  return cube;
+}
+
+export function createBlock2({ width = 5, height = 1, depth = 1 } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
 
   // Create an array of materials for each face:

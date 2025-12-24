@@ -14,24 +14,27 @@ const transversalBlockSize = 1;
 const dimension1 = transversalBlockSize * 5;
 const dimension2 = transversalBlockSize * 4;
 const dimension3 = transversalBlockSize * 5;
-// Cube dimensions
+// Cube Configuration
 const width = dimension1,
   height = transversalBlockSize,
   depth = transversalBlockSize;
-const block1Dimensions = {
+const block1Configuration = {
   width: dimension1,
   height: transversalBlockSize,
   depth: transversalBlockSize,
+  color: 0xff0000,
 };
-const block2Dimensions = {
+const block2Configuration = {
   width: transversalBlockSize,
   height: dimension2,
   depth: transversalBlockSize,
+  color: 0x00ff00,
 };
-const block3Dimensions = {
+const block3Configuration = {
   width: transversalBlockSize,
   height: dimension3,
   depth: transversalBlockSize,
+  color: 0x0000ff,
 };
 
 const { scene, renderer, camera } = setupScene();
@@ -40,9 +43,9 @@ const { scene, renderer, camera } = setupScene();
 const group = new THREE.Group();
 scene.add(group);
 
-const block1 = createBlock(block1Dimensions);
-const block2 = createBlock(block2Dimensions);
-const block3 = createBlock(block3Dimensions);
+const block1 = createBlock(block1Configuration);
+const block2 = createBlock(block2Configuration);
+const block3 = createBlock(block3Configuration);
 
 group.add(block1);
 group.add(block2);
@@ -82,7 +85,7 @@ async function init() {
 
 init();
 
-// Cube dimensions
+// Cube Configuration
 const x = width,
   y = height,
   z = depth;
@@ -91,7 +94,7 @@ const textSize = 16;
 
 // X dimension (along +Y, above the cube)
 addDimensionLine({
-  object3d: group,
+  object3d: scene,
   start: new THREE.Vector3(-x / 2, y / 2 + dimensionLineOffset, z / 2),
   end: new THREE.Vector3(x / 2, y / 2 + dimensionLineOffset, z / 2),
   label: x.toString(),
@@ -102,7 +105,7 @@ addDimensionLine({
 
 // Y dimension (along +X, right of the cube)
 addDimensionLine({
-  object3d: group,
+  object3d: scene,
   start: new THREE.Vector3(x / 2 + dimensionLineOffset, -y / 2, z / 2),
   end: new THREE.Vector3(x / 2 + dimensionLineOffset, y / 2, z / 2),
   label: y.toString(),
@@ -113,7 +116,7 @@ addDimensionLine({
 
 // Z dimension (along +Y, in front of the cube)
 addDimensionLine({
-  object3d: group,
+  object3d: scene,
   start: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, z / 2),
   end: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, -z / 2),
   label: z.toString(),
