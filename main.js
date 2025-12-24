@@ -5,13 +5,12 @@ import { setupScene, createBlock } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
-import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 console.log("Hello, World!", Math.random());
 
 const transversalBlockSize = 1;
 
-const dimension1 = transversalBlockSize * 5;
+const dimension1 = transversalBlockSize * 8;
 const dimension2 = transversalBlockSize * 4;
 const dimension3 = transversalBlockSize * 5;
 // Cube Configuration
@@ -42,6 +41,7 @@ const { scene, renderer, camera } = setupScene();
 // Create a group to hold all elements
 const group = new THREE.Group();
 scene.add(group);
+group.add(new THREE.AxesHelper(6));
 
 const block1 = createBlock(block1Configuration);
 const block2 = createBlock(block2Configuration);
@@ -51,14 +51,14 @@ group.add(block1);
 group.add(block2);
 group.add(block3);
 
-const isAddingGaps = true;
+const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
 
-block2.position.x = dimension1 / 2 - transversalBlockSize / 2 ; // small offset to avoid z-fighting
+block2.position.x = dimension1 / 2 - transversalBlockSize / 2; // small offset to avoid z-fighting
 block2.position.y = dimension2 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
 block2.position.z = 0;
 
-block3.position.x = -dimension1 / 2 + transversalBlockSize / 2 ; // small offset to avoid z-fighting
+block3.position.x = -dimension1 / 2 + transversalBlockSize / 2; // small offset to avoid z-fighting
 block3.position.y = dimension3 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
 block3.position.z = 0;
 
@@ -125,5 +125,27 @@ addDimensionLine({
   textSize,
 });
 
+addDimensionLine({
+  object3d: scene,
+  start: new THREE.Vector3(x / 2 + dimensionLineOffset, -y / 2, -z / 2),
+  end: new THREE.Vector3(x / 2 + dimensionLineOffset, y / 2, -z / 2),
+  label: "d 2",
+  color: 0xffffff,
+  textColor: "white",
+  textSize: 12,
+});
+
 // Add vertices at cube corners
 addVertices(scene, x, y, z);
+
+const groupClone = group.clone();
+groupClone.rotateX(-Math.PI * 0.5);
+groupClone.rotateZ(Math.PI * 0.5);
+groupClone.position.x = 
+0
+
+// -(+dimension3 * 0.5 - (dimension2 +  transversalBlockSize )) -transversalBlockSize*0.5
+// + gapSize * 2;
+groupClone.position.y = transversalBlockSize + dimension2 + gapSize * 2;
+groupClone.position.z = dimension1 * 0.5 - transversalBlockSize * 0.5;
+scene.add(groupClone);
