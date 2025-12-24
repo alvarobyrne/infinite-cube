@@ -3,7 +3,7 @@ import * as THREE from "three/webgpu";
 /**
  * Adds a dimension line with arrows, perpendicular ticks, and a label.
  * @param {Object} options - Options object.
- * @param {THREE.Scene} options.scene - The scene to add to.
+ * @param {THREE.Object3D} options.object3d - The object to add to.
  * @param {THREE.Vector3} options.start - Start point of the dimension line.
  * @param {THREE.Vector3} options.end - End point of the dimension line.
  * @param {string} options.label - The text to display.
@@ -17,7 +17,7 @@ import * as THREE from "three/webgpu";
  * @param {number} [options.arrowHeadWidth=0.05] - Width of the arrow head.
  */
 export function addDimensionLine({
-  scene,
+  object3d,
   start,
   end,
   label,
@@ -57,7 +57,7 @@ export function addDimensionLine({
     const geom = new THREE.BufferGeometry().setFromPoints([a, b]);
     const mat = new THREE.LineBasicMaterial({ color });
     const line = new THREE.Line(geom, mat);
-    if (lengthConditon) scene.add(line);
+    if (lengthConditon) object3d.add(line);
   });
 
   // Add arrows at both ends
@@ -75,7 +75,7 @@ export function addDimensionLine({
       arrowHeadLength,
       arrowHeadWidth
     );
-    scene.add(arrow);
+    object3d.add(arrow);
 
     // Add perpendicular tick
     const tickGeom = new THREE.BufferGeometry().setFromPoints([
@@ -86,7 +86,7 @@ export function addDimensionLine({
       tickGeom,
       new THREE.LineBasicMaterial({ color })
     );
-    scene.add(tick);
+    object3d.add(tick);
   });
 
   // Add label as a sprite
@@ -106,5 +106,5 @@ export function addDimensionLine({
   });
   const sprite = new THREE.Sprite(spriteMat);
   sprite.position.copy(mid);
-  scene.add(sprite);
+  object3d.add(sprite);
 }

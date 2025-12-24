@@ -5,6 +5,7 @@ import { setupScene, createBlock } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -35,13 +36,17 @@ const block3Dimensions = {
 
 const { scene, renderer, camera } = setupScene();
 
+// Create a group to hold all elements
+const group = new THREE.Group();
+scene.add(group);
+
 const block1 = createBlock(block1Dimensions);
 const block2 = createBlock(block2Dimensions);
 const block3 = createBlock(block3Dimensions);
 
-scene.add(block1);
-scene.add(block2);
-scene.add(block3);
+group.add(block1);
+group.add(block2);
+group.add(block3);
 
 const isAddingGaps = true;
 const gapSize = isAddingGaps ? 0.05 : 0;
@@ -86,7 +91,7 @@ const textSize = 16;
 
 // X dimension (along +Y, above the cube)
 addDimensionLine({
-  scene,
+  object3d: group,
   start: new THREE.Vector3(-x / 2, y / 2 + dimensionLineOffset, z / 2),
   end: new THREE.Vector3(x / 2, y / 2 + dimensionLineOffset, z / 2),
   label: x.toString(),
@@ -97,7 +102,7 @@ addDimensionLine({
 
 // Y dimension (along +X, right of the cube)
 addDimensionLine({
-  scene,
+  object3d: group,
   start: new THREE.Vector3(x / 2 + dimensionLineOffset, -y / 2, z / 2),
   end: new THREE.Vector3(x / 2 + dimensionLineOffset, y / 2, z / 2),
   label: y.toString(),
@@ -108,7 +113,7 @@ addDimensionLine({
 
 // Z dimension (along +Y, in front of the cube)
 addDimensionLine({
-  scene,
+  object3d: group,
   start: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, z / 2),
   end: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, -z / 2),
   label: z.toString(),

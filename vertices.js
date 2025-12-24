@@ -2,12 +2,12 @@ import * as THREE from "three/webgpu";
 
 /**
  * Add vertex points at each corner of the cube
- * @param {THREE.Scene} scene - The scene to add vertices to
+ * @param {THREE.Object3D} object3d - The object to add vertices to
  * @param {number} width - Width of the cube
  * @param {number} height - Height of the cube
  * @param {number} depth - Depth of the cube
  */
-export function addVertices(scene, width, height, depth) {
+export function addVertices(object3d, width, height, depth) {
   const vertices = [
     // width, height, depth for each corner
     [-width / 2, -height / 2, -depth / 2],
@@ -25,6 +25,6 @@ export function addVertices(scene, width, height, depth) {
     const pointMaterial = new THREE.MeshBasicMaterial({ color: 0x222222 });
     const point = new THREE.Mesh(pointGeometry, pointMaterial);
     point.position.set(vx, vy, vz);
-    scene.add(point);
+    object3d.add(point);
   });
 }
