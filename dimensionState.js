@@ -26,3 +26,10 @@ export function loadDimensionState() {
   }
   return null;
 }
+
+/**
+ * Clear dimension state from localStorage
+ */
+export function clearDimensionState() {
+  localStorage.removeItem("dimensionState");
+}

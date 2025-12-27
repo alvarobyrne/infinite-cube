@@ -26,3 +26,10 @@ export function loadCameraState(camera, controls) {
     // Ignore parse errors
   }
 }
+
+/**
+ * Clear camera state from localStorage
+ */
+export function clearCameraState() {
+  localStorage.removeItem("cameraState");
+}

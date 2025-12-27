@@ -3,8 +3,8 @@ import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import GUI from "lil-gui";
 import { setupScene, createBlock } from "./scene-setup.js";
-import { saveCameraState, loadCameraState } from "./cameraState.js";
-import { saveDimensionState, loadDimensionState } from "./dimensionState.js";
+import { saveCameraState, loadCameraState, clearCameraState } from "./cameraState.js";
+import { saveDimensionState, loadDimensionState, clearDimensionState } from "./dimensionState.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 
@@ -132,8 +132,8 @@ function recreateScene() {
   groupClone = group.clone();
   groupClone.rotateX(-Math.PI * 0.5);
   groupClone.rotateZ(Math.PI * 0.5);
-  groupClone.position.x = 0;
-  groupClone.position.y = transversalBlockSize + dimensionState.dimension2 + gapSize * 2;
+  groupClone.position.x = -(dimensionState.dimension1*0.5-dimensionState.dimension2)
+  groupClone.position.y = transversalBlockSize + dimensionState.dimension3 + gapSize * 2;
   groupClone.position.z = dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
   scene.add(groupClone);
 }
@@ -164,6 +164,17 @@ gui.add(dimensionState, "dimension3", 1, 20, 0.1).onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
+
+// Add clear buttons
+gui.add({ clearCamera: () => {
+  clearCameraState();
+  loadCameraState(camera, controls);
+}}, "clearCamera").name("Clear Camera State");
+
+gui.add({ clearDimensions: () => {
+  clearDimensionState();
+  location.reload();
+}}, "clearDimensions").name("Clear Dimension State");
 
 async function init() {
   await renderer.init();
