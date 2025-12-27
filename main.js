@@ -176,6 +176,10 @@ gui.add({ clearDimensions: () => {
   location.reload();
 }}, "clearDimensions").name("Clear Dimension State");
 
+gui.add({ reload: () => {
+  location.reload();
+}}, "reload").name("Reload Page");
+
 async function init() {
   await renderer.init();
   console.log("WebGPU initialized");
