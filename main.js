@@ -68,11 +68,13 @@ function recreateScene() {
   group.add(block3);
 
   block2.position.x = dimensionState.dimension1 / 2 - transversalBlockSize / 2; // small offset to avoid z-fighting
-  block2.position.y = dimensionState.dimension2 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
+  block2.position.y =
+    dimensionState.dimension2 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
   block2.position.z = 0;
 
   block3.position.x = -dimensionState.dimension1 / 2 + transversalBlockSize / 2; // small offset to avoid z-fighting
-  block3.position.y = dimensionState.dimension3 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
+  block3.position.y =
+    dimensionState.dimension3 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
   block3.position.z = 0;
 
   // Update dimension lines
