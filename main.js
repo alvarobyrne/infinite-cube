@@ -26,7 +26,7 @@ const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
 
 let group;
-let groupClone1;
+let groupClone1, groupClone2;
 
 function recreateScene() {
   // Clear the scene except for camera
@@ -145,6 +145,13 @@ function recreateScene() {
     dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
   scene.add(groupClone1);
 
+  groupClone2 = group.clone();
+  // groupClone2.rotateX(Math.PI * 0.5);
+  // groupClone2.rotateY(Math.PI * 0.5);
+  groupClone2.rotateZ(-Math.PI * 0.5);
+  // groupClone2.position.x = -(dimensionState.dimension1*0.5 + transversalBlockSize*0.5 - gapSize);
+  // groupClone2.position.z = dimensionState.dimension1*0.5-transversalBlockSize*0.5;
+  scene.add(groupClone2);
 }
 
 // Initial scene creation
