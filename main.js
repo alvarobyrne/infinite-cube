@@ -196,6 +196,17 @@ gui.add({ reload: () => {
   location.reload();
 }}, "reload").name("Reload Page");
 
+function positionAndRotationManager(object3D,gui_) {
+  const guiLocal = gui_ || gui.addFolder("Object3D Position/Rotation");
+  guiLocal.add(object3D.position, "x", -20, 20, 0.1).name("X");
+  guiLocal.add(object3D.position, "y", -20, 20, 0.1).name("Y");
+  guiLocal.add(object3D.position, "z", -20, 20, 0.1).name("Z");
+  guiLocal.add(object3D.rotation, "x", -Math.PI, Math.PI, 0.01).name("Rot X");
+  guiLocal.add(object3D.rotation, "y", -Math.PI, Math.PI, 0.01).name("Rot Y");
+  guiLocal.add(object3D.rotation, "z", -Math.PI, Math.PI, 0.01).name("Rot Z");
+}
+positionAndRotationManager(groupClone2);
+
 async function init() {
   await renderer.init();
   console.log("WebGPU initialized");
