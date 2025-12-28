@@ -161,15 +161,15 @@ controls.addEventListener("change", () => {
 
 // Initialize GUI
 const gui = new GUI();
-gui.add(dimensionState, "dimension1", 1, 20, 0.1).onChange(() => {
+gui.add(dimensionState, "dimension1", 1, 20, 0.1).name('dimension 1, r').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
-gui.add(dimensionState, "dimension2", 1, 20, 0.1).onChange(() => {
+gui.add(dimensionState, "dimension2", 1, 20, 0.1).name('dimension 2, g').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
-gui.add(dimensionState, "dimension3", 1, 20, 0.1).onChange(() => {
+gui.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
