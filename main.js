@@ -26,7 +26,7 @@ const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
 
 let group;
-let groupClone;
+let groupClone1;
 
 function recreateScene() {
   // Clear the scene except for camera
@@ -131,13 +131,20 @@ function recreateScene() {
   addVertices(scene, x, y, z);
 
   // Create and position the cloned group
-  groupClone = group.clone();
-  groupClone.rotateX(-Math.PI * 0.5);
-  groupClone.rotateZ(Math.PI * 0.5);
-  groupClone.position.x = -(dimensionState.dimension1*0.5-dimensionState.dimension2)
-  groupClone.position.y = transversalBlockSize + dimensionState.dimension3 + gapSize * 2;
-  groupClone.position.z = dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
-  scene.add(groupClone);
+  groupClone1 = group.clone();
+  groupClone1.rotateX(-Math.PI * 0.5);
+  groupClone1.rotateZ(Math.PI * 0.5);
+  groupClone1.position.x = -(
+    dimensionState.dimension1 * 0.5 -
+    dimensionState.dimension2 -
+    0.5 * transversalBlockSize
+  );
+  groupClone1.position.y =
+    transversalBlockSize + dimensionState.dimension3 + gapSize * 2;
+  groupClone1.position.z =
+    dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
+  scene.add(groupClone1);
+
 }
 
 // Initial scene creation
