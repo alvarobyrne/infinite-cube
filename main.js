@@ -147,11 +147,11 @@ function recreateScene() {
   scene.add(groupClone1);
 
   groupClone2 = group.clone();
-  // groupClone2.rotateX(Math.PI * 0.5);
-  // groupClone2.rotateY(Math.PI * 0.5);
-  groupClone2.rotateZ(-Math.PI * 0.5);
-  // groupClone2.position.x = -(dimensionState.dimension1*0.5 + transversalBlockSize*0.5 - gapSize);
-  // groupClone2.position.z = dimensionState.dimension1*0.5-transversalBlockSize*0.5;
+  groupClone2.rotateX(Math.PI * 0.5);
+  groupClone2.rotateY(Math.PI * 0.5);
+  groupClone2.position.x = -(dimensionState.dimension1*0.5 + transversalBlockSize*0.5 - gapSize);
+  groupClone2.position.y = dimensionState.dimension2 * 0.5 + transversalBlockSize * 0.5 + gapSize;
+  groupClone2.position.z = transversalBlockSize;
   scene.add(groupClone2);
 }
 
@@ -200,16 +200,7 @@ gui.add({ reload: () => {
   location.reload();
 }}, "reload").name("Reload Page");
 
-function positionAndRotationManager(object3D,gui_) {
-  const guiLocal = gui_ || gui.addFolder("Object3D Position/Rotation");
-  guiLocal.add(object3D.position, "x", -20, 20, 0.1).name("X");
-  guiLocal.add(object3D.position, "y", -20, 20, 0.1).name("Y");
-  guiLocal.add(object3D.position, "z", -20, 20, 0.1).name("Z");
-  guiLocal.add(object3D.rotation, "x", -Math.PI, Math.PI, 0.01).name("Rot X");
-  guiLocal.add(object3D.rotation, "y", -Math.PI, Math.PI, 0.01).name("Rot Y");
-  guiLocal.add(object3D.rotation, "z", -Math.PI, Math.PI, 0.01).name("Rot Z");
-}
-positionAndRotationManager(groupClone2);
+positionAndRotationManager(groupClone2, gui);
 
 async function init() {
   await renderer.init();
