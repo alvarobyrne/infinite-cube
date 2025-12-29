@@ -7,6 +7,7 @@ import { saveCameraState, loadCameraState, clearCameraState } from "./cameraStat
 import { saveDimensionState, loadDimensionState, clearDimensionState } from "./dimensionState.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
+import { loadObject3DState, positionAndRotationManager } from "./object3DState.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -161,6 +162,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // Load camera state if available
 loadCameraState(camera, controls);
+
+// Load object3D state if available
+loadObject3DState(groupClone2);
 
 controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
