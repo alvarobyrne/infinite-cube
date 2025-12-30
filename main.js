@@ -35,6 +35,12 @@ function recreateScene() {
     scene.remove(scene.children[0]);
   }
 
+  const light = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(light);
+  const light1 = new THREE.DirectionalLight(0xffffff, 1);
+  light1.position.set(10, 10, 10);
+  scene.add(light1);
+
   // Create a group to hold all elements
   group = new THREE.Group();
   scene.add(group);
