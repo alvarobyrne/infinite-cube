@@ -27,7 +27,7 @@ const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
 
 let group;
-let groupClone1, groupClone2, groupClone3, groupClone4;
+let groupClone1, groupClone2, groupClone3, groupClone4, groupClone5;
 
 function recreateScene() {
   // Clear the scene except for camera
@@ -172,6 +172,18 @@ function recreateScene() {
   groupClone4.position.z =
     dimensionState.dimension1 * 0.5 + transversalBlockSize * 0.5;
   scene.add(groupClone4);
+  
+  groupClone5 = group.clone();
+  groupClone5.rotateX(-Math.PI * 0.5);
+  groupClone5.rotateY(Math.PI * 0.5);
+  groupClone5.position.x =
+    dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
+  groupClone5.position.y =
+    dimensionState.dimension2 -
+    dimensionState.dimension1 * 0.5 +
+    transversalBlockSize * 0.5;
+  groupClone5.position.z = dimensionState.dimension1 - transversalBlockSize;
+  scene.add(groupClone5);
 }
 
 // Initial scene creation
@@ -183,7 +195,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 loadCameraState(camera, controls);
 
 // Load object3D state if available
-loadObject3DState(groupClone4);
+loadObject3DState(groupClone5);
 
 controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
@@ -219,7 +231,7 @@ gui.add({ reload: () => {
   location.reload();
 }}, "reload").name("Reload Page");
 
-positionAndRotationManager(groupClone4,gui);
+positionAndRotationManager(groupClone5, gui);
 
 async function init() {
   await renderer.init();
