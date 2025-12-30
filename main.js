@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import GUI from "lil-gui";
-import { setupScene, createBlock } from "./scene-setup.js";
+import { setupScene, createBlock, createBlock1 } from "./scene-setup.js";
 import { saveCameraState, loadCameraState, clearCameraState } from "./cameraState.js";
 import { saveDimensionState, loadDimensionState, clearDimensionState } from "./dimensionState.js";
 import { addDimensionLine } from "./dimensionLine.js";
@@ -25,6 +25,11 @@ const { scene, renderer, camera } = setupScene();
 
 const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
+
+// Block rendering style state
+const blockRenderState = {
+  style: "singleColor", // "singleColor" or "coloredFaces"
+};
 
 let group;
 let groupClone1, groupClone2, groupClone3, groupClone4, groupClone5;
@@ -66,9 +71,12 @@ function recreateScene() {
     color: 0x0000ff,
   };
 
-  const block1 = createBlock(block1Configuration);
-  const block2 = createBlock(block2Configuration);
-  const block3 = createBlock(block3Configuration);
+  // Choose block creation function based on render style
+  const createBlockFn = blockRenderState.style === "coloredFaces" ? createBlock1 : createBlock;
+  
+  const block1 = createBlockFn(block1Configuration);
+  const block2 = createBlockFn(block2Configuration);
+  const block3 = createBlockFn(block3Configuration);
 
   group.add(block1);
   group.add(block2);
@@ -219,6 +227,11 @@ gui.add(dimensionState, "dimension2", 1, 20, 0.1).name('dimension 2, g').onChang
 });
 gui.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChange(() => {
   saveDimensionState(dimensionState);
+  recreateScene();
+});
+
+// Add block rendering style control
+gui.add(blockRenderState, "style", ["singleColor", "coloredFaces"]).name("Block Style").onChange(() => {
   recreateScene();
 });
 
