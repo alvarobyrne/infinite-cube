@@ -30,10 +30,44 @@ const gapSize = isAddingGaps ? 0.05 : 0;
 const blockRenderState = {
   style: "singleColor", // "singleColor", "coloredFaces", or "unifiedColor"
   unifiedColor: 0xffffff, // Color used when style is "unifiedColor"
+  useCloneColors: false, // Whether to use independent colors for each cloned group
+  cloneColor1: 0xff00ff, // Color for groupClone1
+  cloneColor2: 0xffff00, // Color for groupClone2
+  cloneColor3: 0x00ffff, // Color for groupClone3
+  cloneColor4: 0xffa500, // Color for groupClone4
+  cloneColor5: 0x800080, // Color for groupClone5
 };
 
 let group;
 let groupClone1, groupClone2, groupClone3, groupClone4, groupClone5;
+
+/**
+ * Recursively change material colors in a group by cloning materials first
+ * This ensures cloned groups don't share material references with the original
+ * @param {THREE.Object3D} object - The object to traverse
+ * @param {number} color - The color to apply
+ */
+function changeGroupColor(object, color) {
+  object.traverse((child) => {
+    if (child.isMesh) {
+      if (Array.isArray(child.material)) {
+        // Handle array of materials - clone each material
+        child.material = child.material.map((mat) => {
+          if (mat && mat.color) {
+            const clonedMat = mat.clone();
+            clonedMat.color.set(color);
+            return clonedMat;
+          }
+          return mat;
+        });
+      } else if (child.material && child.material.color) {
+        // Handle single material - clone it before modifying
+        child.material = child.material.clone();
+        child.material.color.set(color);
+      }
+    }
+  });
+}
 
 function recreateScene() {
   // Clear the scene except for camera
@@ -172,6 +206,9 @@ function recreateScene() {
     transversalBlockSize + dimensionState.dimension3 + gapSize * 2;
   groupClone1.position.z =
     dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    changeGroupColor(groupClone1, blockRenderState.cloneColor1);
+  }
   scene.add(groupClone1);
 
   groupClone2 = group.clone();
@@ -180,6 +217,9 @@ function recreateScene() {
   groupClone2.position.x = -(dimensionState.dimension1*0.5 + transversalBlockSize*0.5 - gapSize);
   groupClone2.position.y = dimensionState.dimension2 * 0.5 + transversalBlockSize * 0.5 + gapSize;
   groupClone2.position.z = transversalBlockSize;
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    changeGroupColor(groupClone2, blockRenderState.cloneColor2);
+  }
   scene.add(groupClone2);
   
   groupClone3 = group.clone();
@@ -187,6 +227,9 @@ function recreateScene() {
   groupClone3.position.x = -transversalBlockSize;
   groupClone3.position.y = dimensionState.dimension2
   groupClone3.position.z = dimensionState.dimension3+transversalBlockSize*2
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    changeGroupColor(groupClone3, blockRenderState.cloneColor3);
+  }
   scene.add(groupClone3);
   
   groupClone4 = group.clone();
@@ -199,6 +242,9 @@ function recreateScene() {
   groupClone4.position.y = -transversalBlockSize;
   groupClone4.position.z =
     dimensionState.dimension1 * 0.5 + transversalBlockSize * 0.5;
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    changeGroupColor(groupClone4, blockRenderState.cloneColor4);
+  }
   scene.add(groupClone4);
   
   groupClone5 = group.clone();
@@ -211,6 +257,9 @@ function recreateScene() {
     dimensionState.dimension1 * 0.5 +
     transversalBlockSize * 0.5;
   groupClone5.position.z = dimensionState.dimension1 - transversalBlockSize;
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    changeGroupColor(groupClone5, blockRenderState.cloneColor5);
+  }
   scene.add(groupClone5);
 }
 
@@ -252,6 +301,43 @@ gui.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor
 // Add unified color control (only relevant when style is "unifiedColor")
 gui.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
   if (blockRenderState.style === "unifiedColor") {
+    recreateScene();
+  }
+});
+
+// Add clone colors controls (only relevant when style is "unifiedColor")
+gui.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange(() => {
+  if (blockRenderState.style === "unifiedColor") {
+    recreateScene();
+  }
+});
+
+gui.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+
+gui.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+
+gui.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+
+gui.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+
+gui.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     recreateScene();
   }
 });
