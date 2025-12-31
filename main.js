@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import GUI from "lil-gui";
-import { setupScene, createBlock, createBlock1 } from "./scene-setup.js";
+import { setupScene, createBlock, createBlock1, createBlock2 } from "./scene-setup.js";
 import { saveCameraState, loadCameraState, clearCameraState } from "./cameraState.js";
 import { saveDimensionState, loadDimensionState, clearDimensionState } from "./dimensionState.js";
 import { addDimensionLine } from "./dimensionLine.js";
@@ -28,7 +28,8 @@ const gapSize = isAddingGaps ? 0.05 : 0;
 
 // Block rendering style state
 const blockRenderState = {
-  style: "singleColor", // "singleColor" or "coloredFaces"
+  style: "singleColor", // "singleColor", "coloredFaces", or "unifiedColor"
+  unifiedColor: 0xffffff, // Color used when style is "unifiedColor"
 };
 
 let group;
@@ -72,11 +73,24 @@ function recreateScene() {
   };
 
   // Choose block creation function based on render style
-  const createBlockFn = blockRenderState.style === "coloredFaces" ? createBlock1 : createBlock;
+  let block1, block2, block3;
   
-  const block1 = createBlockFn(block1Configuration);
-  const block2 = createBlockFn(block2Configuration);
-  const block3 = createBlockFn(block3Configuration);
+  if (blockRenderState.style === "coloredFaces") {
+    // Colored faces style - uses createBlock1 which ignores color parameter
+    block1 = createBlock1(block1Configuration);
+    block2 = createBlock1(block2Configuration);
+    block3 = createBlock1(block3Configuration);
+  } else if (blockRenderState.style === "unifiedColor") {
+    // Unified color style - all blocks use the same color
+    block1 = createBlock2({ ...block1Configuration, color: blockRenderState.unifiedColor });
+    block2 = createBlock2({ ...block2Configuration, color: blockRenderState.unifiedColor });
+    block3 = createBlock2({ ...block3Configuration, color: blockRenderState.unifiedColor });
+  } else {
+    // Single color style - each block uses its own color
+    block1 = createBlock(block1Configuration);
+    block2 = createBlock(block2Configuration);
+    block3 = createBlock(block3Configuration);
+  }
 
   group.add(block1);
   group.add(block2);
@@ -231,8 +245,15 @@ gui.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChang
 });
 
 // Add block rendering style control
-gui.add(blockRenderState, "style", ["singleColor", "coloredFaces"]).name("Block Style").onChange(() => {
+gui.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor"]).name("Block Style").onChange(() => {
   recreateScene();
+});
+
+// Add unified color control (only relevant when style is "unifiedColor")
+gui.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor") {
+    recreateScene();
+  }
 });
 
 // Add clear buttons
