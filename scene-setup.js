@@ -61,3 +61,18 @@ export function createBlock1({ width = 5, height = 1, depth = 1 } = {}) {
   const cube = new THREE.Mesh(geometry, materials);
   return cube;
 }
+
+/**
+ * Create block with unified color (same as createBlock, but used with a single color for all blocks)
+ * @param {Object} params - Parameters object
+ * @param {number} params.width - Width of the cube
+ * @param {number} params.height - Height of the cube
+ * @param {number} params.depth - Depth of the cube
+ * @param {number} params.color - Color for the block
+ */
+export function createBlock2({ width = 5, height = 1, depth = 1, color = 0xffffff } = {}) {
+  const geometry = new THREE.BoxGeometry(width, height, depth);
+  const material = new THREE.MeshToonMaterial({ color });
+  const cube = new THREE.Mesh(geometry, material);
+  return cube;
+}
