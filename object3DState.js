@@ -39,6 +39,7 @@ export function clearObject3DState() {
  * 
  * @param {*} object3D 
  * @param {*} gui 
+ * @returns {GUI} The folder that was created
  */
 export function positionAndRotationManager(object3D, gui) {
   const guiLocal = gui.addFolder("Object3D Position/Rotation");
@@ -64,4 +65,5 @@ export function positionAndRotationManager(object3D, gui) {
     clearObject3DState();
     location.reload();
   }}, "clearObject3D").name("Clear Object3D State");
+  return guiLocal;
 }

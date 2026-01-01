@@ -8,6 +8,7 @@ import { saveDimensionState, loadDimensionState, clearDimensionState } from "./d
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 import { loadObject3DState, positionAndRotationManager } from "./object3DState.js";
+import { saveUIState, loadUIState, clearUIState } from "./uiState.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -355,12 +356,33 @@ actionsFolder.add({ clearDimensions: () => {
   clearDimensionState();
   location.reload();
 }}, "clearDimensions").name("Clear Dimension State");
+actionsFolder.add({ clearUI: () => {
+  clearUIState();
+  location.reload();
+}}, "clearUI").name("Clear UI State");
 
 gui.add({ reload: () => {
   location.reload();
 }}, "reload").name("Reload Page");
 
-positionAndRotationManager(groupClone5, gui);
+const object3DPositionRotationFolder = positionAndRotationManager(groupClone5, gui);
+
+// Collect all folders for UI state management
+const folders = {
+  dimensions: dimensionsFolder,
+  blockRendering: blockRenderingFolder,
+  cloneColors: cloneColorsFolder,
+  actions: actionsFolder,
+  object3DPositionRotation: object3DPositionRotationFolder,
+};
+
+// Load UI state (folder open/closed states)
+loadUIState(folders);
+
+// Save UI state before page unload
+window.addEventListener("beforeunload", () => {
+  saveUIState(folders);
+});
 
 async function init() {
   await renderer.init();
