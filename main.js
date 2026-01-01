@@ -280,75 +280,78 @@ controls.addEventListener("change", () => {
 
 // Initialize GUI
 const gui = new GUI();
-gui.add(dimensionState, "dimension1", 1, 20, 0.1).name('dimension 1, r').onChange(() => {
+
+// Reload page control (outside folders, at the top)
+gui.add({ reload: () => {
+  location.reload();
+}}, "reload").name("Reload Page");
+
+// Dimensions folder
+const dimensionsFolder = gui.addFolder("Dimensions");
+dimensionsFolder.add(dimensionState, "dimension1", 1, 20, 0.1).name('dimension 1, r').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
-gui.add(dimensionState, "dimension2", 1, 20, 0.1).name('dimension 2, g').onChange(() => {
+dimensionsFolder.add(dimensionState, "dimension2", 1, 20, 0.1).name('dimension 2, g').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
-gui.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChange(() => {
+dimensionsFolder.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChange(() => {
   saveDimensionState(dimensionState);
   recreateScene();
 });
 
-// Add block rendering style control
-gui.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor"]).name("Block Style").onChange(() => {
+// Block Rendering folder
+const blockRenderingFolder = gui.addFolder("Block Rendering");
+blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor"]).name("Block Style").onChange(() => {
   recreateScene();
 });
-
-// Add unified color control (only relevant when style is "unifiedColor")
-gui.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
+blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
   if (blockRenderState.style === "unifiedColor") {
     recreateScene();
   }
 });
 
-// Add clone colors controls (only relevant when style is "unifiedColor")
-gui.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange(() => {
+// Clone Colors folder
+const cloneColorsFolder = gui.addFolder("Clone Colors");
+cloneColorsFolder.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange(() => {
   if (blockRenderState.style === "unifiedColor") {
     recreateScene();
   }
 });
-
-gui.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange(() => {
+cloneColorsFolder.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+cloneColorsFolder.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+cloneColorsFolder.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+cloneColorsFolder.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange(() => {
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    recreateScene();
+  }
+});
+cloneColorsFolder.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange(() => {
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     recreateScene();
   }
 });
 
-gui.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange(() => {
-  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-    recreateScene();
-  }
-});
-
-gui.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange(() => {
-  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-    recreateScene();
-  }
-});
-
-gui.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange(() => {
-  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-    recreateScene();
-  }
-});
-
-gui.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange(() => {
-  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-    recreateScene();
-  }
-});
-
-// Add clear buttons
-gui.add({ clearCamera: () => {
+// Actions folder
+const actionsFolder = gui.addFolder("Actions");
+actionsFolder.add({ clearCamera: () => {
   clearCameraState();
   loadCameraState(camera, controls);
 }}, "clearCamera").name("Clear Camera State");
-
-gui.add({ clearDimensions: () => {
+actionsFolder.add({ clearDimensions: () => {
   clearDimensionState();
   location.reload();
 }}, "clearDimensions").name("Clear Dimension State");
