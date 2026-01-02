@@ -12,3 +12,31 @@ export const blockRenderState = {
   cloneColor5: 0x800080, // Color for groupClone5
 };
 
+/**
+ * Save block render state to localStorage
+ */
+export function saveBlockRenderState(state) {
+  localStorage.setItem("blockRenderState", JSON.stringify(state));
+}
+
+/**
+ * Load block render state from localStorage
+ */
+export function loadBlockRenderState() {
+  const stateStr = localStorage.getItem("blockRenderState");
+  if (!stateStr) return null;
+  try {
+    return JSON.parse(stateStr);
+  } catch (e) {
+    // Ignore parse errors
+    return null;
+  }
+}
+
+/**
+ * Clear block render state from localStorage
+ */
+export function clearBlockRenderState() {
+  localStorage.removeItem("blockRenderState");
+}
+

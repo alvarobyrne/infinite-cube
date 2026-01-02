@@ -4,7 +4,7 @@ import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
-import { blockRenderState } from "./blockRenderState.js";
+import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 
@@ -19,6 +19,12 @@ const dimensionState = {
   dimension2: savedDimensionState?.dimension2 || transversalBlockSize * 5,
   dimension3: savedDimensionState?.dimension3 || transversalBlockSize * 5,
 };
+
+// Load block render state or use defaults
+const savedBlockRenderState = loadBlockRenderState();
+if (savedBlockRenderState) {
+  Object.assign(blockRenderState, savedBlockRenderState);
+}
 
 const { scene, renderer, camera } = setupScene();
 

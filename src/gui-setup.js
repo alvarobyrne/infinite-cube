@@ -1,9 +1,10 @@
 import GUI from "lil-gui";
 import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
-import { clearCameraState, loadCameraState } from "./cameraState.js";
+import { clearCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
 import { cloneSelectorState } from "./cloneSelectorState.js";
+import { saveBlockRenderState, clearBlockRenderState } from "./blockRenderState.js";
 
 
 /**
@@ -21,9 +22,11 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
-  gui.add({ reload: () => {
-    location.reload();
-  }}, "reload").name("Reload Page");
+  gui.add({
+    reload: () => {
+      location.reload();
+    }
+  }, "reload").name("Reload Page");
 
   // Dimensions folder
   const dimensionsFolder = gui.addFolder("Dimensions");
@@ -43,9 +46,11 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
   blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor"]).name("Block Style").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     recreateScene();
   });
   blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor") {
       recreateScene();
     }
@@ -54,31 +59,37 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");
   cloneColorsFolder.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor") {
       recreateScene();
     }
   });
   cloneColorsFolder.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
       recreateScene();
     }
   });
   cloneColorsFolder.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
       recreateScene();
     }
   });
   cloneColorsFolder.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
       recreateScene();
     }
   });
   cloneColorsFolder.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
       recreateScene();
     }
   });
   cloneColorsFolder.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange(() => {
+    saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
       recreateScene();
     }
@@ -86,18 +97,31 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
 
   // Actions folder
   const actionsFolder = gui.addFolder("Actions");
-  actionsFolder.add({ clearCamera: () => {
-    clearCameraState();
-    loadCameraState(camera, controls);
-  }}, "clearCamera").name("Clear Camera State");
-  actionsFolder.add({ clearDimensions: () => {
-    clearDimensionState();
-    location.reload();
-  }}, "clearDimensions").name("Clear Dimension State");
-  actionsFolder.add({ clearUI: () => {
-    clearUIState();
-    location.reload();
-  }}, "clearUI").name("Clear UI State");
+  actionsFolder.add({
+    clearCamera: () => {
+      clearCameraState();
+      //loadCameraState(camera, controls);
+      location.reload();
+    }
+  }, "clearCamera").name("Clear Camera State");
+  actionsFolder.add({
+    clearDimensions: () => {
+      clearDimensionState();
+      location.reload();
+    }
+  }, "clearDimensions").name("Clear Dimension State");
+  actionsFolder.add({
+    clearBlockRender: () => {
+      clearBlockRenderState();
+      location.reload();
+    }
+  }, "clearBlockRender").name("Clear Block Render State");
+  actionsFolder.add({
+    clearUI: () => {
+      clearUIState();
+      location.reload();
+    }
+  }, "clearUI").name("Clear UI State");
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
