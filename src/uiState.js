@@ -12,6 +12,7 @@ export function saveUIState(folders) {
     blockRendering: folders.blockRendering ? !folders.blockRendering._closed : undefined,
     cloneColors: folders.cloneColors ? !folders.cloneColors._closed : undefined,
     actions: folders.actions ? !folders.actions._closed : undefined,
+    cloneSelector: folders.cloneSelector ? !folders.cloneSelector._closed : undefined,
     object3DPositionRotation: folders.object3DPositionRotation ? !folders.object3DPositionRotation._closed : undefined,
   };
   localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
@@ -59,6 +60,14 @@ export function loadUIState(folders) {
         folders.actions.open();
       } else {
         folders.actions.close();
+      }
+    }
+    
+    if (folders.cloneSelector && state.cloneSelector !== undefined) {
+      if (state.cloneSelector) {
+        folders.cloneSelector.open();
+      } else {
+        folders.cloneSelector.close();
       }
     }
     

@@ -1,20 +1,30 @@
-const OBJECT3DSTATE_KEY = "object3DState";
+import * as THREE from "three/webgpu";
+
+const OBJECT3DSTATE_KEY_PREFIX = "object3DState_clone";
+
 /**
- * Save object3d position and rotation to localStorage
+ * Get the localStorage key for a specific clone index
  */
-export function saveObject3DState(object3D) {
+function getStateKey(cloneIndex) {
+  return `${OBJECT3DSTATE_KEY_PREFIX}_${cloneIndex}`;
+}
+
+/**
+ * Save object3d position and rotation to localStorage for a specific clone
+ */
+export function saveObject3DState(object3D, cloneIndex) {
   const state = {
     position: object3D.position.toArray(),
     rotation: object3D.rotation.toArray(),
   };
-  localStorage.setItem(OBJECT3DSTATE_KEY, JSON.stringify(state));
+  localStorage.setItem(getStateKey(cloneIndex), JSON.stringify(state));
 }
 
 /**
- * Load object3d position and rotation from localStorage
+ * Load object3d position and rotation from localStorage for a specific clone
  */
-export function loadObject3DState(object3D) {
-  const stateStr = localStorage.getItem(OBJECT3DSTATE_KEY);
+export function loadObject3DState(object3D, cloneIndex) {
+  const stateStr = localStorage.getItem(getStateKey(cloneIndex));
   if (!stateStr) return;
   try {
     const state = JSON.parse(stateStr);
@@ -28,42 +38,171 @@ export function loadObject3DState(object3D) {
 }
 
 /**
- * Clear object3D state from localStorage
+ * Save state for all clones (used when clearing)
  */
-export function clearObject3DState() {
-  localStorage.removeItem(OBJECT3DSTATE_KEY);
+export function saveAllClonesState(clones) {
+  for (let i = 1; i <= 5; i++) {
+    const clone = clones[`groupClone${i}`];
+    if (clone) {
+      saveObject3DState(clone, i);
+    }
+  }
+}
+
+/**
+ * Clear object3D state from localStorage for a specific clone or all clones
+ */
+export function clearObject3DState(cloneIndex = null) {
+  if (cloneIndex !== null) {
+    localStorage.removeItem(getStateKey(cloneIndex));
+  } else {
+    // Clear all clone states
+    for (let i = 1; i <= 5; i++) {
+      localStorage.removeItem(getStateKey(i));
+    }
+  }
 }
 
 
 /**
- * 
- * @param {*} object3D 
- * @param {*} gui 
- * @returns {GUI} The folder that was created
+ * Create a wrapper object that syncs with the selected clone
+ * @returns {THREE.Object3D} A wrapper object with position and rotation
  */
-export function positionAndRotationManager(object3D, gui) {
+function createWrapperObject() {
+  const wrapper = {
+    position: new THREE.Vector3(),
+    rotation: new THREE.Euler(),
+  };
+  return wrapper;
+}
+
+/**
+ * Sync wrapper object from a clone
+ */
+function syncWrapperFromClone(wrapper, clone) {
+  wrapper.position.copy(clone.position);
+  wrapper.rotation.copy(clone.rotation);
+}
+
+/**
+ * Sync clone from wrapper object
+ */
+function syncCloneFromWrapper(clone, wrapper) {
+  clone.position.copy(wrapper.position);
+  clone.rotation.copy(wrapper.rotation);
+}
+
+/**
+ * Position and rotation manager that can switch between clones
+ * @param {Object} clones - Object containing all clones (groupClone1-5)
+ * @param {Object} cloneSelectorState - State object with selectedCloneIndex
+ * @param {GUI} gui - GUI instance
+ * @returns {Object} Object containing the folder and switch function
+ */
+export function positionAndRotationManager(clones, cloneSelectorState, gui) {
+  // Create wrapper object that GUI controls will bind to
+  const wrapper = createWrapperObject();
+  
+  // Track if this is the first initialization
+  let isInitialized = false;
+  
+  // Function to switch to a different clone
+  const switchClone = (newCloneIndex) => {
+    // Save current wrapper state to the old clone (skip on first init)
+    if (isInitialized) {
+      const oldCloneIndex = cloneSelectorState.selectedCloneIndex;
+      if (oldCloneIndex >= 1 && oldCloneIndex <= 5) {
+        const oldClone = clones[`groupClone${oldCloneIndex}`];
+        if (oldClone) {
+          syncCloneFromWrapper(oldClone, wrapper);
+          saveObject3DState(wrapper, oldCloneIndex);
+        }
+      }
+    }
+    
+    // Update selected index
+    cloneSelectorState.selectedCloneIndex = newCloneIndex;
+    
+    // Load new clone state into wrapper
+    const newClone = clones[`groupClone${newCloneIndex}`];
+    if (newClone) {
+      // First try to load saved state, otherwise use current clone state
+      loadObject3DState(wrapper, newCloneIndex);
+      // If no saved state was loaded, sync from the clone's current state
+      if (!isInitialized) {
+        syncWrapperFromClone(wrapper, newClone);
+      }
+      // Always sync the clone to match the wrapper (in case we loaded saved state)
+      syncCloneFromWrapper(newClone, wrapper);
+    }
+    
+    isInitialized = true;
+  };
+  
+  // Initialize with the selected clone
+  switchClone(cloneSelectorState.selectedCloneIndex);
+  
   const guiLocal = gui.addFolder("Object3D Position/Rotation");
-  guiLocal.add(object3D.position, "x", -20, 20, 0.1).name("X").onChange(() => { 
-    saveObject3DState(object3D); 
+  
+  // Position controls
+  guiLocal.add(wrapper.position, "x", -20, 20, 0.1).name("X").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.position.x = wrapper.position.x;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
-  guiLocal.add(object3D.position, "y", -20, 20, 0.1).name("Y").onChange(() => { 
-    saveObject3DState(object3D); 
+  guiLocal.add(wrapper.position, "y", -20, 20, 0.1).name("Y").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.position.y = wrapper.position.y;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
-  guiLocal.add(object3D.position, "z", -20, 20, 0.1).name("Z").onChange(() => { 
-    saveObject3DState(object3D); 
+  guiLocal.add(wrapper.position, "z", -20, 20, 0.1).name("Z").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.position.z = wrapper.position.z;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
-  guiLocal.add(object3D.rotation, "x", -Math.PI, Math.PI, 0.01).name("Rot X").onChange(() => { 
-    saveObject3DState(object3D); 
+  
+  // Rotation controls
+  guiLocal.add(wrapper.rotation, "x", -Math.PI, Math.PI, 0.01).name("Rot X").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.rotation.x = wrapper.rotation.x;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
-  guiLocal.add(object3D.rotation, "y", -Math.PI, Math.PI, 0.01).name("Rot Y").onChange(() => { 
-    saveObject3DState(object3D); 
+  guiLocal.add(wrapper.rotation, "y", -Math.PI, Math.PI, 0.01).name("Rot Y").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.rotation.y = wrapper.rotation.y;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
-  guiLocal.add(object3D.rotation, "z", -Math.PI, Math.PI, 0.01).name("Rot Z").onChange(() => { 
-    saveObject3DState(object3D); 
+  guiLocal.add(wrapper.rotation, "z", -Math.PI, Math.PI, 0.01).name("Rot Z").onChange(() => { 
+    const cloneIndex = cloneSelectorState.selectedCloneIndex;
+    const clone = clones[`groupClone${cloneIndex}`];
+    if (clone) {
+      clone.rotation.z = wrapper.rotation.z;
+      saveObject3DState(wrapper, cloneIndex);
+    }
   });
+  
   guiLocal.add({ clearObject3D: () => {
     clearObject3DState();
     location.reload();
   }}, "clearObject3D").name("Clear Object3D State");
-  return guiLocal;
+  
+  return {
+    folder: guiLocal,
+    switchClone
+  };
 }

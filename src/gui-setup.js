@@ -3,6 +3,8 @@ import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { clearCameraState, loadCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
+import { cloneSelectorState } from "./cloneSelectorState.js";
+
 
 /**
  * Setup GUI and return folder references
@@ -12,10 +14,10 @@ import { positionAndRotationManager } from "./object3DState.js";
  * @param {Function} params.recreateScene - Function to recreate the scene
  * @param {THREE.Camera} params.camera - Camera object
  * @param {Object} params.controls - OrbitControls object
- * @param {THREE.Object3D} params.groupClone5 - Reference to groupClone5 for position/rotation manager
+ * @param {Object} params.clones - Object containing all clones (groupClone1-5)
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, blockRenderState, recreateScene, camera, controls, groupClone5 }) {
+export function setupGUI({ dimensionState, blockRenderState, recreateScene, camera, controls, clones }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -97,7 +99,16 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
     location.reload();
   }}, "clearUI").name("Clear UI State");
 
-  const object3DPositionRotationFolder = positionAndRotationManager(groupClone5, gui);
+  // Position and rotation manager (returns folder and switch function)
+  const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
+
+  // Clone Selector folder
+  const cloneSelectorFolder = gui.addFolder("Clone Selector");
+  cloneSelectorFolder.add(cloneSelectorState, "selectedCloneIndex", [1, 2, 3, 4, 5])
+    .name("Selected Clone")
+    .onChange(() => {
+      positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex);
+    });
 
   // Collect all folders for UI state management
   const folders = {
@@ -105,7 +116,8 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
     blockRendering: blockRenderingFolder,
     cloneColors: cloneColorsFolder,
     actions: actionsFolder,
-    object3DPositionRotation: object3DPositionRotationFolder,
+    cloneSelector: cloneSelectorFolder,
+    object3DPositionRotation: positionRotationManager.folder,
   };
 
   // Load UI state (folder open/closed states)

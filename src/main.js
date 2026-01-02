@@ -4,7 +4,6 @@ import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
-import { loadObject3DState } from "./object3DState.js";
 import { blockRenderState } from "./blockRenderState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
@@ -53,12 +52,18 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // Load camera state if available
 loadCameraState(camera, controls);
 
-// Load object3D state if available
-loadObject3DState(groupClone5);
-
 controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
 });
+
+// Collect all clones for GUI
+const clones = {
+  groupClone1,
+  groupClone2,
+  groupClone3,
+  groupClone4,
+  groupClone5,
+};
 
 // Initialize GUI
 const { gui } = setupGUI({
@@ -67,7 +72,7 @@ const { gui } = setupGUI({
   recreateScene: recreateSceneWrapper,
   camera,
   controls,
-  groupClone5,
+  clones,
 });
 
 async function init() {
