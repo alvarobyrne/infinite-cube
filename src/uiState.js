@@ -13,6 +13,7 @@ export function saveUIState(folders) {
     cloneColors: folders.cloneColors ? !folders.cloneColors._closed : undefined,
     actions: folders.actions ? !folders.actions._closed : undefined,
     cloneSelector: folders.cloneSelector ? !folders.cloneSelector._closed : undefined,
+    visibility: folders.visibility ? !folders.visibility._closed : undefined,
     object3DPositionRotation: folders.object3DPositionRotation ? !folders.object3DPositionRotation._closed : undefined,
   };
   localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
@@ -29,7 +30,7 @@ export function loadUIState(folders) {
   if (!stateStr) return;
   try {
     const state = JSON.parse(stateStr);
-    
+
     // Restore folder states (state value: true = open, false = closed)
     if (folders.dimensions && state.dimensions !== undefined) {
       if (state.dimensions) {
@@ -38,7 +39,7 @@ export function loadUIState(folders) {
         folders.dimensions.close();
       }
     }
-    
+
     if (folders.blockRendering && state.blockRendering !== undefined) {
       if (state.blockRendering) {
         folders.blockRendering.open();
@@ -46,7 +47,7 @@ export function loadUIState(folders) {
         folders.blockRendering.close();
       }
     }
-    
+
     if (folders.cloneColors && state.cloneColors !== undefined) {
       if (state.cloneColors) {
         folders.cloneColors.open();
@@ -54,7 +55,7 @@ export function loadUIState(folders) {
         folders.cloneColors.close();
       }
     }
-    
+
     if (folders.actions && state.actions !== undefined) {
       if (state.actions) {
         folders.actions.open();
@@ -62,7 +63,7 @@ export function loadUIState(folders) {
         folders.actions.close();
       }
     }
-    
+
     if (folders.cloneSelector && state.cloneSelector !== undefined) {
       if (state.cloneSelector) {
         folders.cloneSelector.open();
@@ -70,7 +71,15 @@ export function loadUIState(folders) {
         folders.cloneSelector.close();
       }
     }
-    
+
+    if (folders.visibility && state.visibility !== undefined) {
+      if (state.visibility) {
+        folders.visibility.open();
+      } else {
+        folders.visibility.close();
+      }
+    }
+
     if (folders.object3DPositionRotation && state.object3DPositionRotation !== undefined) {
       if (state.object3DPositionRotation) {
         folders.object3DPositionRotation.open();

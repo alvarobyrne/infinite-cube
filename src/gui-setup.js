@@ -5,6 +5,7 @@ import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
 import { cloneSelectorState } from "./cloneSelectorState.js";
 import { saveBlockRenderState, clearBlockRenderState } from "./blockRenderState.js";
+import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
 
 
 /**
@@ -12,13 +13,14 @@ import { saveBlockRenderState, clearBlockRenderState } from "./blockRenderState.
  * @param {Object} params - Parameters object
  * @param {Object} params.dimensionState - Dimension state object
  * @param {Object} params.blockRenderState - Block render state object
+ * @param {Object} params.cloneVisibilityState - Clone visibility state object
  * @param {Function} params.recreateScene - Function to recreate the scene
  * @param {THREE.Camera} params.camera - Camera object
  * @param {Object} params.controls - OrbitControls object
  * @param {Object} params.clones - Object containing all clones (groupClone1-5)
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, blockRenderState, recreateScene, camera, controls, clones }) {
+export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, camera, controls, clones }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -95,6 +97,29 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
     }
   });
 
+  // Clone Visibility folder
+  const visibilityFolder = gui.addFolder("Clone Visibility");
+  visibilityFolder.add(cloneVisibilityState, "groupClone1").name("Clone 1").onChange((vis) => {
+    clones.groupClone1.visible = vis;
+    saveCloneVisibilityState(cloneVisibilityState);
+  });
+  visibilityFolder.add(cloneVisibilityState, "groupClone2").name("Clone 2").onChange((vis) => {
+    clones.groupClone2.visible = vis;
+    saveCloneVisibilityState(cloneVisibilityState);
+  });
+  visibilityFolder.add(cloneVisibilityState, "groupClone3").name("Clone 3").onChange((vis) => {
+    clones.groupClone3.visible = vis;
+    saveCloneVisibilityState(cloneVisibilityState);
+  });
+  visibilityFolder.add(cloneVisibilityState, "groupClone4").name("Clone 4").onChange((vis) => {
+    clones.groupClone4.visible = vis;
+    saveCloneVisibilityState(cloneVisibilityState);
+  });
+  visibilityFolder.add(cloneVisibilityState, "groupClone5").name("Clone 5").onChange((vis) => {
+    clones.groupClone5.visible = vis;
+    saveCloneVisibilityState(cloneVisibilityState);
+  });
+
   // Actions folder
   const actionsFolder = gui.addFolder("Actions");
   actionsFolder.add({
@@ -116,6 +141,12 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
       location.reload();
     }
   }, "clearBlockRender").name("Clear Block Render State");
+  actionsFolder.add({
+    clearCloneVisibility: () => {
+      clearCloneVisibilityState();
+      location.reload();
+    }
+  }, "clearCloneVisibility").name("Clear Clone Visibility State");
   actionsFolder.add({
     clearUI: () => {
       clearUIState();
@@ -139,6 +170,7 @@ export function setupGUI({ dimensionState, blockRenderState, recreateScene, came
     dimensions: dimensionsFolder,
     blockRendering: blockRenderingFolder,
     cloneColors: cloneColorsFolder,
+    visibility: visibilityFolder,
     actions: actionsFolder,
     cloneSelector: cloneSelectorFolder,
     object3DPositionRotation: positionRotationManager.folder,

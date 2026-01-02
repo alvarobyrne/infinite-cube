@@ -5,6 +5,7 @@ import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
 import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
+import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 
@@ -24,6 +25,12 @@ const dimensionState = {
 const savedBlockRenderState = loadBlockRenderState();
 if (savedBlockRenderState) {
   Object.assign(blockRenderState, savedBlockRenderState);
+}
+
+// Load clone visibility state or use defaults
+const savedCloneVisibilityState = loadCloneVisibilityState();
+if (savedCloneVisibilityState) {
+  Object.assign(cloneVisibilityState, savedCloneVisibilityState);
 }
 
 const { scene, renderer, camera } = setupScene();
@@ -48,6 +55,13 @@ function recreateSceneWrapper() {
   groupClone3 = result.groupClone3;
   groupClone4 = result.groupClone4;
   groupClone5 = result.groupClone5;
+
+  // Apply initial visibility
+  groupClone1.visible = cloneVisibilityState.groupClone1;
+  groupClone2.visible = cloneVisibilityState.groupClone2;
+  groupClone3.visible = cloneVisibilityState.groupClone3;
+  groupClone4.visible = cloneVisibilityState.groupClone4;
+  groupClone5.visible = cloneVisibilityState.groupClone5;
 }
 
 // Initial scene creation
@@ -75,6 +89,7 @@ const clones = {
 const { gui } = setupGUI({
   dimensionState,
   blockRenderState,
+  cloneVisibilityState,
   recreateScene: recreateSceneWrapper,
   camera,
   controls,
