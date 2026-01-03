@@ -96,6 +96,18 @@ function setAllClonesVisibility(visible) {
   saveCloneVisibilityState(cloneVisibilityState);
 }
 
+// Initialize GUI
+const { gui, folders } = setupGUI({
+  dimensionState,
+  blockRenderState,
+  cloneVisibilityState,
+  recreateScene: recreateSceneWrapper,
+  setAllClonesVisibility,
+  camera,
+  controls,
+  clones,
+});
+
 // Keyboard shortcuts for clone visibility
 window.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
@@ -117,19 +129,27 @@ window.addEventListener("keydown", (event) => {
     setAllClonesVisibility(true);
   } else if (key === "h") {
     setAllClonesVisibility(false);
-  }
-});
+  } else if (key === "q") {
+    // Cycle block styles
+    const styles = ["singleColor", "coloredFaces", "unifiedColor"];
+    const currentIndex = styles.indexOf(blockRenderState.style);
+    const nextStyle = styles[(currentIndex + 1) % styles.length];
 
-// Initialize GUI
-const { gui } = setupGUI({
-  dimensionState,
-  blockRenderState,
-  cloneVisibilityState,
-  recreateScene: recreateSceneWrapper,
-  setAllClonesVisibility,
-  camera,
-  controls,
-  clones,
+    // Find the style controller in lil-gui and update it
+    const styleController = folders.blockRendering.controllers.find(
+      (c) => c._name === "Block Style"
+    );
+
+    if (styleController) {
+      styleController.setValue(nextStyle);
+      // setValue triggers the onChange handler, which handles save and scene recreation
+    } else {
+      // Fallback if controller not found
+      blockRenderState.style = nextStyle;
+      saveBlockRenderState(blockRenderState);
+      recreateSceneWrapper();
+    }
+  }
 });
 
 async function init() {

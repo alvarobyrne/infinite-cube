@@ -50,7 +50,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
   blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor"]).name("Block Style").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
-  });
+  }).listen();
   blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
     saveBlockRenderState(blockRenderState);
     if (blockRenderState.style === "unifiedColor") {
