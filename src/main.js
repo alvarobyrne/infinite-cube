@@ -39,7 +39,14 @@ const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
 
 // Wrapper function for recreateScene that updates local variables
-let group, groupClone1, groupClone2, groupClone3, groupClone4, groupClone5;
+let group;
+const clones = {
+  groupClone1: null,
+  groupClone2: null,
+  groupClone3: null,
+  groupClone4: null,
+  groupClone5: null,
+};
 
 function recreateSceneWrapper() {
   const result = recreateScene({
@@ -50,18 +57,18 @@ function recreateSceneWrapper() {
     gapSize,
   });
   group = result.group;
-  groupClone1 = result.groupClone1;
-  groupClone2 = result.groupClone2;
-  groupClone3 = result.groupClone3;
-  groupClone4 = result.groupClone4;
-  groupClone5 = result.groupClone5;
+  clones.groupClone1 = result.groupClone1;
+  clones.groupClone2 = result.groupClone2;
+  clones.groupClone3 = result.groupClone3;
+  clones.groupClone4 = result.groupClone4;
+  clones.groupClone5 = result.groupClone5;
 
   // Apply initial visibility
-  groupClone1.visible = cloneVisibilityState.groupClone1;
-  groupClone2.visible = cloneVisibilityState.groupClone2;
-  groupClone3.visible = cloneVisibilityState.groupClone3;
-  groupClone4.visible = cloneVisibilityState.groupClone4;
-  groupClone5.visible = cloneVisibilityState.groupClone5;
+  clones.groupClone1.visible = cloneVisibilityState.groupClone1;
+  clones.groupClone2.visible = cloneVisibilityState.groupClone2;
+  clones.groupClone3.visible = cloneVisibilityState.groupClone3;
+  clones.groupClone4.visible = cloneVisibilityState.groupClone4;
+  clones.groupClone5.visible = cloneVisibilityState.groupClone5;
 }
 
 // Initial scene creation
@@ -76,9 +83,23 @@ controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
 });
 
-// Keyboard shortcuts for clone visibility (1-5)
+// Helper to set visibility for all clones
+function setAllClonesVisibility(visible) {
+  for (let i = 1; i <= 5; i++) {
+    const cloneName = `groupClone${i}`;
+    const clone = clones[cloneName];
+    if (clone) {
+      clone.visible = visible;
+      cloneVisibilityState[cloneName] = visible;
+    }
+  }
+  saveCloneVisibilityState(cloneVisibilityState);
+}
+
+// Keyboard shortcuts for clone visibility
 window.addEventListener("keydown", (event) => {
-  const key = event.key;
+  const key = event.key.toLowerCase();
+
   if (key >= "1" && key <= "5") {
     const cloneIndex = parseInt(key);
     const cloneName = `groupClone${cloneIndex}`;
@@ -92,17 +113,12 @@ window.addEventListener("keydown", (event) => {
       // Persist state
       saveCloneVisibilityState(cloneVisibilityState);
     }
+  } else if (key === "a") {
+    setAllClonesVisibility(true);
+  } else if (key === "h") {
+    setAllClonesVisibility(false);
   }
 });
-
-// Collect all clones for GUI
-const clones = {
-  groupClone1,
-  groupClone2,
-  groupClone3,
-  groupClone4,
-  groupClone5,
-};
 
 // Initialize GUI
 const { gui } = setupGUI({
@@ -110,6 +126,7 @@ const { gui } = setupGUI({
   blockRenderState,
   cloneVisibilityState,
   recreateScene: recreateSceneWrapper,
+  setAllClonesVisibility,
   camera,
   controls,
   clones,

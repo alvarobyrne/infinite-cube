@@ -20,7 +20,7 @@ import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisi
  * @param {Object} params.clones - Object containing all clones (groupClone1-5)
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, camera, controls, clones }) {
+export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -119,6 +119,13 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     clones.groupClone5.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
+
+  visibilityFolder.add({
+    showAll: () => setAllClonesVisibility(true)
+  }, "showAll").name("Show All Clones (A)");
+  visibilityFolder.add({
+    hideAll: () => setAllClonesVisibility(false)
+  }, "hideAll").name("Hide All Clones (H)");
 
   // Actions folder
   const actionsFolder = gui.addFolder("Actions");
