@@ -102,23 +102,23 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
   visibilityFolder.add(cloneVisibilityState, "groupClone1").name("Clone 1").onChange((vis) => {
     clones.groupClone1.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
-  });
+  }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone2").name("Clone 2").onChange((vis) => {
     clones.groupClone2.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
-  });
+  }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone3").name("Clone 3").onChange((vis) => {
     clones.groupClone3.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
-  });
+  }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone4").name("Clone 4").onChange((vis) => {
     clones.groupClone4.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
-  });
+  }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone5").name("Clone 5").onChange((vis) => {
     clones.groupClone5.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
-  });
+  }).listen();
 
   // Actions folder
   const actionsFolder = gui.addFolder("Actions");

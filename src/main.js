@@ -5,7 +5,7 @@ import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
 import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
-import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
+import { cloneVisibilityState, loadCloneVisibilityState, saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 
@@ -74,6 +74,25 @@ loadCameraState(camera, controls);
 
 controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
+});
+
+// Keyboard shortcuts for clone visibility (1-5)
+window.addEventListener("keydown", (event) => {
+  const key = event.key;
+  if (key >= "1" && key <= "5") {
+    const cloneIndex = parseInt(key);
+    const cloneName = `groupClone${cloneIndex}`;
+    const clone = clones[cloneName];
+
+    if (clone) {
+      // Toggle visibility
+      clone.visible = !clone.visible;
+      // Update state object (GUI will reflect this via .listen())
+      cloneVisibilityState[cloneName] = clone.visible;
+      // Persist state
+      saveCloneVisibilityState(cloneVisibilityState);
+    }
+  }
 });
 
 // Collect all clones for GUI
