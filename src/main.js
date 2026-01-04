@@ -9,6 +9,7 @@ import { cloneVisibilityState, loadCloneVisibilityState, saveCloneVisibilityStat
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 import { loadAllClonesState } from "./object3DState.js";
+import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -32,6 +33,12 @@ if (savedBlockRenderState) {
 const savedCloneVisibilityState = loadCloneVisibilityState();
 if (savedCloneVisibilityState) {
   Object.assign(cloneVisibilityState, savedCloneVisibilityState);
+}
+
+// Load clone selector state or use defaults
+const savedCloneSelectorState = loadCloneSelectorState();
+if (savedCloneSelectorState) {
+  Object.assign(cloneSelectorState, savedCloneSelectorState);
 }
 
 const { scene, renderer, camera } = setupScene();

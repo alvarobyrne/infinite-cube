@@ -3,9 +3,9 @@ import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { clearCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
-import { cloneSelectorState } from "./cloneSelectorState.js";
 import { saveBlockRenderState, clearBlockRenderState } from "./blockRenderState.js";
 import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
+import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 
 
 /**
@@ -160,6 +160,12 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
       location.reload();
     }
   }, "clearUI").name("Clear UI State");
+  actionsFolder.add({
+    clearCloneSelector: () => {
+      clearCloneSelectorState();
+      location.reload();
+    }
+  }, "clearCloneSelector").name("Clear Clone Selector State");
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
@@ -169,6 +175,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
   cloneSelectorFolder.add(cloneSelectorState, "selectedCloneIndex", [1, 2, 3, 4, 5])
     .name("Selected Clone")
     .onChange(() => {
+      saveCloneSelectorState(cloneSelectorState);
       positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex);
     });
 
