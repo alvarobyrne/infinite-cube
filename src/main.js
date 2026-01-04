@@ -8,6 +8,7 @@ import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
 import { cloneVisibilityState, loadCloneVisibilityState, saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
+import { loadAllClonesState } from "./object3DState.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -48,6 +49,9 @@ const clones = {
   groupClone5: null,
 };
 
+// Position and rotation manager reference
+let positionRotationManager = null;
+
 function recreateSceneWrapper() {
   const result = recreateScene({
     scene,
@@ -69,6 +73,14 @@ function recreateSceneWrapper() {
   clones.groupClone3.visible = cloneVisibilityState.groupClone3;
   clones.groupClone4.visible = cloneVisibilityState.groupClone4;
   clones.groupClone5.visible = cloneVisibilityState.groupClone5;
+
+  // Load saved positions/rotations for all clones
+  loadAllClonesState(clones);
+
+  // If the manager has been initialized, tell it to switch/sync with the current selection
+  if (positionRotationManager) {
+    positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex, true);
+  }
 }
 
 // Initial scene creation
@@ -97,7 +109,7 @@ function setAllClonesVisibility(visible) {
 }
 
 // Initialize GUI
-const { gui, folders } = setupGUI({
+const guiResult = setupGUI({
   dimensionState,
   blockRenderState,
   cloneVisibilityState,
@@ -107,6 +119,9 @@ const { gui, folders } = setupGUI({
   controls,
   clones,
 });
+
+const { gui, folders, manager } = guiResult;
+positionRotationManager = manager;
 
 // Keyboard shortcuts for clone visibility
 window.addEventListener("keydown", (event) => {

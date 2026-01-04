@@ -193,7 +193,8 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
 
   return {
     gui,
-    folders
+    folders,
+    manager: positionRotationManager
   };
 }
 
