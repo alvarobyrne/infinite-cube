@@ -19,7 +19,7 @@ const transversalBlockSize = 1;
 const savedDimensionState = loadDimensionState();
 const dimensionState = {
   dimension1: savedDimensionState?.dimension1 || transversalBlockSize * 7,
-  dimension2: savedDimensionState?.dimension2 || transversalBlockSize * 5,
+  dimension2: savedDimensionState?.dimension2 || transversalBlockSize * 4,
   dimension3: savedDimensionState?.dimension3 || transversalBlockSize * 5,
 };
 

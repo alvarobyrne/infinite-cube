@@ -39,7 +39,7 @@ export function changeGroupColor(object, color) {
  */
 export function createCloneGroups(group, scene, dimensionState, transversalBlockSize, gapSize, blockRenderState, changeGroupColor) {
   const clones = {};
-  
+
   clones.groupClone1 = group.clone();
   clones.groupClone1.rotateX(-Math.PI * 0.5);
   clones.groupClone1.rotateZ(Math.PI * 0.5);
@@ -60,54 +60,78 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
   clones.groupClone2 = group.clone();
   clones.groupClone2.rotateX(Math.PI * 0.5);
   clones.groupClone2.rotateY(Math.PI * 0.5);
-  clones.groupClone2.position.x = -(dimensionState.dimension1*0.5 + transversalBlockSize*0.5 - gapSize);
-  clones.groupClone2.position.y = dimensionState.dimension2 * 0.5 + transversalBlockSize * 0.5 + gapSize;
-  clones.groupClone2.position.z = transversalBlockSize;
+  clones.groupClone2.position.x = -(dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5) + dimensionState.dimension2 - dimensionState.dimension3 - transversalBlockSize;
+  clones.groupClone2.position.y = dimensionState.dimension3 + transversalBlockSize * 1.5 - dimensionState.dimension1 * 0.5;
+  clones.groupClone2.position.z = dimensionState.dimension1 - dimensionState.dimension2 - transversalBlockSize
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone2, blockRenderState.cloneColor2);
   }
   scene.add(clones.groupClone2);
-  
+
   clones.groupClone3 = group.clone();
   clones.groupClone3.rotateZ(Math.PI);
-  clones.groupClone3.position.x = -transversalBlockSize;
-  clones.groupClone3.position.y = dimensionState.dimension2
-  clones.groupClone3.position.z = dimensionState.dimension3+transversalBlockSize*2
+  clones.groupClone3.position.x = dimensionState.dimension2 - dimensionState.dimension3 - transversalBlockSize
+  clones.groupClone3.position.y = dimensionState.dimension3 - dimensionState.dimension1 + dimensionState.dimension2 + transversalBlockSize * 2;
+  clones.groupClone3.position.z = dimensionState.dimension1 - dimensionState.dimension2 + dimensionState.dimension3
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone3, blockRenderState.cloneColor3);
   }
   scene.add(clones.groupClone3);
-  
+
   clones.groupClone4 = group.clone();
   clones.groupClone4.rotateX(-Math.PI * 0.5);
   clones.groupClone4.rotateZ(-Math.PI * 0.5);
-  clones.groupClone4.position.x = -(
-    dimensionState.dimension1 * 0.5 -
-    transversalBlockSize * 0.5
-  );
-  clones.groupClone4.position.y = -transversalBlockSize;
-  clones.groupClone4.position.z =
-    dimensionState.dimension1 * 0.5 + transversalBlockSize * 0.5;
+  clones.groupClone4.position.x =
+    -dimensionState.dimension1 * 0.5
+    + dimensionState.dimension2
+    - dimensionState.dimension3
+    + dimensionState.dimension1
+    - dimensionState.dimension2
+    - transversalBlockSize * 1.5
+    ;
+  clones.groupClone4.position.y =
+    + dimensionState.dimension3
+    - dimensionState.dimension1
+    + dimensionState.dimension2
+    - dimensionState.dimension3
+    + transversalBlockSize
+    ;
+  clones.groupClone4.position.z = dimensionState.dimension1 * 0.5 - dimensionState.dimension2 + dimensionState.dimension3 + transversalBlockSize * 0.5;
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone4, blockRenderState.cloneColor4);
   }
   scene.add(clones.groupClone4);
-  
+
   clones.groupClone5 = group.clone();
   clones.groupClone5.rotateX(-Math.PI * 0.5);
   clones.groupClone5.rotateY(Math.PI * 0.5);
   clones.groupClone5.position.x =
-    dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
+    - dimensionState.dimension1 * 0.5
+    + dimensionState.dimension2
+    - dimensionState.dimension3
+    + dimensionState.dimension1
+    - dimensionState.dimension2
+    + dimensionState.dimension3
+    - transversalBlockSize * .5
   clones.groupClone5.position.y =
-    dimensionState.dimension2 -
-    dimensionState.dimension1 * 0.5 +
-    transversalBlockSize * 0.5;
-  clones.groupClone5.position.z = dimensionState.dimension1 - transversalBlockSize;
+    + dimensionState.dimension3
+    - dimensionState.dimension1
+    + dimensionState.dimension2
+    - dimensionState.dimension3
+    + dimensionState.dimension1 * 0.5
+    + transversalBlockSize * 0.5;
+  clones.groupClone5.position.z =
+    + dimensionState.dimension1
+    - dimensionState.dimension2
+    + dimensionState.dimension3
+    - dimensionState.dimension1
+    + dimensionState.dimension2
+    + transversalBlockSize
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone5, blockRenderState.cloneColor5);
   }
   scene.add(clones.groupClone5);
-  
+
   return clones;
 }
 
