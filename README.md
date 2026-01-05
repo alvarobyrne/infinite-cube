@@ -11,3 +11,7 @@
 # dev server
 
 [localhost:5173](http://localhost:5173)
+
+# tools used
+
+- [lil-gui](https://lil-gui.georgealways.com/#)
