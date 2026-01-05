@@ -6,6 +6,7 @@ export function saveDimensionState(dimensions) {
     dimension1: dimensions.dimension1,
     dimension2: dimensions.dimension2,
     dimension3: dimensions.dimension3,
+    transversalBlockSize: dimensions.transversalBlockSize,
   };
   localStorage.setItem("dimensionState", JSON.stringify(state));
 }

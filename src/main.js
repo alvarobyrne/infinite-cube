@@ -13,14 +13,13 @@ import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState
 
 console.log("Hello, World!", Math.random());
 
-const transversalBlockSize = 1;
-
 // Load dimension state or use defaults
 const savedDimensionState = loadDimensionState();
 const dimensionState = {
-  dimension1: savedDimensionState?.dimension1 || transversalBlockSize * 7,
-  dimension2: savedDimensionState?.dimension2 || transversalBlockSize * 4,
-  dimension3: savedDimensionState?.dimension3 || transversalBlockSize * 5,
+  dimension1: savedDimensionState?.dimension1 || 14,
+  dimension2: savedDimensionState?.dimension2 || 8,
+  dimension3: savedDimensionState?.dimension3 || 10,
+  transversalBlockSize: savedDimensionState?.transversalBlockSize || 2,
 };
 
 // Load block render state or use defaults
@@ -64,7 +63,7 @@ function recreateSceneWrapper() {
     scene,
     dimensionState,
     blockRenderState,
-    transversalBlockSize,
+    transversalBlockSize: dimensionState.transversalBlockSize,
     gapSize,
   });
   group = result.group;

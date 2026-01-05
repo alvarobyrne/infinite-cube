@@ -44,6 +44,10 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     saveDimensionState(dimensionState);
     recreateScene();
   });
+  dimensionsFolder.add(dimensionState, "transversalBlockSize", 0.1, 10, 0.1).name('Transversal Size').onChange(() => {
+    saveDimensionState(dimensionState);
+    recreateScene();
+  });
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
