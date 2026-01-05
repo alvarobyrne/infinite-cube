@@ -6,8 +6,6 @@
 - channel name: Coffreedom
 - channel handle: @coffreedom9247
 
-![alt text](whole.png)
-
 # dev server
 
 [localhost:5173](http://localhost:5173)
