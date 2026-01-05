@@ -31,13 +31,13 @@ export function changeGroupColor(object, color) {
  * @param {THREE.Group} group - The original group to clone
  * @param {THREE.Scene} scene - The scene to add clones to
  * @param {Object} dimensionState - Dimension state object
- * @param {number} transversalBlockSize - Size of transversal blocks
+ * @param {number} blockThickness - Size of blocks thickness
  * @param {number} gapSize - Gap size between blocks
  * @param {Object} blockRenderState - Block rendering state
  * @param {Function} changeGroupColor - Function to change group colors
  * @returns {Object} Object containing all cloned groups
  */
-export function createCloneGroups(group, scene, dimensionState, transversalBlockSize, gapSize, blockRenderState, changeGroupColor) {
+export function createCloneGroups(group, scene, dimensionState, blockThickness, gapSize, blockRenderState, changeGroupColor) {
   const clones = {};
 
   clones.groupClone1 = group.clone();
@@ -46,12 +46,12 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
   clones.groupClone1.position.x = -(
     dimensionState.dimension1 * 0.5 -
     dimensionState.dimension2 -
-    0.5 * transversalBlockSize
+    0.5 * blockThickness
   );
   clones.groupClone1.position.y =
-    transversalBlockSize + dimensionState.dimension3 + gapSize * 2;
+    blockThickness + dimensionState.dimension3 + gapSize * 2;
   clones.groupClone1.position.z =
-    dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5;
+    dimensionState.dimension1 * 0.5 - blockThickness * 0.5;
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone1, blockRenderState.cloneColor1);
   }
@@ -60,9 +60,9 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
   clones.groupClone2 = group.clone();
   clones.groupClone2.rotateX(Math.PI * 0.5);
   clones.groupClone2.rotateY(Math.PI * 0.5);
-  clones.groupClone2.position.x = -(dimensionState.dimension1 * 0.5 - transversalBlockSize * 0.5) + dimensionState.dimension2 - dimensionState.dimension3 - transversalBlockSize;
-  clones.groupClone2.position.y = dimensionState.dimension3 + transversalBlockSize * 1.5 - dimensionState.dimension1 * 0.5;
-  clones.groupClone2.position.z = dimensionState.dimension1 - dimensionState.dimension2 - transversalBlockSize
+  clones.groupClone2.position.x = -(dimensionState.dimension1 * 0.5 - blockThickness * 0.5) + dimensionState.dimension2 - dimensionState.dimension3 - blockThickness;
+  clones.groupClone2.position.y = dimensionState.dimension3 + blockThickness * 1.5 - dimensionState.dimension1 * 0.5;
+  clones.groupClone2.position.z = dimensionState.dimension1 - dimensionState.dimension2 - blockThickness
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone2, blockRenderState.cloneColor2);
   }
@@ -70,8 +70,8 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
 
   clones.groupClone3 = group.clone();
   clones.groupClone3.rotateZ(Math.PI);
-  clones.groupClone3.position.x = dimensionState.dimension2 - dimensionState.dimension3 - transversalBlockSize
-  clones.groupClone3.position.y = dimensionState.dimension3 - dimensionState.dimension1 + dimensionState.dimension2 + transversalBlockSize * 2;
+  clones.groupClone3.position.x = dimensionState.dimension2 - dimensionState.dimension3 - blockThickness
+  clones.groupClone3.position.y = dimensionState.dimension3 - dimensionState.dimension1 + dimensionState.dimension2 + blockThickness * 2;
   clones.groupClone3.position.z = dimensionState.dimension1 - dimensionState.dimension2 + dimensionState.dimension3
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone3, blockRenderState.cloneColor3);
@@ -87,16 +87,16 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
     - dimensionState.dimension3
     + dimensionState.dimension1
     - dimensionState.dimension2
-    - transversalBlockSize * 1.5
+    - blockThickness * 1.5
     ;
   clones.groupClone4.position.y =
     + dimensionState.dimension3
     - dimensionState.dimension1
     + dimensionState.dimension2
     - dimensionState.dimension3
-    + transversalBlockSize
+    + blockThickness
     ;
-  clones.groupClone4.position.z = dimensionState.dimension1 * 0.5 - dimensionState.dimension2 + dimensionState.dimension3 + transversalBlockSize * 0.5;
+  clones.groupClone4.position.z = dimensionState.dimension1 * 0.5 - dimensionState.dimension2 + dimensionState.dimension3 + blockThickness * 0.5;
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone4, blockRenderState.cloneColor4);
   }
@@ -112,21 +112,21 @@ export function createCloneGroups(group, scene, dimensionState, transversalBlock
     + dimensionState.dimension1
     - dimensionState.dimension2
     + dimensionState.dimension3
-    - transversalBlockSize * .5
+    - blockThickness * .5
   clones.groupClone5.position.y =
     + dimensionState.dimension3
     - dimensionState.dimension1
     + dimensionState.dimension2
     - dimensionState.dimension3
     + dimensionState.dimension1 * 0.5
-    + transversalBlockSize * 0.5;
+    + blockThickness * 0.5;
   clones.groupClone5.position.z =
     + dimensionState.dimension1
     - dimensionState.dimension2
     + dimensionState.dimension3
     - dimensionState.dimension1
     + dimensionState.dimension2
-    + transversalBlockSize
+    + blockThickness
   if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
     changeGroupColor(clones.groupClone5, blockRenderState.cloneColor5);
   }

@@ -19,7 +19,7 @@ const dimensionState = {
   dimension1: savedDimensionState?.dimension1 || 14,
   dimension2: savedDimensionState?.dimension2 || 8,
   dimension3: savedDimensionState?.dimension3 || 10,
-  transversalBlockSize: savedDimensionState?.transversalBlockSize || 2,
+  blockThickness: savedDimensionState?.blockThickness || savedDimensionState?.transversalBlockSize || 2,
 };
 
 // Load block render state or use defaults
@@ -63,7 +63,7 @@ function recreateSceneWrapper() {
     scene,
     dimensionState,
     blockRenderState,
-    transversalBlockSize: dimensionState.transversalBlockSize,
+    blockThickness: dimensionState.blockThickness,
     gapSize,
   });
   group = result.group;

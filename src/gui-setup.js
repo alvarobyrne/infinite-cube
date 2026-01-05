@@ -44,7 +44,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     saveDimensionState(dimensionState);
     recreateScene();
   });
-  dimensionsFolder.add(dimensionState, "transversalBlockSize", 0.1, 10, 0.1).name('Transversal Size').onChange(() => {
+  dimensionsFolder.add(dimensionState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
     saveDimensionState(dimensionState);
     recreateScene();
   });

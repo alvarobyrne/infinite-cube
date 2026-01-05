@@ -10,11 +10,11 @@ import { createCloneGroups, changeGroupColor } from "./scene-utils.js";
  * @param {THREE.Scene} params.scene - The scene to populate
  * @param {Object} params.dimensionState - Dimension state object
  * @param {Object} params.blockRenderState - Block render state object
- * @param {number} params.transversalBlockSize - Size of transversal blocks
+ * @param {number} params.blockThickness - Size of blocks thickness
  * @param {number} params.gapSize - Gap size between blocks
  * @returns {Object} Object containing the main group and clone groups
  */
-export function recreateScene({ scene, dimensionState, blockRenderState, transversalBlockSize, gapSize }) {
+export function recreateScene({ scene, dimensionState, blockRenderState, blockThickness, gapSize }) {
   // Clear the scene except for camera
   while (scene.children.length > 0) {
     scene.remove(scene.children[0]);
@@ -34,26 +34,26 @@ export function recreateScene({ scene, dimensionState, blockRenderState, transve
   // Update block configurations
   const block1Configuration = {
     width: dimensionState.dimension1,
-    height: transversalBlockSize,
-    depth: transversalBlockSize,
+    height: blockThickness,
+    depth: blockThickness,
     color: 0xff0000,
   };
   const block2Configuration = {
-    width: transversalBlockSize,
+    width: blockThickness,
     height: dimensionState.dimension2,
-    depth: transversalBlockSize,
+    depth: blockThickness,
     color: 0x00ff00,
   };
   const block3Configuration = {
-    width: transversalBlockSize,
+    width: blockThickness,
     height: dimensionState.dimension3,
-    depth: transversalBlockSize,
+    depth: blockThickness,
     color: 0x0000ff,
   };
 
   // Choose block creation function based on render style
   let block1, block2, block3;
-  
+
   if (blockRenderState.style === "coloredFaces") {
     // Colored faces style - uses createBlock1 which ignores color parameter
     block1 = createBlock1(block1Configuration);
@@ -75,20 +75,20 @@ export function recreateScene({ scene, dimensionState, blockRenderState, transve
   group.add(block2);
   group.add(block3);
 
-  block2.position.x = dimensionState.dimension1 / 2 - transversalBlockSize / 2; // small offset to avoid z-fighting
+  block2.position.x = dimensionState.dimension1 / 2 - blockThickness / 2; // small offset to avoid z-fighting
   block2.position.y =
-    dimensionState.dimension2 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
+    dimensionState.dimension2 / 2 + blockThickness / 2 + gapSize; // small offset to avoid z-fighting
   block2.position.z = 0;
 
-  block3.position.x = -dimensionState.dimension1 / 2 + transversalBlockSize / 2; // small offset to avoid z-fighting
+  block3.position.x = -dimensionState.dimension1 / 2 + blockThickness / 2; // small offset to avoid z-fighting
   block3.position.y =
-    dimensionState.dimension3 / 2 + transversalBlockSize / 2 + gapSize; // small offset to avoid z-fighting
+    dimensionState.dimension3 / 2 + blockThickness / 2 + gapSize; // small offset to avoid z-fighting
   block3.position.z = 0;
 
   // Update dimension lines
   const x = dimensionState.dimension1;
-  const y = transversalBlockSize;
-  const z = transversalBlockSize;
+  const y = blockThickness;
+  const z = blockThickness;
   const dimensionLineOffset = 0.4;
   const textSize = 16;
 
@@ -143,7 +143,7 @@ export function recreateScene({ scene, dimensionState, blockRenderState, transve
     group,
     scene,
     dimensionState,
-    transversalBlockSize,
+    blockThickness,
     gapSize,
     blockRenderState,
     changeGroupColor
