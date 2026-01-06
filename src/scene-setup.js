@@ -76,3 +76,57 @@ export function createBlock2({ width = 5, height = 1, depth = 1, color = 0xfffff
   const cube = new THREE.Mesh(geometry, material);
   return cube;
 }
+
+/**
+ * Create a block using planes, with an option to exclude specific pairs of faces
+ * @param {Object} params - Parameters object
+ * @param {string[]} params.exclude - Pairs of faces to exclude: 'verticals', 'horizontals', 'laterals'
+ */
+export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x00ff00, exclude = [] } = {}) {
+  const group = new THREE.Group();
+  const material = new THREE.MeshToonMaterial({ color, side: THREE.DoubleSide });
+
+  // Front and Back (Verticals)
+  if (!exclude.includes("verticals")) {
+    const verticalPlane = new THREE.PlaneGeometry(width, height);
+    const front = new THREE.Mesh(verticalPlane, material);
+    front.position.z = depth / 2;
+    group.add(front);
+
+    const back = new THREE.Mesh(verticalPlane, material);
+    back.position.z = -depth / 2;
+    back.rotation.y = Math.PI;
+    group.add(back);
+  }
+
+  // Top and Bottom (Horizontals)
+  if (!exclude.includes("horizontals")) {
+    const horizontalPlane = new THREE.PlaneGeometry(width, depth);
+    const top = new THREE.Mesh(horizontalPlane, material);
+    top.position.y = height / 2;
+    top.rotation.x = -Math.PI / 2;
+    group.add(top);
+
+    const bottom = new THREE.Mesh(horizontalPlane, material);
+    bottom.position.y = -height / 2;
+    bottom.rotation.x = Math.PI / 2;
+    group.add(bottom);
+  }
+
+  // Left and Right (Laterals)
+  if (!exclude.includes("laterals")) {
+    const lateralPlane = new THREE.PlaneGeometry(depth, height);
+    const left = new THREE.Mesh(lateralPlane, material);
+    left.position.x = -width / 2;
+    left.rotation.y = -Math.PI / 2;
+    group.add(left);
+
+    const right = new THREE.Mesh(lateralPlane, material);
+    right.position.x = width / 2;
+    right.rotation.y = Math.PI / 2;
+    group.add(right);
+  }
+
+  return group;
+}
+

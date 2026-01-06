@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1 } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock } from "./scene-setup.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 import { createCloneGroups, changeGroupColor } from "./scene-utils.js";
@@ -30,6 +30,16 @@ class SingleColorStrategy extends RenderingStrategy {
       block1: createBlock(b1),
       block2: createBlock(b2),
       block3: createBlock(b3),
+    };
+  }
+}
+
+class HollowStrategy extends RenderingStrategy {
+  createBlocks({ b1, b2, b3 }) {
+    return {
+      block1: createHollowBlock(b1),
+      block2: createHollowBlock({ ...b2, exclude: ["horizontals"] }),
+      block3: createHollowBlock({ ...b3, exclude: ["horizontals"] }),
     };
   }
 }
@@ -89,6 +99,8 @@ class BaseRecreator extends SceneRecreator {
       strategy = new ColoredFacesStrategy();
     } else if (blockRenderState.style === "unifiedColor") {
       strategy = new UnifiedColorStrategy();
+    } else if (blockRenderState.style === "hollow") {
+      strategy = new HollowStrategy();
     } else if (blockRenderState.style === "singleColor") {
       strategy = new SingleColorStrategy();
     } else {
