@@ -4,12 +4,18 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "vite ."
+    "dev": "vite .",
+    "build": "vite build",
+    "predeploy": "yarn build",
+    "deploy" : "gh-pages -d dist"
   },
   "dependencies": {
     "lil-gui": "^0.21.0",
     "three": "^0.182.0",
     "three-stdlib": "^2.36.1",
     "vite": "^7.3.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
