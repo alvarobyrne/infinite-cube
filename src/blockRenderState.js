@@ -10,6 +10,8 @@ export const blockRenderState = {
   cloneColor3: 0x00ffff, // Color for groupClone3
   cloneColor4: 0xffa500, // Color for groupClone4
   cloneColor5: 0x800080, // Color for groupClone5
+  showDimensionLines: true, // Whether to show dimension lines
+  showVertices: true, // Whether to show vertices
 };
 
 /**
@@ -39,4 +41,3 @@ export function loadBlockRenderState() {
 export function clearBlockRenderState() {
   localStorage.removeItem("blockRenderState");
 }
-

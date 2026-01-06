@@ -61,6 +61,14 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
       recreateScene();
     }
   });
+  blockRenderingFolder.add(blockRenderState, "showDimensionLines").name("Show Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showVertices").name("Show Vertices").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
 
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");
