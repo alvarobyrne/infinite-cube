@@ -59,13 +59,9 @@ export function recreateScene({ scene, dimensionState, blockRenderState, blockTh
     block1 = createBlock1(block1Configuration);
     block2 = createBlock1(block2Configuration);
     block3 = createBlock1(block3Configuration);
-  } else if (blockRenderState.style === "unifiedColor") {
-    // Unified color style - all blocks use the same color
-    block1 = createBlock2({ ...block1Configuration, color: blockRenderState.unifiedColor });
-    block2 = createBlock2({ ...block2Configuration, color: blockRenderState.unifiedColor });
-    block3 = createBlock2({ ...block3Configuration, color: blockRenderState.unifiedColor });
   } else {
-    // Single color style - each block uses its own color
+    // Use standard block creation for singleColor and unifiedColor
+    // We'll apply the unified color afterwards if needed
     block1 = createBlock(block1Configuration);
     block2 = createBlock(block2Configuration);
     block3 = createBlock(block3Configuration);
@@ -74,6 +70,11 @@ export function recreateScene({ scene, dimensionState, blockRenderState, blockTh
   group.add(block1);
   group.add(block2);
   group.add(block3);
+
+  // Apply unified color to the main group if selected
+  if (blockRenderState.style === "unifiedColor") {
+    changeGroupColor(group, blockRenderState.unifiedColor);
+  }
 
   block2.position.x = dimensionState.dimension1 / 2 - blockThickness / 2; // small offset to avoid z-fighting
   block2.position.y =
@@ -144,14 +145,22 @@ export function recreateScene({ scene, dimensionState, blockRenderState, blockTh
     scene,
     dimensionState,
     blockThickness,
-    gapSize,
-    blockRenderState,
-    changeGroupColor
+    gapSize
   );
+
+  // Apply coloring to clones if using unified color and clone colors are enabled
+  if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
+    if (clones.groupClone1) changeGroupColor(clones.groupClone1, blockRenderState.cloneColor1);
+    if (clones.groupClone2) changeGroupColor(clones.groupClone2, blockRenderState.cloneColor2);
+    if (clones.groupClone3) changeGroupColor(clones.groupClone3, blockRenderState.cloneColor3);
+    if (clones.groupClone4) changeGroupColor(clones.groupClone4, blockRenderState.cloneColor4);
+    if (clones.groupClone5) changeGroupColor(clones.groupClone5, blockRenderState.cloneColor5);
+  }
 
   return {
     group,
     ...clones
   };
+
 }
 
