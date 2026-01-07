@@ -1,8 +1,15 @@
-/**
- * Block rendering style state
- */
+export const BLOCK_STYLES = [
+  "singleColor",
+  "coloredFaces",
+  "unifiedColor",
+  "hollow",
+  "multiColorPlanes",
+  "multiColorBox",
+  "granularColor"
+];
+
 export const blockRenderState = {
-  style: "singleColor", // "singleColor", "coloredFaces", "unifiedColor", "hollow", "multiColorPlanes", "multiColorBox", or "granularColor"
+  style: BLOCK_STYLES[0], // "singleColor"
   unifiedColor: 0xffffff, // Color used when style is "unifiedColor"
   useCloneColors: false, // Whether to use independent colors for each cloned group
   cloneColor1: 0xff00ff, // Color for groupClone1

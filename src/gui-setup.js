@@ -3,7 +3,7 @@ import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { clearCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
-import { saveBlockRenderState, clearBlockRenderState } from "./blockRenderState.js";
+import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
 import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 
@@ -51,7 +51,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
-  blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor", "hollow", "multiColorPlanes", "multiColorBox", "granularColor"]).name("Block Style").onChange(() => {
+  blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   }).listen();

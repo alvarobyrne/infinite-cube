@@ -4,7 +4,7 @@ import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
-import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
+import { blockRenderState, loadBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
 import { cloneVisibilityState, loadCloneVisibilityState, saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
@@ -152,9 +152,8 @@ window.addEventListener("keydown", (event) => {
     setAllClonesVisibility(false);
   } else if (key === "q") {
     // Cycle block styles
-    const styles = ["singleColor", "coloredFaces", "unifiedColor"];
-    const currentIndex = styles.indexOf(blockRenderState.style);
-    const nextStyle = styles[(currentIndex + 1) % styles.length];
+    const currentIndex = BLOCK_STYLES.indexOf(blockRenderState.style);
+    const nextStyle = BLOCK_STYLES[(currentIndex + 1) % BLOCK_STYLES.length];
 
     // Find the style controller in lil-gui and update it
     const styleController = folders.blockRendering.controllers.find(
