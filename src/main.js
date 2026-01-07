@@ -4,12 +4,13 @@ import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
-import { blockRenderState, loadBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
-import { cloneVisibilityState, loadCloneVisibilityState, saveCloneVisibilityState } from "./cloneVisibilityState.js";
+import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
+import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 import { loadAllClonesState } from "./object3DState.js";
 import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState.js";
+import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handlers.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -101,18 +102,8 @@ controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
 });
 
-// Helper to set visibility for all clones
-function setAllClonesVisibility(visible) {
-  for (let i = 1; i <= 5; i++) {
-    const cloneName = `groupClone${i}`;
-    const clone = clones[cloneName];
-    if (clone) {
-      clone.visible = visible;
-      cloneVisibilityState[cloneName] = visible;
-    }
-  }
-  saveCloneVisibilityState(cloneVisibilityState);
-}
+// Helper to set visibility for all clones (bound to local clones and state)
+const setAllClonesVisibilityBound = (visible) => setAllClonesVisibility(clones, cloneVisibilityState, visible);
 
 // Initialize GUI
 const guiResult = setupGUI({
@@ -120,7 +111,7 @@ const guiResult = setupGUI({
   blockRenderState,
   cloneVisibilityState,
   recreateScene: recreateSceneWrapper,
-  setAllClonesVisibility,
+  setAllClonesVisibility: setAllClonesVisibilityBound,
   camera,
   controls,
   clones,
@@ -129,47 +120,13 @@ const guiResult = setupGUI({
 const { gui, folders, manager } = guiResult;
 positionRotationManager = manager;
 
-// Keyboard shortcuts for clone visibility
-window.addEventListener("keydown", (event) => {
-  const key = event.key.toLowerCase();
-
-  if (key >= "1" && key <= "5") {
-    const cloneIndex = parseInt(key);
-    const cloneName = `groupClone${cloneIndex}`;
-    const clone = clones[cloneName];
-
-    if (clone) {
-      // Toggle visibility
-      clone.visible = !clone.visible;
-      // Update state object (GUI will reflect this via .listen())
-      cloneVisibilityState[cloneName] = clone.visible;
-      // Persist state
-      saveCloneVisibilityState(cloneVisibilityState);
-    }
-  } else if (key === "a") {
-    setAllClonesVisibility(true);
-  } else if (key === "h") {
-    setAllClonesVisibility(false);
-  } else if (key === "q") {
-    // Cycle block styles
-    const currentIndex = BLOCK_STYLES.indexOf(blockRenderState.style);
-    const nextStyle = BLOCK_STYLES[(currentIndex + 1) % BLOCK_STYLES.length];
-
-    // Find the style controller in lil-gui and update it
-    const styleController = folders.blockRendering.controllers.find(
-      (c) => c._name === "Block Style"
-    );
-
-    if (styleController) {
-      styleController.setValue(nextStyle);
-      // setValue triggers the onChange handler, which handles save and scene recreation
-    } else {
-      // Fallback if controller not found
-      blockRenderState.style = nextStyle;
-      saveBlockRenderState(blockRenderState);
-      recreateSceneWrapper();
-    }
-  }
+// Initialize Keyboard Handlers
+setupKeyboardHandlers({
+  clones,
+  cloneVisibilityState,
+  blockRenderState,
+  recreateSceneWrapper,
+  folders,
 });
 
 async function init() {
