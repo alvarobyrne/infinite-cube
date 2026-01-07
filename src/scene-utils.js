@@ -27,6 +27,31 @@ export function changeGroupColor(object, color) {
 }
 
 /**
+ * Change individual face colors for box meshes in a group
+ * @param {THREE.Object3D} object - The object to traverse
+ * @param {Object} colors - Object containing colors for each face
+ */
+export function changeGroupFaceColors(object, colors) {
+  const { colorRight, colorLeft, colorTop, colorBottom, colorFront, colorBack } = colors;
+  const faceColors = [colorRight, colorLeft, colorTop, colorBottom, colorFront, colorBack];
+
+  object.traverse((child) => {
+    if (child.isMesh && Array.isArray(child.material) && child.material.length === 6) {
+      child.material = child.material.map((mat, index) => {
+        const color = faceColors[index];
+        if (color !== undefined && mat && mat.color) {
+          const clonedMat = mat.clone();
+          clonedMat.color.set(color);
+          return clonedMat;
+        }
+        return mat;
+      });
+    }
+  });
+}
+
+
+/**
  * Create and position cloned groups
  * @param {THREE.Group} group - The original group to clone
  * @param {THREE.Scene} scene - The scene to add clones to

@@ -2,7 +2,7 @@ import * as THREE from "three/webgpu";
 import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock } from "./scene-setup.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
-import { createCloneGroups, changeGroupColor } from "./scene-utils.js";
+import { createCloneGroups, changeGroupColor, changeGroupFaceColors } from "./scene-utils.js";
 
 // --- Strategy Pattern for Block Rendering ---
 
@@ -111,7 +111,26 @@ class MultiColorBoxStrategy extends RenderingStrategy {
       }),
     };
   }
+
+  applyClones(clones, blockRenderState) {
+    if (clones.groupClone1) {
+      changeGroupFaceColors(clones.groupClone1, {
+        colorFront: 0xff00ff, colorBack: 0x550055,
+        colorTop: 0x00ffff, colorBottom: 0x005555,
+        colorLeft: 0xffff00, colorRight: 0x555500
+      });
+    }
+    if (clones.groupClone2) {
+      changeGroupFaceColors(clones.groupClone2, {
+        colorFront: 0xffa500, colorBack: 0x804000,
+        colorTop: 0x800080, colorBottom: 0x400040,
+        colorLeft: 0x008000, colorRight: 0x004000
+      });
+    }
+    // and so on for other clones...
+  }
 }
+
 
 
 
