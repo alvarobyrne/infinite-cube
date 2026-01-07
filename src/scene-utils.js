@@ -50,6 +50,35 @@ export function changeGroupFaceColors(object, colors) {
   });
 }
 
+/**
+ * Granularly change colors for each face of each block within a group
+ * @param {THREE.Object3D} group - The group containing named blocks
+ * @param {Object} config - Config object with block names as keys and face color objects as values
+ */
+export function granularGroupFacesColorsChange(group, config) {
+  for (const blockName in config) {
+    const block = group.getObjectByName(blockName);
+    if (block) {
+      const colors = config[blockName];
+      const { colorRight, colorLeft, colorTop, colorBottom, colorFront, colorBack } = colors;
+      const faceColors = [colorRight, colorLeft, colorTop, colorBottom, colorFront, colorBack];
+
+      block.traverse((child) => {
+        if (child.isMesh && Array.isArray(child.material) && child.material.length === 6) {
+          child.material = child.material.map((mat, index) => {
+            const color = faceColors[index];
+            if (color !== undefined && mat && mat.color) {
+              const clonedMat = mat.clone();
+              clonedMat.color.set(color);
+              return clonedMat;
+            }
+            return mat;
+          });
+        }
+      });
+    }
+  }
+}
 
 /**
  * Create and position cloned groups

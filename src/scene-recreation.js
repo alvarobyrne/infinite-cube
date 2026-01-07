@@ -2,7 +2,7 @@ import * as THREE from "three/webgpu";
 import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock } from "./scene-setup.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
-import { createCloneGroups, changeGroupColor, changeGroupFaceColors } from "./scene-utils.js";
+import { createCloneGroups, changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange } from "./scene-utils.js";
 
 // --- Strategy Pattern for Block Rendering ---
 
@@ -88,26 +88,26 @@ class MultiColorBoxStrategy extends RenderingStrategy {
         colorBack: multiColor2,
         colorTop: multiColor3,
         colorBottom: multiColor4,
-        colorLeft: multiColor1,
-        colorRight: multiColor2,
+        colorLeft: multiColor4,
+        colorRight: multiColor4,
       }),
       block2: createMultiColorBoxBlock({
         ...b2,
         colorFront: multiColor1,
         colorBack: multiColor2,
-        colorTop: multiColor3,
+        colorTop: multiColor2,
         colorBottom: multiColor4,
-        colorLeft: multiColor1,
-        colorRight: multiColor2,
+        colorLeft: multiColor3,
+        colorRight: multiColor4,
       }),
       block3: createMultiColorBoxBlock({
         ...b3,
         colorFront: multiColor1,
         colorBack: multiColor2,
-        colorTop: multiColor3,
-        colorBottom: multiColor4,
-        colorLeft: multiColor1,
-        colorRight: multiColor2,
+        colorTop: 0,
+        colorBottom: 0,
+        colorLeft: multiColor4,
+        colorRight: multiColor3,
       }),
     };
   }
@@ -130,6 +130,41 @@ class MultiColorBoxStrategy extends RenderingStrategy {
     // and so on for other clones...
   }
 }
+class GranularColorStrategy extends MultiColorBoxStrategy {
+
+  applyClones(clones, blockRenderState) {
+    const config = {
+      groupClone1: {
+        block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+        block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+        block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+      },
+      groupClone2: {
+        block1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
+        block2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: 0, colorLeft: multiColor3, colorRight: multiColor4 },
+        block3: { colorFront: multiColor1, colorBack: multiColor2, colorTop: 0, colorBottom: 0, colorLeft: multiColor4, colorRight: multiColor3 },
+      },
+      groupClone3: {
+        block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+        block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+        block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+      },
+      // clone 4's color is the same as the original group so there is no need to change it
+      groupClone5: {
+        block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+        block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+        block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+      },
+
+    };
+
+    if (clones.groupClone1) granularGroupFacesColorsChange(clones.groupClone1, config.groupClone1);
+    if (clones.groupClone2) granularGroupFacesColorsChange(clones.groupClone2, config.groupClone2);
+    if (clones.groupClone3) granularGroupFacesColorsChange(clones.groupClone3, config.groupClone3);
+    if (clones.groupClone5) granularGroupFacesColorsChange(clones.groupClone5, config.groupClone5);
+  }
+}
+
 
 
 
@@ -195,6 +230,8 @@ class BaseRecreator extends SceneRecreator {
       strategy = new MultiColorPlaneStrategy();
     } else if (blockRenderState.style === "multiColorBox") {
       strategy = new MultiColorBoxStrategy();
+    } else if (blockRenderState.style === "granularColor") {
+      strategy = new GranularColorStrategy();
     } else if (blockRenderState.style === "singleColor") {
       strategy = new SingleColorStrategy();
     } else {
@@ -203,6 +240,9 @@ class BaseRecreator extends SceneRecreator {
     }
 
     const { block1, block2, block3 } = strategy.createBlocks(configs);
+    block1.name = "block1";
+    block2.name = "block2";
+    block3.name = "block3";
     group.add(block1);
     group.add(block2);
     group.add(block3);
