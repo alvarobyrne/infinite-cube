@@ -19,6 +19,10 @@ export const blockRenderState = {
   cloneColor5: 0x800080, // Color for groupClone5
   showDimensionLines: true, // Whether to show dimension lines
   showVertices: true, // Whether to show vertices
+  multiColor1: 0xff0000,
+  multiColor2: 0x00ff00,
+  multiColor3: 0x0000ff,
+  multiColor4: 0xffff00,
 };
 
 /**

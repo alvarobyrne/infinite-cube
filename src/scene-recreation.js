@@ -7,7 +7,7 @@ import { createCloneGroups, changeGroupColor, changeGroupFaceColors, granularGro
 // --- Strategy Pattern for Block Rendering ---
 
 class RenderingStrategy {
-  createBlocks(configs) {
+  createBlocks(configs, blockRenderState) {
     throw new Error("createBlocks must be implemented");
   }
   applyMainGroup(group, blockRenderState) { }
@@ -15,7 +15,7 @@ class RenderingStrategy {
 }
 
 class ColoredFacesStrategy extends RenderingStrategy {
-  createBlocks({ b1, b2, b3 }) {
+  createBlocks({ b1, b2, b3 }, blockRenderState) {
     return {
       block1: createBlock1(b1),
       block2: createBlock1(b2),
@@ -25,7 +25,7 @@ class ColoredFacesStrategy extends RenderingStrategy {
 }
 
 class SingleColorStrategy extends RenderingStrategy {
-  createBlocks({ b1, b2, b3 }) {
+  createBlocks({ b1, b2, b3 }, blockRenderState) {
     return {
       block1: createBlock(b1),
       block2: createBlock(b2),
@@ -35,7 +35,7 @@ class SingleColorStrategy extends RenderingStrategy {
 }
 
 class HollowStrategy extends RenderingStrategy {
-  createBlocks({ b1, b2, b3 }) {
+  createBlocks({ b1, b2, b3 }, blockRenderState) {
     return {
       block1: createHollowBlock(b1),
       block2: createHollowBlock({ ...b2, exclude: ["horizontals"] }),
@@ -43,12 +43,9 @@ class HollowStrategy extends RenderingStrategy {
     };
   }
 }
-const multiColor1 = 0xff0000;
-const multiColor2 = 0x00ff00;
-const multiColor3 = 0x0000ff;
-const multiColor4 = 0xffff00;
 class MultiColorPlaneStrategy extends RenderingStrategy {
-  createBlocks({ b1, b2, b3 }) {
+  createBlocks({ b1, b2, b3 }, blockRenderState) {
+    const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
     return {
       block1: createMultiColorPlaneBlock({
         ...b1,
@@ -80,7 +77,8 @@ class MultiColorPlaneStrategy extends RenderingStrategy {
 }
 
 class MultiColorBoxStrategy extends RenderingStrategy {
-  createBlocks({ b1, b2, b3 }) {
+  createBlocks({ b1, b2, b3 }, blockRenderState) {
+    const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
     return {
       block1: createMultiColorBoxBlock({
         ...b1,
@@ -133,6 +131,7 @@ class MultiColorBoxStrategy extends RenderingStrategy {
 class GranularColorStrategy extends MultiColorBoxStrategy {
 
   applyClones(clones, blockRenderState) {
+    const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
     const config = {
       groupClone1: {
         block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
@@ -239,7 +238,7 @@ class BaseRecreator extends SceneRecreator {
       console.warn("Invalid block render style, using singleColor");
     }
 
-    const { block1, block2, block3 } = strategy.createBlocks(configs);
+    const { block1, block2, block3 } = strategy.createBlocks(configs, blockRenderState);
     block1.name = "block1";
     block2.name = "block2";
     block3.name = "block3";

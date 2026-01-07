@@ -109,6 +109,19 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     }
   });
 
+  // Multi-Color Palette folder
+  const multiColorFolder = gui.addFolder("Multi-Color Palette");
+  const updateMultiColor = () => {
+    saveBlockRenderState(blockRenderState);
+    if (["multiColorPlanes", "multiColorBox", "granularColor"].includes(blockRenderState.style)) {
+      recreateScene();
+    }
+  };
+  multiColorFolder.addColor(blockRenderState, "multiColor1").name("Color 1").onChange(updateMultiColor);
+  multiColorFolder.addColor(blockRenderState, "multiColor2").name("Color 2").onChange(updateMultiColor);
+  multiColorFolder.addColor(blockRenderState, "multiColor3").name("Color 3").onChange(updateMultiColor);
+  multiColorFolder.addColor(blockRenderState, "multiColor4").name("Color 4").onChange(updateMultiColor);
+
   // Clone Visibility folder
   const visibilityFolder = gui.addFolder("Clone Visibility");
   visibilityFolder.add(cloneVisibilityState, "groupClone1").name("Clone 1").onChange((vis) => {
@@ -196,6 +209,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     dimensions: dimensionsFolder,
     blockRendering: blockRenderingFolder,
     cloneColors: cloneColorsFolder,
+    multiColorPalette: multiColorFolder,
     visibility: visibilityFolder,
     actions: actionsFolder,
     cloneSelector: cloneSelectorFolder,
