@@ -51,7 +51,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
-  blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor", "hollow"]).name("Block Style").onChange(() => {
+  blockRenderingFolder.add(blockRenderState, "style", ["singleColor", "coloredFaces", "unifiedColor", "hollow", "multiColorPlanes"]).name("Block Style").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   }).listen();

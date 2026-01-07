@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock } from "./scene-setup.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 import { createCloneGroups, changeGroupColor } from "./scene-utils.js";
@@ -43,6 +43,42 @@ class HollowStrategy extends RenderingStrategy {
     };
   }
 }
+const multiColor1 = 0xff0000;
+const multiColor2 = 0x00ff00;
+const multiColor3 = 0x0000ff;
+const multiColor4 = 0xffff00;
+class MultiColorPlaneStrategy extends RenderingStrategy {
+  createBlocks({ b1, b2, b3 }) {
+    return {
+      block1: createMultiColorPlaneBlock({
+        ...b1,
+        colorFront: multiColor3,
+        colorBack: multiColor1,
+        colorTop: multiColor2,
+        colorBottom: multiColor4,
+        colorLeft: multiColor4,
+        colorRight: multiColor4,
+      }),
+      block2: createMultiColorPlaneBlock({
+        ...b2,
+        colorFront: multiColor3,
+        colorBack: multiColor1,
+        colorLeft: multiColor2,
+        colorRight: multiColor4,
+        exclude: ["top", "bottom"],
+      }),
+      block3: createMultiColorPlaneBlock({
+        ...b3,
+        colorFront: multiColor3,
+        colorBack: multiColor1,
+        colorLeft: multiColor4,
+        colorRight: multiColor2,
+        exclude: ["top", "bottom"],
+      }),
+    };
+  }
+}
+
 
 class UnifiedColorStrategy extends SingleColorStrategy {
   applyMainGroup(group, blockRenderState) {
@@ -101,6 +137,8 @@ class BaseRecreator extends SceneRecreator {
       strategy = new UnifiedColorStrategy();
     } else if (blockRenderState.style === "hollow") {
       strategy = new HollowStrategy();
+    } else if (blockRenderState.style === "multiColorPlanes") {
+      strategy = new MultiColorPlaneStrategy();
     } else if (blockRenderState.style === "singleColor") {
       strategy = new SingleColorStrategy();
     } else {

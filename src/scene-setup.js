@@ -130,3 +130,100 @@ export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x
   return group;
 }
 
+/**
+ * Create a block using planes, allowing separate colors for each pair of faces
+ * @param {Object} params - Parameters object
+ * @param {number} params.verticalColor - Color for front and back faces
+ * @param {number} params.horizontalColor - Color for top and bottom faces
+ * @param {number} params.lateralColor - Color for left and right faces
+ * @param {string[]} params.exclude - Pairs of faces to exclude
+ */
+/**
+ * Create a block using planes, allowing separate colors for each face
+ * @param {Object} params - Parameters object
+ * @param {number} params.colorFront - Color for front face
+ * @param {number} params.colorBack - Color for back face
+ * @param {number} params.colorTop - Color for top face
+ * @param {number} params.colorBottom - Color for bottom face
+ * @param {number} params.colorLeft - Color for left face
+ * @param {number} params.colorRight - Color for right face
+ * @param {string[]} params.exclude - Faces to exclude (e.g., 'front', 'back', 'top', 'bottom', 'left', 'right')
+ */
+export function createMultiColorPlaneBlock({
+  width = 5,
+  height = 1,
+  depth = 1,
+  colorFront = 0x00ff00,
+  colorBack = 0x00ff00,
+  colorTop = 0xff0000,
+  colorBottom = 0xff0000,
+  colorLeft = 0x0000ff,
+  colorRight = 0x0000ff,
+  exclude = []
+} = {}) {
+  const group = new THREE.Group();
+
+  // Front (+Z)
+  if (!exclude.includes("front")) {
+    const material = new THREE.MeshToonMaterial({ color: colorFront, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(width, height);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.z = depth / 2;
+    group.add(mesh);
+  }
+
+  // Back (-Z)
+  if (!exclude.includes("back")) {
+    const material = new THREE.MeshToonMaterial({ color: colorBack, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(width, height);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.z = -depth / 2;
+    mesh.rotation.y = Math.PI;
+    group.add(mesh);
+  }
+
+  // Top (+Y)
+  if (!exclude.includes("top")) {
+    const material = new THREE.MeshToonMaterial({ color: colorTop, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(width, depth);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.y = height / 2;
+    mesh.rotation.x = -Math.PI / 2;
+    group.add(mesh);
+  }
+
+  // Bottom (-Y)
+  if (!exclude.includes("bottom")) {
+    const material = new THREE.MeshToonMaterial({ color: colorBottom, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(width, depth);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.y = -height / 2;
+    mesh.rotation.x = Math.PI / 2;
+    group.add(mesh);
+  }
+
+  // Left (-X)
+  if (!exclude.includes("left")) {
+    const material = new THREE.MeshToonMaterial({ color: colorLeft, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(depth, height);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.x = -width / 2;
+    mesh.rotation.y = -Math.PI / 2;
+    group.add(mesh);
+  }
+
+  // Right (+X)
+  if (!exclude.includes("right")) {
+    const material = new THREE.MeshToonMaterial({ color: colorRight, side: THREE.DoubleSide });
+    const plane = new THREE.PlaneGeometry(depth, height);
+    const mesh = new THREE.Mesh(plane, material);
+    mesh.position.x = width / 2;
+    mesh.rotation.y = Math.PI / 2;
+    group.add(mesh);
+  }
+
+  return group;
+}
+
+
+
