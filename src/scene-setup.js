@@ -63,6 +63,33 @@ export function createBlock1({ width = 5, height = 1, depth = 1 } = {}) {
 }
 
 /**
+ * Create a box block with individual colors for each face
+ */
+export function createMultiColorBoxBlock({
+  width = 5,
+  height = 1,
+  depth = 1,
+  colorRight = 0x0000ff,
+  colorLeft = 0x0000ff,
+  colorTop = 0xff0000,
+  colorBottom = 0xff0000,
+  colorFront = 0x00ff00,
+  colorBack = 0x00ff00
+} = {}) {
+  const geometry = new THREE.BoxGeometry(width, height, depth);
+  const materials = [
+    new THREE.MeshToonMaterial({ color: colorRight }),
+    new THREE.MeshToonMaterial({ color: colorLeft }),
+    new THREE.MeshToonMaterial({ color: colorTop }),
+    new THREE.MeshToonMaterial({ color: colorBottom }),
+    new THREE.MeshToonMaterial({ color: colorFront }),
+    new THREE.MeshToonMaterial({ color: colorBack }),
+  ];
+  return new THREE.Mesh(geometry, materials);
+}
+
+
+/**
  * Create block with unified color (same as createBlock, but used with a single color for all blocks)
  * @param {Object} params - Parameters object
  * @param {number} params.width - Width of the cube

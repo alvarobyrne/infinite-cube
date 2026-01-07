@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock } from "./scene-setup.js";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
 import { createCloneGroups, changeGroupColor } from "./scene-utils.js";
@@ -79,6 +79,41 @@ class MultiColorPlaneStrategy extends RenderingStrategy {
   }
 }
 
+class MultiColorBoxStrategy extends RenderingStrategy {
+  createBlocks({ b1, b2, b3 }) {
+    return {
+      block1: createMultiColorBoxBlock({
+        ...b1,
+        colorFront: multiColor1,
+        colorBack: multiColor2,
+        colorTop: multiColor3,
+        colorBottom: multiColor4,
+        colorLeft: multiColor1,
+        colorRight: multiColor2,
+      }),
+      block2: createMultiColorBoxBlock({
+        ...b2,
+        colorFront: multiColor1,
+        colorBack: multiColor2,
+        colorTop: multiColor3,
+        colorBottom: multiColor4,
+        colorLeft: multiColor1,
+        colorRight: multiColor2,
+      }),
+      block3: createMultiColorBoxBlock({
+        ...b3,
+        colorFront: multiColor1,
+        colorBack: multiColor2,
+        colorTop: multiColor3,
+        colorBottom: multiColor4,
+        colorLeft: multiColor1,
+        colorRight: multiColor2,
+      }),
+    };
+  }
+}
+
+
 
 class UnifiedColorStrategy extends SingleColorStrategy {
   applyMainGroup(group, blockRenderState) {
@@ -139,6 +174,8 @@ class BaseRecreator extends SceneRecreator {
       strategy = new HollowStrategy();
     } else if (blockRenderState.style === "multiColorPlanes") {
       strategy = new MultiColorPlaneStrategy();
+    } else if (blockRenderState.style === "multiColorBox") {
+      strategy = new MultiColorBoxStrategy();
     } else if (blockRenderState.style === "singleColor") {
       strategy = new SingleColorStrategy();
     } else {
