@@ -15,6 +15,7 @@ export function saveUIState(folders) {
     cloneSelector: folders.cloneSelector ? !folders.cloneSelector._closed : undefined,
     visibility: folders.visibility ? !folders.visibility._closed : undefined,
     object3DPositionRotation: folders.object3DPositionRotation ? !folders.object3DPositionRotation._closed : undefined,
+    multiColorPalette: folders.multiColorPalette ? !folders.multiColorPalette._closed : undefined,
   };
   localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
 }
@@ -85,6 +86,14 @@ export function loadUIState(folders) {
         folders.object3DPositionRotation.open();
       } else {
         folders.object3DPositionRotation.close();
+      }
+    }
+
+    if (folders.multiColorPalette && state.multiColorPalette !== undefined) {
+      if (state.multiColorPalette) {
+        folders.multiColorPalette.open();
+      } else {
+        folders.multiColorPalette.close();
       }
     }
   } catch (e) {
