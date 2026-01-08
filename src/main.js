@@ -4,6 +4,7 @@ import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
 import { loadDimensionState } from "./dimensionState.js";
+import { loadWHDState } from "./width_height_depth/whdState.js";
 import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
 import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
@@ -21,6 +22,15 @@ const dimensionState = {
   dimension2: savedDimensionState?.dimension2 || 8,
   dimension3: savedDimensionState?.dimension3 || 10,
   blockThickness: savedDimensionState?.blockThickness || savedDimensionState?.transversalBlockSize || 2,
+};
+
+// Load WHD state or use defaults
+const savedWHDState = loadWHDState();
+const whdState = {
+  width: savedWHDState?.width || 14,
+  height: savedWHDState?.height || 8,
+  depth: savedWHDState?.depth || 10,
+  blockThickness: savedWHDState?.blockThickness || 2,
 };
 
 // Load block render state or use defaults
@@ -66,6 +76,7 @@ function recreateSceneWrapper() {
     blockRenderState,
     blockThickness: dimensionState.blockThickness,
     gapSize,
+    whdState,
   });
   group = result.group;
   clones.groupClone1 = result.groupClone1;
@@ -108,6 +119,7 @@ const setAllClonesVisibilityBound = (visible) => setAllClonesVisibility(clones, 
 // Initialize GUI
 const guiResult = setupGUI({
   dimensionState,
+  whdState,
   blockRenderState,
   cloneVisibilityState,
   recreateScene: recreateSceneWrapper,

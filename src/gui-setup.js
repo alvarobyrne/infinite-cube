@@ -1,5 +1,6 @@
 import GUI from "lil-gui";
 import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
+import { saveWHDState, clearWHDState } from "./width_height_depth/whdState.js";
 import { clearCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
@@ -20,7 +21,7 @@ import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } f
  * @param {Object} params.clones - Object containing all clones (groupClone1-5)
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones }) {
+export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -47,6 +48,25 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
   dimensionsFolder.add(dimensionState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
     saveDimensionState(dimensionState);
     recreateScene();
+  });
+
+  // WHD (Width, Height, Depth) folder
+  const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
+  whdFolder.add(whdState, "width", 1, 30, 0.1).name('Width').onChange(() => {
+    saveWHDState(whdState);
+    // recreateScene(); // Not using it yet as requested
+  });
+  whdFolder.add(whdState, "height", 1, 30, 0.1).name('Height').onChange(() => {
+    saveWHDState(whdState);
+    // recreateScene();
+  });
+  whdFolder.add(whdState, "depth", 1, 30, 0.1).name('Depth').onChange(() => {
+    saveWHDState(whdState);
+    // recreateScene();
+  });
+  whdFolder.add(whdState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
+    saveWHDState(whdState);
+    // recreateScene();
   });
 
   // Block Rendering folder
@@ -191,6 +211,12 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
       location.reload();
     }
   }, "clearCloneSelector").name("Clear Clone Selector State");
+  actionsFolder.add({
+    clearWHD: () => {
+      clearWHDState();
+      location.reload();
+    }
+  }, "clearWHD").name("Clear WHD State");
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
@@ -213,6 +239,7 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
     visibility: visibilityFolder,
     actions: actionsFolder,
     cloneSelector: cloneSelectorFolder,
+    whd: whdFolder,
     object3DPositionRotation: positionRotationManager.folder,
   };
 
