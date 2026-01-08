@@ -9,7 +9,8 @@ import {
     MultiColorPlaneStrategy,
     MultiColorBoxStrategy,
     GranularColorStrategy,
-    SingleColorStrategy
+    SingleColorStrategy,
+    ColoredFacedWHDStrategy
 } from "./block-strategies.js";
 
 // --- Decorator Pattern for Scene Additives ---
@@ -22,7 +23,7 @@ export class SceneRecreator {
 
 export class BaseRecreator extends SceneRecreator {
     recreate(params) {
-        const { scene, dimensionState, blockRenderState, blockThickness, gapSize } = params;
+        const { scene, blockRenderState } = params;
 
         // Clear the scene except for camera
         while (scene.children.length > 0) {
@@ -34,17 +35,6 @@ export class BaseRecreator extends SceneRecreator {
         const light1 = new THREE.DirectionalLight(0xffffff, 1);
         light1.position.set(10, 10, 10);
         scene.add(light1);
-
-        // Create a group to hold all elements
-        const group = new THREE.Group();
-        scene.add(group);
-        group.add(new THREE.AxesHelper(6));
-
-        const configs = {
-            b1: { width: dimensionState.dimension1, height: blockThickness, depth: blockThickness, color: 0xff0000 },
-            b2: { width: blockThickness, height: dimensionState.dimension2, depth: blockThickness, color: 0x00ff00 },
-            b3: { width: blockThickness, height: dimensionState.dimension3, depth: blockThickness, color: 0x0000ff },
-        };
 
         // Strategy Selection
         let strategy;
@@ -62,33 +52,14 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new GranularColorStrategy();
         } else if (blockRenderState.style === "singleColor") {
             strategy = new SingleColorStrategy();
+        } else if (blockRenderState.style === "coloredFacedWHD") {
+            strategy = new ColoredFacedWHDStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
         }
 
-        const { block1, block2, block3 } = strategy.createBlocks(configs, blockRenderState);
-        block1.name = "block1";
-        block2.name = "block2";
-        block3.name = "block3";
-        group.add(block1);
-        group.add(block2);
-        group.add(block3);
-
-        strategy.applyMainGroup(group, blockRenderState);
-
-        block2.position.x = dimensionState.dimension1 / 2 - blockThickness / 2;
-        block2.position.y = dimensionState.dimension2 / 2 + blockThickness / 2 + gapSize;
-        block2.position.z = 0;
-
-        block3.position.x = -dimensionState.dimension1 / 2 + blockThickness / 2;
-        block3.position.y = dimensionState.dimension3 / 2 + blockThickness / 2 + gapSize;
-        block3.position.z = 0;
-
-        const clones = createCloneGroups(group, scene, dimensionState, blockThickness, gapSize);
-        strategy.applyClones(clones, blockRenderState);
-
-        return { group, ...clones };
+        return strategy.execute(params);
     }
 }
 

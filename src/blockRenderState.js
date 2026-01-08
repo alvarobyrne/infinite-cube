@@ -5,7 +5,8 @@ export const BLOCK_STYLES = [
   "hollow",
   "multiColorPlanes",
   "multiColorBox",
-  "granularColor"
+  "granularColor",
+  "coloredFacedWHD"
 ];
 
 export const blockRenderState = {

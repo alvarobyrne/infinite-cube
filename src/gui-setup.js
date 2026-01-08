@@ -54,19 +54,19 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
   whdFolder.add(whdState, "width", 1, 30, 0.1).name('Width').onChange(() => {
     saveWHDState(whdState);
-    // recreateScene(); // Not using it yet as requested
+    recreateScene();
   });
   whdFolder.add(whdState, "height", 1, 30, 0.1).name('Height').onChange(() => {
     saveWHDState(whdState);
-    // recreateScene();
+    recreateScene();
   });
   whdFolder.add(whdState, "depth", 1, 30, 0.1).name('Depth').onChange(() => {
     saveWHDState(whdState);
-    // recreateScene();
+    recreateScene();
   });
   whdFolder.add(whdState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
     saveWHDState(whdState);
-    // recreateScene();
+    recreateScene();
   });
 
   // Block Rendering folder

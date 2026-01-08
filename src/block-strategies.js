@@ -1,18 +1,64 @@
 import * as THREE from "three/webgpu";
 import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock } from "./scene-setup.js";
-import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange } from "./scene-utils.js";
+import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
 
 // --- Strategy Pattern for Block Rendering ---
 
 export class RenderingStrategy {
+    execute(params) {
+        throw new Error("execute must be implemented");
+    }
+}
+
+/**
+ * Base strategy for the "Infinite Cube" object (3 interlocking blocks + 5 clones)
+ */
+export class InfiniteCubeBaseStrategy extends RenderingStrategy {
     createBlocks(configs, blockRenderState) {
         throw new Error("createBlocks must be implemented");
     }
     applyMainGroup(group, blockRenderState) { }
     applyClones(clones, blockRenderState) { }
+
+    execute(params) {
+        const { scene, dimensionState, blockRenderState, blockThickness, gapSize } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = {
+            b1: { width: dimensionState.dimension1, height: blockThickness, depth: blockThickness, color: 0xff0000 },
+            b2: { width: blockThickness, height: dimensionState.dimension2, depth: blockThickness, color: 0x00ff00 },
+            b3: { width: blockThickness, height: dimensionState.dimension3, depth: blockThickness, color: 0x0000ff },
+        };
+
+        const { block1, block2, block3 } = this.createBlocks(configs, blockRenderState);
+        block1.name = "block1";
+        block2.name = "block2";
+        block3.name = "block3";
+        group.add(block1);
+        group.add(block2);
+        group.add(block3);
+
+        this.applyMainGroup(group, blockRenderState);
+
+        block2.position.x = dimensionState.dimension1 / 2 - blockThickness / 2;
+        block2.position.y = dimensionState.dimension2 / 2 + blockThickness / 2 + gapSize;
+        block2.position.z = 0;
+
+        block3.position.x = -dimensionState.dimension1 / 2 + blockThickness / 2;
+        block3.position.y = dimensionState.dimension3 / 2 + blockThickness / 2 + gapSize;
+        block3.position.z = 0;
+
+        const clones = createCloneGroups(group, scene, dimensionState, blockThickness, gapSize);
+        this.applyClones(clones, blockRenderState);
+
+        return { group, ...clones };
+    }
 }
 
-export class ColoredFacesStrategy extends RenderingStrategy {
+export class ColoredFacesStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         return {
             block1: createBlock1(b1),
@@ -22,7 +68,7 @@ export class ColoredFacesStrategy extends RenderingStrategy {
     }
 }
 
-export class SingleColorStrategy extends RenderingStrategy {
+export class SingleColorStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         return {
             block1: createBlock(b1),
@@ -32,7 +78,7 @@ export class SingleColorStrategy extends RenderingStrategy {
     }
 }
 
-export class HollowStrategy extends RenderingStrategy {
+export class HollowStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         return {
             block1: createHollowBlock(b1),
@@ -42,7 +88,7 @@ export class HollowStrategy extends RenderingStrategy {
     }
 }
 
-export class MultiColorPlaneStrategy extends RenderingStrategy {
+export class MultiColorPlaneStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
         return {
@@ -75,7 +121,7 @@ export class MultiColorPlaneStrategy extends RenderingStrategy {
     }
 }
 
-export class MultiColorBoxStrategy extends RenderingStrategy {
+export class MultiColorBoxStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
         return {
@@ -172,5 +218,28 @@ export class UnifiedColorStrategy extends SingleColorStrategy {
             if (clones.groupClone4) changeGroupColor(clones.groupClone4, blockRenderState.cloneColor4);
             if (clones.groupClone5) changeGroupColor(clones.groupClone5, blockRenderState.cloneColor5);
         }
+    }
+}
+
+/**
+ * New strategy that renders a single box using Width, Height, Depth (WHD) state
+ */
+export class ColoredFacedWHDStrategy extends RenderingStrategy {
+    execute(params) {
+        const { scene, whdState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const block = createBlock1({
+            width: whdState.width,
+            height: whdState.height,
+            depth: whdState.depth
+        });
+        block.name = "mainBox";
+        group.add(block);
+
+        return { group };
     }
 }
