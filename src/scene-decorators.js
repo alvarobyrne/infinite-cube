@@ -37,7 +37,7 @@ export class BaseRecreator extends SceneRecreator {
         scene.add(light1);
 
         // Strategy Selection
-        let strategy;
+        let strategy, whdStrategy;
         if (blockRenderState.style === "coloredFaces") {
             strategy = new ColoredFacesStrategy();
         } else if (blockRenderState.style === "unifiedColor") {
@@ -58,6 +58,8 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
         }
+        whdStrategy = new ColoredFacedWHDStrategy();
+        whdStrategy.execute(params);
 
         return strategy.execute(params);
     }
