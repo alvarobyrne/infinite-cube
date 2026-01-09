@@ -226,20 +226,73 @@ export class UnifiedColorStrategy extends SingleColorStrategy {
  */
 export class ColoredFacedWHDStrategy extends RenderingStrategy {
     execute(params) {
-        const { scene, whdState } = params;
+        const { scene, whdState, blockRenderState } = params;
+        console.log("🔍 ~ execute ~ src/block-strategies.js:229 ~ params:", params);
 
         const group = new THREE.Group();
         scene.add(group);
         group.add(new THREE.AxesHelper(6));
 
-        const block = createBlock1({
-            width: whdState.width,
-            height: whdState.height,
-            depth: whdState.depth
+        const gapSize = 0.05;
+        const { blockThickness } = whdState;
+        const factor = 1.1;
+        const gap = blockThickness * factor;
+        const reducedWidth = whdState.width - gap;
+        const reducedHeight = whdState.height - gap;
+        const reducedDepth = whdState.depth - gap;
+        const configs = {
+            b1: { width: whdState.width, height: blockThickness, depth: blockThickness, color: 'red', isWireframe: false },
+            b2: { width: blockThickness, height: reducedHeight, depth: blockThickness, color: 'green', isWireframe: false },
+            b3: { width: blockThickness, height: whdState.height, depth: blockThickness, color: 0x0000ff, isWireframe: false },
+        };
+
+        const { block1, block2, block3 } = this.createBlocks(configs, blockRenderState);
+        block1.name = "block1";
+        block2.name = "block2";
+        block3.name = "block3";
+        group.add(block1);
+        group.add(block2);
+        group.add(block3);
+
+        block2.position.x = whdState.width / 2 - blockThickness / 2;
+        block2.position.y = reducedHeight / 2 + blockThickness / 2 + gapSize;
+        block2.position.z = 0;
+
+        block3.position.x = -whdState.width / 2 + blockThickness / 2;
+        block3.position.y = whdState.height / 2 + blockThickness / 2 + gapSize;
+        block3.position.z = 0;
+
+        const block4 = createBlock({
+            width: reducedWidth,
+            height: blockThickness,
+            depth: blockThickness,
+            color: 0x00ff00,
+            isWireframe: false
         });
-        block.name = "mainBox";
-        group.add(block);
+        block4.position.x = reducedWidth / 2 - whdState.width / 2;
+        block4.position.y = whdState.height + blockThickness;
+        block4.position.z = 0;
+        group.add(block4);
+
+        const block5 = createBlock({
+            width: blockThickness,
+            height: blockThickness,
+            depth: whdState.depth,
+            color: 0x00ff00,
+            isWireframe: false
+        });
+        block5.position.x = reducedWidth / 2 - whdState.width / 2;
+        block5.position.y = whdState.height + blockThickness;
+        block5.position.z = whdState.depth / 2 + blockThickness / 2;
+        group.add(block5);
 
         return { group };
+    }
+    createBlocks({ b1, b2, b3 }, blockRenderState) {
+        return {
+            block1: createBlock(b1),
+            block2: createBlock(b2),
+            block3: createBlock(b3),
+        };
     }
 }
