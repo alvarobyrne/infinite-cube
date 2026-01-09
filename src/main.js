@@ -86,11 +86,11 @@ function recreateSceneWrapper() {
   clones.groupClone5 = result.groupClone5;
 
   // Apply initial visibility
-  clones.groupClone1.visible = cloneVisibilityState.groupClone1;
-  clones.groupClone2.visible = cloneVisibilityState.groupClone2;
-  clones.groupClone3.visible = cloneVisibilityState.groupClone3;
-  clones.groupClone4.visible = cloneVisibilityState.groupClone4;
-  clones.groupClone5.visible = cloneVisibilityState.groupClone5;
+  if (clones.groupClone1) clones.groupClone1.visible = cloneVisibilityState.groupClone1;
+  if (clones.groupClone2) clones.groupClone2.visible = cloneVisibilityState.groupClone2;
+  if (clones.groupClone3) clones.groupClone3.visible = cloneVisibilityState.groupClone3;
+  if (clones.groupClone4) clones.groupClone4.visible = cloneVisibilityState.groupClone4;
+  if (clones.groupClone5) clones.groupClone5.visible = cloneVisibilityState.groupClone5;
 
   // Load saved positions/rotations for all clones
   loadAllClonesState(clones);

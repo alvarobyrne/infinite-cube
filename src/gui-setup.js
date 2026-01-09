@@ -145,23 +145,23 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Clone Visibility folder
   const visibilityFolder = gui.addFolder("Clone Visibility");
   visibilityFolder.add(cloneVisibilityState, "groupClone1").name("Clone 1").onChange((vis) => {
-    clones.groupClone1.visible = vis;
+    if (clones.groupClone1) clones.groupClone1.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone2").name("Clone 2").onChange((vis) => {
-    clones.groupClone2.visible = vis;
+    if (clones.groupClone2) clones.groupClone2.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone3").name("Clone 3").onChange((vis) => {
-    clones.groupClone3.visible = vis;
+    if (clones.groupClone3) clones.groupClone3.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone4").name("Clone 4").onChange((vis) => {
-    clones.groupClone4.visible = vis;
+    if (clones.groupClone4) clones.groupClone4.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone5").name("Clone 5").onChange((vis) => {
-    clones.groupClone5.visible = vis;
+    if (clones.groupClone5) clones.groupClone5.visible = vis;
     saveCloneVisibilityState(cloneVisibilityState);
   }).listen();
 
