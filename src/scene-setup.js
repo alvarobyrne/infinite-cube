@@ -32,13 +32,19 @@ export function setupScene() {
  * @param {number} params.width - Width of the cube
  * @param {number} params.height - Height of the cube
  * @param {number} params.depth - Depth of the cube
+ * @param {number} params.color - Color of the cube
+ * @param {boolean} params.isWireframe - Whether to use wireframe
  */
-export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff } = {}) {
+export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff, isWireframe = true } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
+  // if isWireframe, lighten the color
+  if (isWireframe) {
+    color = color | 0x777777;
+  }
 
   // Create an array of materials for each face:
   // [right, left, top, bottom, front, back]
-  const material = new THREE.MeshToonMaterial({ color });
+  const material = new THREE.MeshToonMaterial({ color, wireframe: isWireframe });
 
   const cube = new THREE.Mesh(geometry, material);
   return cube;
