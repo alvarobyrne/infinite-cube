@@ -11,6 +11,8 @@ import { setupGUI } from "./gui-setup.js";
 import { loadAllClonesState } from "./object3DState.js";
 import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState.js";
 import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handlers.js";
+import { viewState, loadViewState, saveViewState, VIEW_MODES } from "./viewState.js";
+import { views, setupViews } from "./scene-setup.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -41,7 +43,17 @@ if (savedCloneSelectorState) {
   Object.assign(cloneSelectorState, savedCloneSelectorState);
 }
 
+// Load view state or use defaults
+const savedViewState = loadViewState();
+if (savedViewState) {
+  Object.assign(viewState, savedViewState);
+}
+
 const { scene, renderer, camera } = setupScene();
+
+if (viewState.mode === VIEW_MODES.MULTI) {
+  setupViews(camera);
+}
 
 const isAddingGaps = false;
 const gapSize = isAddingGaps ? 0.05 : 0;
@@ -115,6 +127,9 @@ const guiResult = setupGUI({
   camera,
   controls,
   clones,
+  viewState,
+  saveViewState,
+  VIEW_MODES,
 });
 
 const { gui, folders, manager } = guiResult;
@@ -133,9 +148,44 @@ async function init() {
   await renderer.init();
   console.log("WebGPU initialized");
 
+  window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
   function animate() {
     controls.update();
-    renderer.render(scene, camera);
+
+    if (viewState.mode === VIEW_MODES.SINGLE) {
+      renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+      renderer.setScissorTest(false);
+      renderer.render(scene, camera);
+    } else {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      for (let i = 0; i < views.length; i++) {
+        const view = views[i];
+        const viewCamera = view.camera;
+
+        const left = Math.floor(windowWidth * view.left);
+        const bottom = Math.floor(windowHeight * view.bottom);
+        const width = Math.floor(windowWidth * view.width);
+        const height = Math.floor(windowHeight * view.height);
+
+        renderer.setViewport(left, bottom, width, height);
+        renderer.setScissor(left, bottom, width, height);
+        renderer.setScissorTest(true);
+        renderer.setClearColor(view.background);
+
+        viewCamera.aspect = width / height;
+        viewCamera.updateProjectionMatrix();
+
+        renderer.render(scene, viewCamera);
+      }
+    }
+
     requestAnimationFrame(animate);
   }
   animate();

@@ -18,9 +18,12 @@ import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } f
  * @param {THREE.Camera} params.camera - Camera object
  * @param {Object} params.controls - OrbitControls object
  * @param {Object} params.clones - Object containing all clones (groupClone1-5)
+ * @param {Object} params.viewState - View state object
+ * @param {Function} params.saveViewState - Function to save view state
+ * @param {Object} params.VIEW_MODES - View modes constants
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones }) {
+export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -29,6 +32,12 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
       location.reload();
     }
   }, "reload").name("Reload Page");
+
+  // View Mode selector
+  gui.add(viewState, "mode", Object.values(VIEW_MODES)).name("View Mode").onChange(() => {
+    saveViewState(viewState);
+    location.reload(); // Reload to re-initialize cameras and render loop
+  });
 
   // Dimensions folder
   const dimensionsFolder = gui.addFolder("Dimensions");
@@ -191,6 +200,13 @@ export function setupGUI({ dimensionState, blockRenderState, cloneVisibilityStat
       location.reload();
     }
   }, "clearCloneSelector").name("Clear Clone Selector State");
+
+  actionsFolder.add({
+    clearView: () => {
+      localStorage.removeItem("viewState");
+      location.reload();
+    }
+  }, "clearView").name("Clear View State");
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
