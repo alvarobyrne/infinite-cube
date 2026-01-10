@@ -26,6 +26,61 @@ export function setupScene() {
   return { scene, renderer, camera };
 }
 
+export const views = [
+  {
+    left: 0,
+    bottom: 0,
+    width: 0.5,
+    height: 1.0,
+    background: new THREE.Color(0.05, 0.05, 0.05),
+    eye: [10, 10, 10],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.5,
+    bottom: 0,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.1, 0.1, 0.1),
+    eye: [15, 0, 0],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.5,
+    bottom: 0.5,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.08, 0.08, 0.08),
+    eye: [0, 15, 0],
+    up: [0, 0, 1],
+    fov: 45,
+  }
+];
+
+export function setupViews(mainCamera) {
+  for (let i = 0; i < views.length; i++) {
+    const view = views[i];
+
+    if (i === 0 && mainCamera) {
+      view.camera = mainCamera;
+      continue;
+    }
+
+    const camera = new THREE.PerspectiveCamera(
+      view.fov,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.fromArray(view.eye);
+    camera.up.fromArray(view.up);
+    camera.lookAt(0, 0, 0);
+    view.camera = camera;
+  }
+}
+
 /**
  * Create the cube geometry and materials
  * @param {Object} params - Parameters object
