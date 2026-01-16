@@ -1,5 +1,6 @@
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { saveBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
+import { clearWHDState } from "./width_height_depth/whdState.js";
 
 /**
  * Helper to set visibility for all clones
@@ -74,6 +75,10 @@ export function setupKeyboardHandlers({
                 saveBlockRenderState(blockRenderState);
                 recreateSceneWrapper();
             }
+        } else if (key === "w") {
+            clearWHDState();
+            location.reload();
+        }
         }
     });
 }

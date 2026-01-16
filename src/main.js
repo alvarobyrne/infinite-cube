@@ -33,6 +33,7 @@ const whdState = {
   height: savedWHDState?.height || 8,
   depth: savedWHDState?.depth || 10,
   blockThickness: savedWHDState?.blockThickness || 2,
+  gap: savedWHDState?.gap || 2.5,
 };
 
 // Load block render state or use defaults

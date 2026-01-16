@@ -235,56 +235,266 @@ export class ColoredFacedWHDStrategy extends RenderingStrategy {
 
         const gapSize = 0.05;
         const { blockThickness } = whdState;
+        const t = blockThickness;
         const factor = 1.1;
-        const gap = blockThickness * factor;
-        const reducedWidth = whdState.width - gap;
-        const reducedHeight = whdState.height - gap;
-        const reducedDepth = whdState.depth - gap;
+        const gap = whdState.gap;
+        const g = gap;
+        const { width: w, height: h, depth: d } = whdState;
+        const reducedWidth = w - 2 * t;
+        const w_prime = w - g - t;
+        const reducedHeight = h - 2 * t;
+        const h_prime = h - g - t;
+        const reducedDepth = d - 2 * t;
+        const d_prime = d - g - t;
         const configs = {
-            b1: { width: whdState.width, height: blockThickness, depth: blockThickness, color: 'red', isWireframe: false },
-            b2: { width: blockThickness, height: reducedHeight, depth: blockThickness, color: 'green', isWireframe: false },
-            b3: { width: blockThickness, height: whdState.height, depth: blockThickness, color: 0x0000ff, isWireframe: false },
+            b1: { width: w, height: blockThickness, depth: blockThickness, color: 'red', isWireframe: false },
+            b2: { width: blockThickness, height: h_prime, depth: blockThickness, color: 'lime', isWireframe: false },
+            b3: {
+                width: blockThickness, height: reducedHeight, depth: blockThickness,
+                color: 'lightgreen',
+                color: 'blue',
+                isWireframe: false
+            },
         };
 
         const { block1, block2, block3 } = this.createBlocks(configs, blockRenderState);
         block1.name = "block1";
         block2.name = "block2";
         block3.name = "block3";
+
         group.add(block1);
         group.add(block2);
         group.add(block3);
 
-        block2.position.x = whdState.width / 2 - blockThickness / 2;
-        block2.position.y = reducedHeight / 2 + blockThickness / 2 + gapSize;
-        block2.position.z = 0;
+        block2.position.x = block1.position.x + w / 2 - t / 2;
+        block2.position.y = block1.position.y + h_prime / 2 + t / 2;
+        block2.position.z = block1.position.z
 
-        block3.position.x = -whdState.width / 2 + blockThickness / 2;
-        block3.position.y = whdState.height / 2 + blockThickness / 2 + gapSize;
-        block3.position.z = 0;
+        block3.position.x = block1.position.x - (w / 2 - t / 2);
+        block3.position.y = block1.position.y + reducedHeight / 2 + t / 2;
+        block3.position.z = block1.position.z;
 
-        const block4 = createBlock({
+        configs.b4 = {
+            width: w_prime,
+            height: blockThickness,
+            depth: blockThickness,
+            color: 0xaa0000,
+            color: 'lime',
+            isWireframe: false
+        }
+
+        const block4 = createBlock(configs.b4);
+        block4.position.x = block3.position.x + w_prime / 2 - t / 2;
+        block4.position.y = block3.position.y + configs.b3.height / 2 + t / 2;
+        block4.position.z = block3.position.z;
+        group.add(block4);
+
+        configs.b5 = {
+            width: blockThickness,
+            height: blockThickness,
+            depth: d,
+            color: 'blue',
+            color: 'red',
+            isWireframe: false
+        }
+        const block5 = createBlock(configs.b5);
+        block5.position.x = block4.position.x + configs.b4.width / 2 + t / 2;
+        block5.position.y = block4.position.y;
+        block5.position.z = block4.position.z + configs.b5.depth / 2 - blockThickness / 2;
+        group.add(block5);
+
+        configs.b6 = {
             width: reducedWidth,
             height: blockThickness,
             depth: blockThickness,
-            color: 0x00ff00,
+            color: 'salmon',
+            color: 'blue',
             isWireframe: false
-        });
-        block4.position.x = reducedWidth / 2 - whdState.width / 2;
-        block4.position.y = whdState.height + blockThickness;
-        block4.position.z = 0;
-        group.add(block4);
+        }
+        const block6 = createBlock(configs.b6);
+        block6.position.x = block5.position.x - configs.b6.width / 2 - blockThickness / 2;
+        block6.position.y = block5.position.y;
+        block6.position.z = block5.position.z + configs.b5.depth / 2 - blockThickness / 2;
+        group.add(block6);
 
-        const block5 = createBlock({
+        configs.b7 = {
             width: blockThickness,
             height: blockThickness,
-            depth: whdState.depth,
-            color: 0x00ff00,
+            depth: d_prime,
+            color: 'cyan',
+            color: 'lime',
             isWireframe: false
-        });
-        block5.position.x = reducedWidth / 2 - whdState.width / 2;
-        block5.position.y = whdState.height + blockThickness;
-        block5.position.z = whdState.depth / 2 + blockThickness / 2;
-        group.add(block5);
+        }
+
+        const block7 = createBlock(configs.b7);
+        block7.position.x = block6.position.x - configs.b6.width / 2 - blockThickness / 2;
+        block7.position.y = block6.position.y;
+        block7.position.z = block6.position.z - configs.b7.depth / 2 + blockThickness / 2;
+        group.add(block7);
+
+        configs.b8 = {
+            width: blockThickness,
+            height: h,
+            depth: blockThickness,
+            color: 'green',
+            color: 'red',
+            isWireframe: false
+        }
+
+        const block8 = createBlock(configs.b8);
+        block8.position.x = block7.position.x;
+        block8.position.y = block7.position.y - configs.b8.height / 2 + blockThickness / 2;
+        block8.position.z = block7.position.z - configs.b7.depth / 2 - blockThickness / 2;
+        group.add(block8);
+
+        configs.b9 = {
+            width: blockThickness,
+            height: blockThickness,
+            depth: reducedDepth,
+            color: 'blue',
+            isWireframe: false
+        }
+
+        const block9 = createBlock(configs.b9);
+        block9.position.x = block8.position.x;
+        block9.position.y = block8.position.y - configs.b8.height / 2 + blockThickness / 2;
+        block9.position.z = block8.position.z + configs.b9.depth / 2 + blockThickness / 2;
+        group.add(block9);
+
+        configs.b10 = {
+            width: blockThickness,
+            height: h_prime,
+            depth: blockThickness,
+            color: 'lightgreen',
+            color: 'lime',
+            isWireframe: false
+        }
+
+        const block10 = createBlock(configs.b10);
+        block10.position.x = block9.position.x;
+        block10.position.y = block9.position.y + configs.b10.height / 2 - blockThickness / 2;
+        block10.position.z = block9.position.z + configs.b9.depth / 2 + blockThickness / 2;
+        group.add(block10);
+
+        configs.b11 = {
+            width: w,
+            height: blockThickness,
+            depth: blockThickness,
+            color: 'magenta',
+            color: 'red',
+            isWireframe: false,
+        }
+
+        const block11 = createBlock(configs.b11);
+        block11.position.x = block10.position.x + configs.b11.width / 2 - blockThickness / 2;
+        block11.position.y = block10.position.y + configs.b10.height / 2 + blockThickness / 2;
+        block11.position.z = block10.position.z;
+        group.add(block11);
+
+        configs.b12 = {
+            width: blockThickness,
+            height: reducedHeight,
+            depth: blockThickness,
+            color: 'green',
+            color: 'blue',
+            isWireframe: false,
+        }
+
+        const block12 = createBlock(configs.b12);
+        block12.position.x = block11.position.x + configs.b11.width / 2 - blockThickness / 2;
+        block12.position.y = block11.position.y - configs.b12.height / 2 - blockThickness / 2;
+        block12.position.z = block11.position.z;
+        group.add(block12);
+
+        configs.b13 = {
+            width: w_prime,
+            height: blockThickness,
+            depth: blockThickness,
+            color: 'red',
+            color: 'lime',
+            isWireframe: false
+        }
+
+        const block13 = createBlock(configs.b13);
+        block13.position.x = block12.position.x - configs.b13.width / 2 + blockThickness / 2;
+        block13.position.y = block12.position.y - configs.b12.height / 2 - blockThickness / 2;
+        block13.position.z = block12.position.z;
+        group.add(block13);
+
+        configs.b14 = {
+            width: blockThickness,
+            height: blockThickness,
+            depth: d,
+            color: 'blue',
+            color: 'red',
+            isWireframe: false
+        }
+
+        const block14 = createBlock(configs.b14);
+        block14.position.x = block13.position.x - configs.b13.width / 2 - blockThickness / 2;
+        block14.position.y = block13.position.y;
+        block14.position.z = block13.position.z - configs.b14.depth / 2 + blockThickness / 2;
+        group.add(block14);
+
+        configs.b15 = {
+            width: reducedWidth,
+            height: blockThickness,
+            depth: blockThickness,
+            color: 'yellow',
+            color: 'blue',
+            isWireframe: false
+        }
+
+        const block15 = createBlock(configs.b15);
+        block15.position.x = block14.position.x + configs.b15.width / 2 + blockThickness / 2;
+        block15.position.y = block14.position.y;
+        block15.position.z = block14.position.z - configs.b14.depth / 2 + blockThickness / 2;
+        group.add(block15);
+
+        configs.b16 = {
+            width: blockThickness,
+            height: blockThickness,
+            depth: d_prime,
+            color: 'blue',
+            color: 'lime',
+            isWireframe: false
+        }
+
+        const block16 = createBlock(configs.b16);
+        block16.position.x = block15.position.x + configs.b15.width / 2 + blockThickness / 2;
+        block16.position.y = block15.position.y;
+        block16.position.z = block15.position.z + configs.b16.depth / 2 - blockThickness / 2;
+        group.add(block16);
+
+        configs.b17 = {
+            width: blockThickness,
+            height: h,
+            depth: blockThickness,
+            color: 'blue',
+            color: 'red',
+            isWireframe: false
+        }
+
+        const block17 = createBlock(configs.b17);
+        block17.position.x = block16.position.x
+        block17.position.y = block16.position.y + configs.b17.height / 2 - blockThickness / 2;
+        block17.position.z = block16.position.z + configs.b16.depth / 2 + blockThickness / 2;
+        group.add(block17);
+
+        configs.b18 = {
+            width: blockThickness,
+            height: blockThickness,
+            depth: reducedDepth,
+            color: 'green',
+            color: 'blue',
+            isWireframe: false
+        }
+
+        const block18 = createBlock(configs.b18);
+        block18.position.x = block17.position.x;
+        block18.position.y = block17.position.y + configs.b17.height / 2 - blockThickness / 2;
+        block18.position.z = block17.position.z - configs.b18.depth / 2 - blockThickness / 2;
+        group.add(block18);
 
         return { group };
     }

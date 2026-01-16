@@ -7,6 +7,7 @@ export function saveWHDState(whd) {
         height: whd.height,
         depth: whd.depth,
         blockThickness: whd.blockThickness,
+        gap: whd.gap || 1,
     };
     localStorage.setItem("whdState", JSON.stringify(state));
 }

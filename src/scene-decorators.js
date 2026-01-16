@@ -58,10 +58,20 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
         }
-        whdStrategy = new ColoredFacedWHDStrategy();
-        whdStrategy.execute(params);
 
-        return strategy.execute(params);
+        const result = strategy.execute(params);
+        const group = new THREE.Group();
+        group.add(result.group);
+        group.add(result.groupClone1);
+        group.add(result.groupClone2);
+        group.add(result.groupClone3);
+        group.add(result.groupClone4);
+        group.add(result.groupClone5);
+        const scale = blockRenderState.scale;
+        group.scale.set(scale, scale, scale);
+        group.position.set(blockRenderState.x, blockRenderState.y, blockRenderState.z)
+        scene.add(group);
+        return result;
     }
 }
 

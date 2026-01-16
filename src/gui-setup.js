@@ -77,6 +77,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveWHDState(whdState);
     recreateScene();
   });
+  whdFolder.add(whdState, "gap", 0.1, 5, 0.1).name('Gap').onChange(() => {
+    saveWHDState(whdState);
+    recreateScene();
+  });
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
