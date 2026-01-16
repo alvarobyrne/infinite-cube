@@ -110,6 +110,22 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "scale", 0.1, 10, 0.1).name('Scale').onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "x", -10, 10, 0.1).name('X').onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "y", -10, 10, 0.1).name('Y').onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "z", -10, 10, 0.1).name('Z').onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
 
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");

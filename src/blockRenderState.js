@@ -26,6 +26,10 @@ export const blockRenderState = {
   multiColor3: 0x0000ff,
   multiColor4: 0xffff00,
   isOpaque: true,
+  scale: 1,
+  x: 0,
+  y: 0,
+  z: 0,
 };
 
 /**

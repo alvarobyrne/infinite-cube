@@ -76,7 +76,11 @@ export function setupViews(mainCamera) {
     );
     camera.position.fromArray(view.eye);
     camera.up.fromArray(view.up);
-    camera.lookAt(0, 0, 0);
+    if (view.lookAt) {
+      camera.lookAt(...view.lookAt);
+    } else {
+      camera.lookAt(0, 0, 0);
+    }
     view.camera = camera;
   }
 }
