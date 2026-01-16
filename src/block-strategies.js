@@ -70,10 +70,11 @@ export class ColoredFacesStrategy extends InfiniteCubeBaseStrategy {
 
 export class SingleColorStrategy extends InfiniteCubeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
         return {
-            block1: createBlock(b1),
-            block2: createBlock(b2),
-            block3: createBlock(b3),
+            block1: createBlock({ ...b1, transparent: true, opacity }),
+            block2: createBlock({ ...b2, transparent: true, opacity }),
+            block3: createBlock({ ...b3, transparent: true, opacity }),
         };
     }
 }
@@ -227,7 +228,6 @@ export class UnifiedColorStrategy extends SingleColorStrategy {
 export class ColoredFacedWHDStrategy extends RenderingStrategy {
     execute(params) {
         const { scene, whdState, blockRenderState } = params;
-        console.log("🔍 ~ execute ~ src/block-strategies.js:229 ~ params:", params);
 
         const group = new THREE.Group();
         scene.add(group);

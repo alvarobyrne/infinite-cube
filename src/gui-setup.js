@@ -102,6 +102,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
 
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");

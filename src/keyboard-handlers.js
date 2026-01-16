@@ -78,7 +78,9 @@ export function setupKeyboardHandlers({
         } else if (key === "w") {
             clearWHDState();
             location.reload();
-        }
+        } else if (key === "z") {
+            blockRenderState.isOpaque = !blockRenderState.isOpaque;
+            recreateSceneWrapper();
         }
     });
 }

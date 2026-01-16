@@ -90,7 +90,7 @@ export function setupViews(mainCamera) {
  * @param {number} params.color - Color of the cube
  * @param {boolean} params.isWireframe - Whether to use wireframe
  */
-export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff, isWireframe = true } = {}) {
+export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff, isWireframe = false, opacity = 1, transparent = false } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
   // if isWireframe, lighten the color
   if (isWireframe) {
@@ -99,7 +99,7 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff
 
   // Create an array of materials for each face:
   // [right, left, top, bottom, front, back]
-  const material = new THREE.MeshToonMaterial({ color, wireframe: isWireframe });
+  const material = new THREE.MeshToonMaterial({ color, wireframe: isWireframe, transparent, opacity });
 
   const cube = new THREE.Mesh(geometry, material);
   return cube;
