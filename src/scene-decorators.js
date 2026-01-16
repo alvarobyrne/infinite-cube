@@ -148,3 +148,26 @@ export class VertexDecorator extends RecreatorDecorator {
         return result;
     }
 }
+
+export class XYPlaneSquareDecorator extends RecreatorDecorator {
+    recreate(params) {
+        const result = super.recreate(params);
+        const { scene } = params;
+
+        const size = 2;
+        const points = [];
+        points.push(new THREE.Vector3(-size, -size, 0));
+        points.push(new THREE.Vector3(size, -size, 0));
+        points.push(new THREE.Vector3(size, size, 0));
+        points.push(new THREE.Vector3(-size, size, 0));
+        points.push(new THREE.Vector3(-size, -size, 0));
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
+        const line = new THREE.Line(geometry, material);
+
+        scene.add(line);
+        return result;
+    }
+}
+

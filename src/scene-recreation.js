@@ -1,4 +1,4 @@
-import { BaseRecreator, DimensionLineDecorator, VertexDecorator } from "./scene-decorators.js";
+import { BaseRecreator, DimensionLineDecorator, VertexDecorator, XYPlaneSquareDecorator } from "./scene-decorators.js";
 
 /**
  * Recreate the scene with blocks, dimension lines, vertices, and clones
@@ -12,6 +12,10 @@ export function recreateScene(params) {
 
   if (params.blockRenderState.showVertices) {
     recreator = new VertexDecorator(recreator);
+  }
+
+  if (params.blockRenderState.showXYPlaneSquare) {
+    recreator = new XYPlaneSquareDecorator(recreator);
   }
 
   return recreator.recreate(params);

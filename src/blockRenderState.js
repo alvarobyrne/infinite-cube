@@ -20,6 +20,7 @@ export const blockRenderState = {
   cloneColor5: 0x800080, // Color for groupClone5
   showDimensionLines: true, // Whether to show dimension lines
   showVertices: true, // Whether to show vertices
+  showXYPlaneSquare: false, // Whether to show the XY plane square
   multiColor1: 0xff0000,
   multiColor2: 0x00ff00,
   multiColor3: 0x0000ff,

@@ -106,6 +106,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "showXYPlaneSquare").name("Show XY Plane Square").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
 
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");
