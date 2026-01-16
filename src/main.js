@@ -112,6 +112,7 @@ function recreateSceneWrapper() {
   if (positionRotationManager) {
     positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex, true);
   }
+  scene.add(new THREE.AxesHelper(20));
 }
 
 // Initial scene creation
