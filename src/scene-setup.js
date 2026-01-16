@@ -26,14 +26,70 @@ export function setupScene() {
   return { scene, renderer, camera };
 }
 
-export const views = [
+export const views0 = [
   {
-    left: 0,
+    left: 0.5,
     bottom: 0,
     width: 0.5,
-    height: 1.0,
+    height: 0.5,
     background: new THREE.Color(0.05, 0.05, 0.05),
     eye: [10, 10, 10],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.5,
+    bottom: 0.5,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.05, 0.05, 0.05),
+    eye: [0, 5, 50],
+    lookAt: [0, 5, 0],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.0,
+    bottom: 0,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.1, 0.1, 0.1),
+    eye: [33, 5, 8],
+    lookAt: [0, 5, 8],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.0,
+    bottom: 0.5,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.08, 0.08, 0.08),
+    eye: [0, 41, 5],
+    lookAt: [0, 0, 5],
+    up: [0, 0, 1],
+    fov: 45,
+  }
+];
+export const views2 = [
+  {
+    left: 0.0,
+    bottom: 0,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.05, 0.05, 0.05),
+    eye: [10, 10, 10],
+    up: [0, 1, 0],
+    fov: 45,
+  },
+  {
+    left: 0.0,
+    bottom: 0.5,
+    width: 0.5,
+    height: 0.5,
+    background: new THREE.Color(0.05, 0.05, 0.05),
+    eye: [0, 5, 50],
+    lookAt: [0, 5, 0],
     up: [0, 1, 0],
     fov: 45,
   },
@@ -43,7 +99,8 @@ export const views = [
     width: 0.5,
     height: 0.5,
     background: new THREE.Color(0.1, 0.1, 0.1),
-    eye: [15, 0, 0],
+    eye: [33, 5, 8],
+    lookAt: [0, 5, 8],
     up: [0, 1, 0],
     fov: 45,
   },
@@ -53,11 +110,13 @@ export const views = [
     width: 0.5,
     height: 0.5,
     background: new THREE.Color(0.08, 0.08, 0.08),
-    eye: [0, 15, 0],
+    eye: [0, 41, 5],
+    lookAt: [0, 0, 5],
     up: [0, 0, 1],
     fov: 45,
   }
 ];
+export const views = views2
 
 export function setupViews(mainCamera) {
   for (let i = 0; i < views.length; i++) {
