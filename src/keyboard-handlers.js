@@ -1,6 +1,7 @@
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { saveBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
 import { clearWHDState } from "./width_height_depth/whdState.js";
+import { toggleInstructions } from "./instructions-manager.js";
 
 /**
  * Helper to set visibility for all clones
@@ -54,7 +55,7 @@ export function setupKeyboardHandlers({
             }
         } else if (key === "a") {
             setAllClonesVisibility(clones, cloneVisibilityState, true);
-        } else if (key === "h") {
+        } else if (key === "s") {
             setAllClonesVisibility(clones, cloneVisibilityState, false);
         } else if (key === "q") {
             // Cycle block styles
@@ -81,6 +82,8 @@ export function setupKeyboardHandlers({
         } else if (key === "z") {
             blockRenderState.isOpaque = !blockRenderState.isOpaque;
             recreateSceneWrapper();
+        } else if (key === "h") {
+            toggleInstructions();
         }
     });
 }

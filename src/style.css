@@ -1,7 +1,9 @@
 body {
     background-color: black;
+    color: whitesmoke;
+    font-family: 'Courier New', Courier, monospace;
 }
-canvas {
+canvas,div#readme-container {
     display: block;
 
     position: absolute;
@@ -9,4 +11,12 @@ canvas {
     left: 0;
     border: 1px solid white;
     box-sizing: border-box;
+}
+
+div#readme-container {
+    padding: 20px;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    zoom: 0.75;
 }
