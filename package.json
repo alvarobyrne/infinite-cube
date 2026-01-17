@@ -7,10 +7,11 @@
     "dev": "vite .",
     "build": "vite build",
     "predeploy": "yarn build",
-    "deploy" : "gh-pages -d dist"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "lil-gui": "^0.21.0",
+    "marked": "^17.0.1",
     "three": "^0.182.0",
     "three-stdlib": "^2.36.1",
     "vite": "^7.3.0"
