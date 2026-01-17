@@ -161,6 +161,11 @@ export function positionAndRotationManager(clones, cloneSelectorState, gui) {
   switchClone(cloneSelectorState.selectedCloneIndex);
 
   const guiLocal = gui.addFolder("Object3D Position/Rotation");
+  
+  // Only visible in development
+  if (import.meta.env.PROD) {
+    guiLocal.hide();
+  }
 
   // Position controls - added .listen() so sliders update when wrapper changes
   guiLocal.add(wrapper.position, "x", -20, 20, 0.1).name("X").onChange(() => {

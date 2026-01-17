@@ -276,8 +276,11 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
 
-  // Clone Selector folder
+  // Clone Selector folder - only visible in development
   const cloneSelectorFolder = gui.addFolder("Clone Selector");
+  if (import.meta.env.PROD) {
+    cloneSelectorFolder.hide();
+  }
   cloneSelectorFolder.add(cloneSelectorState, "selectedCloneIndex", [1, 2, 3, 4, 5])
     .name("Selected Clone")
     .onChange(() => {
