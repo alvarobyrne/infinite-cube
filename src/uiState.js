@@ -17,6 +17,8 @@ export function saveUIState(folders) {
     object3DPositionRotation: folders.object3DPositionRotation ? !folders.object3DPositionRotation._closed : undefined,
     multiColorPalette: folders.multiColorPalette ? !folders.multiColorPalette._closed : undefined,
     whd: folders.whd ? !folders.whd._closed : undefined,
+    dimensionsHidden: folders.dimensions ? folders.dimensions._hidden : undefined,
+    whdHidden: folders.whd ? folders.whd._hidden : undefined,
   };
   localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
 }
@@ -102,6 +104,23 @@ export function loadUIState(folders) {
         folders.whd.open();
       } else {
         folders.whd.close();
+      }
+    }
+
+    // Restore folder hidden states
+    if (folders.dimensions && state.dimensionsHidden !== undefined) {
+      if (state.dimensionsHidden) {
+        folders.dimensions.hide();
+      } else {
+        folders.dimensions.show();
+      }
+    }
+
+    if (folders.whd && state.whdHidden !== undefined) {
+      if (state.whdHidden) {
+        folders.whd.hide();
+      } else {
+        folders.whd.show();
       }
     }
   } catch (e) {

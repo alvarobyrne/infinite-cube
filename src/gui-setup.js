@@ -85,6 +85,17 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
   blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange(() => {
+    // Show/hide strategy-specific folders
+    if (blockRenderState.style === "coloredFacedWHD") {
+      // Hide dimensions folder, show whd folder
+      dimensionsFolder.hide();
+      whdFolder.show();
+    } else {
+      // Show dimensions folder, hide whd folder
+      dimensionsFolder.show();
+      whdFolder.hide();
+    }
+    
     saveBlockRenderState(blockRenderState);
     recreateScene();
   }).listen();
@@ -289,6 +300,15 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Load UI state (folder open/closed states)
   loadUIState(folders);
+
+  // Sync folder visibility based on current strategy
+  if (blockRenderState.style === "coloredFacedWHD") {
+    dimensionsFolder.hide();
+    whdFolder.show();
+  } else {
+    dimensionsFolder.show();
+    whdFolder.hide();
+  }
 
   // Save UI state before page unload
   window.addEventListener("beforeunload", () => {
