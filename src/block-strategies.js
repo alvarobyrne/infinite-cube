@@ -223,11 +223,18 @@ export class UnifiedColorStrategy extends SingleColorStrategy {
         }
     }
 }
-
+/**
+ * Base strategy for the WHD (Width, Height, Depth) object (18 independent blocks)
+ */
+export class WHDBaseStrategy extends RenderingStrategy {
+    execute(params) {
+        throw new Error("execute must be implemented");
+    }
+}
 /**
  * New strategy that renders a single box using Width, Height, Depth (WHD) state
  */
-export class ColoredFacedWHDStrategy extends RenderingStrategy {
+export class ColoredFacedWHDStrategy extends WHDBaseStrategy {
     execute(params) {
         const { scene, whdState } = params;
 

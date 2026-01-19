@@ -101,7 +101,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     recreateScene();
 
     // Show/hide strategy-specific folders based on the actual strategy instance type
-    if (activeStrategyType === STRATEGY_TYPES.COLORED_FACED_WHD) {
+    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
       // Hide dimensions folder, show whd folder
       dimensionsFolder.hide();
       whdFolder.show();
@@ -338,7 +338,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   loadUIState(folders);
 
   // Sync folder visibility based on the current strategy's instance type
-  if (activeStrategyType === STRATEGY_TYPES.COLORED_FACED_WHD) {
+  if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
     dimensionsFolder.hide();
     whdFolder.show();
   } else {

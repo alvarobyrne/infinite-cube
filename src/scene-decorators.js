@@ -11,13 +11,14 @@ import {
     GranularColorStrategy,
     SingleColorStrategy,
     ColoredFacedWHDStrategy,
-    UshapeBaseStrategy
+    UshapeBaseStrategy,
+    WHDBaseStrategy
 } from "./block-strategies.js";
 
 
 export const STRATEGY_TYPES = {
     USHAPE_BASE: "UshapeBaseStrategy",
-    COLORED_FACED_WHD: "ColoredFacedWHDStrategy"
+    WHD_BASE: "WHDBaseStrategy"
 };
 
 export let activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
@@ -69,8 +70,8 @@ export class BaseRecreator extends SceneRecreator {
         }
 
         // Set the active strategy type based on the instance's class hierarchy
-        if (strategy instanceof ColoredFacedWHDStrategy) {
-            activeStrategyType = STRATEGY_TYPES.COLORED_FACED_WHD;
+        if (strategy instanceof WHDBaseStrategy) {
+            activeStrategyType = STRATEGY_TYPES.WHD_BASE;
         } else if (strategy instanceof UshapeBaseStrategy) {
             activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         } else {
@@ -106,7 +107,7 @@ export class RecreatorDecorator extends SceneRecreator {
 export class WHDDimensionLineDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (activeStrategyType !== STRATEGY_TYPES.COLORED_FACED_WHD) return result;
+        if (activeStrategyType !== STRATEGY_TYPES.WHD_BASE) return result;
         const textColor = "white";
         const { scene, whdState, blockRenderState } = params;
         const { width: w, height: h, depth: d, blockThickness: t, gap: g } = whdState;
