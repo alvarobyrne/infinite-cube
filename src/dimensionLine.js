@@ -22,14 +22,16 @@ export function addDimensionLine({
   end,
   label,
   color = 0x000000,
-  tickSize = 0.2,
+  tickSize = 0.3,
   textColor = "#000",
   textSize = 32,
   gap = 0.4,
   lengthThreshold = 0.8,
-  arrowHeadLength = 0.1,
-  arrowHeadWidth = 0.05,
+  arrowHeadLength = 0.15,
+  arrowHeadWidth = 0.1,
 }) {
+  const group = new THREE.Group();
+  object3d.add(group);
   // Calculate direction and midpoint
   const dir = new THREE.Vector3().subVectors(end, start).normalize();
   const length = start.distanceTo(end);
@@ -37,7 +39,8 @@ export function addDimensionLine({
 
   // Perpendicular vector for ticks (choose a world axis not parallel to dir)
   let perp = new THREE.Vector3(0, 1, 0);
-  const perpendiculaCondition = Math.abs(dir.dot(perp)) > 0.99;
+  const dotProduct = dir.dot(perp);
+  const perpendiculaCondition = Math.abs(dotProduct) > 0.99;
   if (perpendiculaCondition) perp = new THREE.Vector3(1, 0, 0);
   perp.cross(dir).normalize();
 
@@ -57,7 +60,7 @@ export function addDimensionLine({
     const geom = new THREE.BufferGeometry().setFromPoints([a, b]);
     const mat = new THREE.LineBasicMaterial({ color });
     const line = new THREE.Line(geom, mat);
-    if (lengthConditon) object3d.add(line);
+    if (lengthConditon) group.add(line);
   });
 
   // Add arrows at both ends
@@ -75,7 +78,7 @@ export function addDimensionLine({
       arrowHeadLength,
       arrowHeadWidth
     );
-    object3d.add(arrow);
+    group.add(arrow);
 
     // Add perpendicular tick
     const tickGeom = new THREE.BufferGeometry().setFromPoints([
@@ -86,7 +89,7 @@ export function addDimensionLine({
       tickGeom,
       new THREE.LineBasicMaterial({ color })
     );
-    object3d.add(tick);
+    group.add(tick);
   });
 
   // Add label as a sprite
@@ -106,5 +109,6 @@ export function addDimensionLine({
   });
   const sprite = new THREE.Sprite(spriteMat);
   sprite.position.copy(mid);
-  object3d.add(sprite);
+  group.add(sprite);
+  return group;
 }

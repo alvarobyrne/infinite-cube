@@ -95,7 +95,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       dimensionsFolder.show();
       whdFolder.hide();
     }
-    
+
     saveBlockRenderState(blockRenderState);
     recreateScene();
   }).listen();
@@ -106,6 +106,26 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     }
   });
   blockRenderingFolder.add(blockRenderState, "showDimensionLines").name("Show Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showTopDimensionLines").name("Show Top Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showRightDimensionLines").name("Show Right Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showFrontDimensionLines").name("Show Front Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showExtraDimensionLines").name("Show Extra Dimension Lines").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showGSGroup").name("Show gaps Group").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
