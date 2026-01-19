@@ -11,16 +11,16 @@ import {
     GranularColorStrategy,
     SingleColorStrategy,
     ColoredFacedWHDStrategy,
-    InfiniteCubeBaseStrategy
+    UshapeBaseStrategy
 } from "./block-strategies.js";
 
 
 export const STRATEGY_TYPES = {
-    INFINITE_CUBE_BASE: "InfiniteCubeBaseStrategy",
+    USHAPE_BASE: "UshapeBaseStrategy",
     COLORED_FACED_WHD: "ColoredFacedWHDStrategy"
 };
 
-export let activeStrategyType = STRATEGY_TYPES.INFINITE_CUBE_BASE;
+export let activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
 
 // --- Decorator Pattern for Scene Additives ---
 
@@ -71,10 +71,10 @@ export class BaseRecreator extends SceneRecreator {
         // Set the active strategy type based on the instance's class hierarchy
         if (strategy instanceof ColoredFacedWHDStrategy) {
             activeStrategyType = STRATEGY_TYPES.COLORED_FACED_WHD;
-        } else if (strategy instanceof InfiniteCubeBaseStrategy) {
-            activeStrategyType = STRATEGY_TYPES.INFINITE_CUBE_BASE;
+        } else if (strategy instanceof UshapeBaseStrategy) {
+            activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         } else {
-            activeStrategyType = STRATEGY_TYPES.INFINITE_CUBE_BASE;
+            activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         }
 
         const result = strategy.execute(params);
@@ -567,7 +567,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
 export class DimensionLineDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (activeStrategyType !== STRATEGY_TYPES.INFINITE_CUBE_BASE) return result;
+        if (activeStrategyType !== STRATEGY_TYPES.USHAPE_BASE) return result;
         const { scene, dimensionState, blockThickness: t } = params;
         const gap = 0.5;
 
@@ -657,7 +657,7 @@ export class DimensionLineDecorator extends RecreatorDecorator {
 export class VertexDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (activeStrategyType !== STRATEGY_TYPES.INFINITE_CUBE_BASE) return result;
+        if (activeStrategyType !== STRATEGY_TYPES.USHAPE_BASE) return result;
         const { scene, dimensionState, blockThickness } = params;
         addVertices(scene, dimensionState.dimension1, blockThickness, blockThickness);
         return result;

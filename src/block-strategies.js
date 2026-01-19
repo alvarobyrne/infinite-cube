@@ -13,9 +13,9 @@ export class RenderingStrategy {
 }
 
 /**
- * Base strategy for the "Infinite Cube" object (3 interlocking blocks + 5 clones)
+ * Base strategy for the "U-shape" object (3 interlocking blocks + 5 clones)
  */
-export class InfiniteCubeBaseStrategy extends RenderingStrategy {
+export class UshapeBaseStrategy extends RenderingStrategy {
     createBlocks(configs, blockRenderState) {
         throw new Error("createBlocks must be implemented");
     }
@@ -60,7 +60,7 @@ export class InfiniteCubeBaseStrategy extends RenderingStrategy {
     }
 }
 
-export class ColoredFacesStrategy extends InfiniteCubeBaseStrategy {
+export class ColoredFacesStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         return {
             block1: createBlock1(b1),
@@ -70,7 +70,7 @@ export class ColoredFacesStrategy extends InfiniteCubeBaseStrategy {
     }
 }
 
-export class SingleColorStrategy extends InfiniteCubeBaseStrategy {
+export class SingleColorStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const opacity = blockRenderState.isOpaque ? 1 : 0.4;
         return {
@@ -81,7 +81,7 @@ export class SingleColorStrategy extends InfiniteCubeBaseStrategy {
     }
 }
 
-export class HollowStrategy extends InfiniteCubeBaseStrategy {
+export class HollowStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         return {
             block1: createHollowBlock(b1),
@@ -91,7 +91,7 @@ export class HollowStrategy extends InfiniteCubeBaseStrategy {
     }
 }
 
-export class MultiColorPlaneStrategy extends InfiniteCubeBaseStrategy {
+export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
         return {
@@ -124,7 +124,7 @@ export class MultiColorPlaneStrategy extends InfiniteCubeBaseStrategy {
     }
 }
 
-export class MultiColorBoxStrategy extends InfiniteCubeBaseStrategy {
+export class MultiColorBoxStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
         return {
