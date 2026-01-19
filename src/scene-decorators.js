@@ -62,11 +62,11 @@ export class BaseRecreator extends SceneRecreator {
         const result = strategy.execute(params);
         const group = new THREE.Group();
         group.add(result.group);
-        group.add(result.groupClone1);
-        group.add(result.groupClone2);
-        group.add(result.groupClone3);
-        group.add(result.groupClone4);
-        group.add(result.groupClone5);
+        if (result.groupClone1) group.add(result.groupClone1);
+        if (result.groupClone2) group.add(result.groupClone2);
+        if (result.groupClone3) group.add(result.groupClone3);
+        if (result.groupClone4) group.add(result.groupClone4);
+        if (result.groupClone5) group.add(result.groupClone5);
         const scale = blockRenderState.scale;
         group.scale.set(scale, scale, scale);
         group.position.set(blockRenderState.x, blockRenderState.y, blockRenderState.z)
@@ -548,52 +548,86 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
 export class DimensionLineDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        const { scene, dimensionState, blockThickness } = params;
+        const { scene, dimensionState, blockThickness: t } = params;
+        const gap = 0.5;
 
-        const x = dimensionState.dimension1;
-        const y = blockThickness;
-        const z = blockThickness;
+        const { dimension1: d1, dimension2: d2, dimension3: d3 } = dimensionState;
+        const y = t;
+        const z = t;
+        const z2 = t * 0.5 + gap;
         const dimensionLineOffset = 0.4;
-        const textSize = 16;
+        const textSize = 20;
+        const right = d1 / 2 + dimensionLineOffset;
+        const left = -d1 / 2 - dimensionLineOffset;
 
         addDimensionLine({
             object3d: scene,
-            start: new THREE.Vector3(-x / 2, y / 2 + dimensionLineOffset, z / 2),
-            end: new THREE.Vector3(x / 2, y / 2 + dimensionLineOffset, z / 2),
-            label: x.toString(),
-            color: 0xff0000,
-            textColor: "#f00",
+            start: new THREE.Vector3(left, y / 2, -z2),
+            end: new THREE.Vector3(d1 / 2, y / 2, -z2),
+            label: d1.toString(),
+            color: 'red',
+            textColor: "white",
             textSize,
         });
 
         addDimensionLine({
             object3d: scene,
-            start: new THREE.Vector3(x / 2 + dimensionLineOffset, -y / 2, z / 2),
-            end: new THREE.Vector3(x / 2 + dimensionLineOffset, y / 2, z / 2),
+            start: new THREE.Vector3(-d1 / 2, -y / 2, -z2),
+            end: new THREE.Vector3(d1 / 2, -y / 2, -z2),
+            label: 'd1',
+            color: 'white',
+            textColor: "white",
+            textSize,
+        });
+
+        addDimensionLine({
+            object3d: scene,
+            start: new THREE.Vector3(right, -y / 2, z / 2),
+            end: new THREE.Vector3(right, y / 2, z / 2),
             label: y.toString(),
-            color: 0x00ff00,
-            textColor: "#0a0",
+            color: 'white',
+            textColor: "white",
             textSize,
         });
 
         addDimensionLine({
             object3d: scene,
-            start: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, z / 2),
-            end: new THREE.Vector3(-x / 2 - dimensionLineOffset, y / 2, -z / 2),
+            start: new THREE.Vector3(right, y / 2, z / 2),
+            end: new THREE.Vector3(right, y / 2, -z / 2),
             label: z.toString(),
-            color: 0x0000ff,
-            textColor: "#00f",
+            color: 'white',
+            textColor: "white",
             textSize,
         });
 
         addDimensionLine({
             object3d: scene,
-            start: new THREE.Vector3(x / 2 + dimensionLineOffset, -y / 2, -z / 2),
-            end: new THREE.Vector3(x / 2 + dimensionLineOffset, y / 2, -z / 2),
-            label: "d 2",
+            start: new THREE.Vector3(right, -y / 2, -z / 2),
+            end: new THREE.Vector3(right, y / 2, -z / 2),
+            label: "t",
             color: 0xffffff,
             textColor: "white",
-            textSize: 12,
+            textSize,
+        });
+
+        addDimensionLine({
+            object3d: scene,
+            start: new THREE.Vector3(left, -y / 2 + t, -z / 2),
+            end: new THREE.Vector3(left, -y / 2 + t + d3, -z / 2),
+            label: "d2",
+            color: 'white',
+            textColor: "white",
+            textSize,
+        });
+
+        addDimensionLine({
+            object3d: scene,
+            start: new THREE.Vector3(right, -y / 2 + t, -z / 2),
+            end: new THREE.Vector3(right, -y / 2 + t + d2, -z / 2),
+            label: "d3",
+            color: 0xffffff,
+            textColor: "white",
+            textSize,
         });
 
         return result;
