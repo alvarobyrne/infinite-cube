@@ -70,3 +70,5 @@ if (readmeContainer) {
     isMouseDown = false;
   });
 }
+
+export { instructionsState };

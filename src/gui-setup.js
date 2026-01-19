@@ -7,6 +7,8 @@ import { positionAndRotationManager } from "./object3DState.js";
 import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
 import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
+import { instructionsState } from "./instructions-manager.js";
+
 
 
 /**
@@ -33,6 +35,15 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       location.reload();
     }
   }, "reload").name("Reload Page");
+
+  // Instructions checkbox at the beginning
+  gui.add(instructionsState, "visible").name("Show Instructions (H)").onChange(() => {
+    const readmeContainer = document.getElementById("readme-container");
+    if (readmeContainer) {
+      readmeContainer.style.display = instructionsState.visible ? "block" : "none";
+    }
+    localStorage.setItem("instructionsVisible", JSON.stringify(instructionsState.visible));
+  }).listen();
 
   // View Mode selector
   gui.add(viewState, "mode", Object.values(VIEW_MODES)).name("View Mode").onChange(() => {
@@ -292,6 +303,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       location.reload();
     }
   }, "clearView").name("Clear View State");
+
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
