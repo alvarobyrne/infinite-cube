@@ -8,6 +8,7 @@ import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blo
 import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 import { instructionsState } from "./instructions-manager.js";
+import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 
 
 
@@ -96,8 +97,11 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
   blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange(() => {
-    // Show/hide strategy-specific folders
-    if (blockRenderState.style === "coloredFacedWHD") {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+
+    // Show/hide strategy-specific folders based on the actual strategy instance type
+    if (activeStrategyType === STRATEGY_TYPES.COLORED_FACED_WHD) {
       // Hide dimensions folder, show whd folder
       dimensionsFolder.hide();
       whdFolder.show();
@@ -106,9 +110,6 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       dimensionsFolder.show();
       whdFolder.hide();
     }
-
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
   }).listen();
   blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
     saveBlockRenderState(blockRenderState);
@@ -336,8 +337,8 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Load UI state (folder open/closed states)
   loadUIState(folders);
 
-  // Sync folder visibility based on current strategy
-  if (blockRenderState.style === "coloredFacedWHD") {
+  // Sync folder visibility based on the current strategy's instance type
+  if (activeStrategyType === STRATEGY_TYPES.COLORED_FACED_WHD) {
     dimensionsFolder.hide();
     whdFolder.show();
   } else {

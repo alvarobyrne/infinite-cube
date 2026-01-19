@@ -1,4 +1,4 @@
-import { BaseRecreator, DimensionLineDecorator, VertexDecorator, WHDDimensionLineDecorator, XYPlaneSquareDecorator } from "./scene-decorators.js";
+import { BaseRecreator, DimensionLineDecorator, VertexDecorator, WHDDimensionLineDecorator, XYPlaneSquareDecorator, STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 
 /**
  * Recreate the scene with blocks, dimension lines, vertices, and clones
@@ -8,11 +8,9 @@ export function recreateScene(params) {
   let recreator = new BaseRecreator();
 
   if (blockRenderState.showDimensionLines) {
-    if (blockRenderState.style === "coloredFacedWHD") {
-      recreator = new WHDDimensionLineDecorator(recreator);
-    } else {
-      recreator = new DimensionLineDecorator(recreator);
-    }
+    // Both decorators are added; they check activeStrategyType internally using instanceof BaseRecreator's strategy
+    recreator = new DimensionLineDecorator(recreator);
+    recreator = new WHDDimensionLineDecorator(recreator);
   }
 
   if (blockRenderState.showVertices) {
