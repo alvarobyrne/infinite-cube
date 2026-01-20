@@ -60,7 +60,9 @@ export function setupKeyboardHandlers({
         } else if (key === "q") {
             // Cycle block styles
             const currentIndex = BLOCK_STYLES.indexOf(blockRenderState.style);
-            const nextStyle = BLOCK_STYLES[(currentIndex + 1) % BLOCK_STYLES.length];
+            const direction = event.shiftKey ? -1 : 1;
+            const nextIndex = (currentIndex + direction + BLOCK_STYLES.length) % BLOCK_STYLES.length;
+            const nextStyle = BLOCK_STYLES[nextIndex];
 
             // Find the style controller in lil-gui and update it
             const styleController = folders.blockRendering.controllers.find(
