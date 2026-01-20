@@ -1,4 +1,5 @@
 import GUI from "lil-gui";
+import { configState } from "./configState.js";
 import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { saveWHDState, clearWHDState } from "./width_height_depth/whdState.js";
 import { clearCameraState } from "./cameraState.js";
@@ -28,7 +29,7 @@ import { setItem, removeItem } from "./storage-manager.js";
  * @param {Object} params.VIEW_MODES - View modes constants
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState }) {
+export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState, configState }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -96,25 +97,28 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   });
 
   // Block Rendering folder
+  const syncFolders = () => {
+    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
+      dimensionsFolder.hide();
+      whdFolder.show();
+      reportsFolder.show();
+      visibilityFolder.hide();
+    } else {
+      reportsFolder.hide();
+      visibilityFolder.show();
+      dimensionsFolder.show();
+      whdFolder.hide();
+    }
+  };
+
+  configState.syncFolders = syncFolders;
+
+  // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
   blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
-
-    // Show/hide strategy-specific folders based on the actual strategy instance type
-    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
-      // Hide dimensions folder, show whd folder
-      dimensionsFolder.hide();
-      whdFolder.show();
-      reportsFolder.show()
-      visibilityFolder.hide()
-    } else {
-      // Show dimensions folder, hide whd folder
-      reportsFolder.hide()
-      visibilityFolder.show()
-      dimensionsFolder.show();
-      whdFolder.hide();
-    }
+    syncFolders();
   }).listen();
   blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
     saveBlockRenderState(blockRenderState);
@@ -321,6 +325,34 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   reportsFolder.add(reportState, "reducedDepth").name("Reduced Depth").disable().listen();
   reportsFolder.add(reportState, "d_prime").name("D' (Depth Prime)").disable().listen();
 
+  // Saved Configurations folder
+  const configsFolder = gui.addFolder("Saved Configurations");
+  const configControls = {
+    name: configsFolder.add(configState, "name").name("Config Name").listen(),
+    selector: configsFolder.add(configState, "selectedConfig", Object.keys(configState.savedConfigs)).name("Saved Configs").listen(),
+    save: configsFolder.add(configState, "save").name("Save New Config"),
+    update: configsFolder.add(configState, "update").name("Update Current"),
+    load: configsFolder.add(configState, "load").name("Load Selected"),
+    delete: configsFolder.add(configState, "delete").name("Delete Selected"),
+  };
+
+  const updateConfigsDropdown = () => {
+    const keys = Object.keys(configState.savedConfigs);
+    configControls.selector.options(keys);
+  };
+
+  // Wrap save/delete to update dropdown
+  const originalSave = configState.save;
+  configState.save = () => {
+    originalSave();
+    updateConfigsDropdown();
+  };
+  const originalDelete = configState.delete;
+  configState.delete = () => {
+    originalDelete();
+    updateConfigsDropdown();
+  };
+
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
 
@@ -348,6 +380,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     whd: whdFolder,
     object3DPositionRotation: positionRotationManager.folder,
     reports: reportsFolder,
+    savedConfigs: configsFolder,
     gui: gui
   };
 
@@ -355,13 +388,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   loadUIState(folders);
 
   // Sync folder visibility based on the current strategy's instance type
-  if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
-    dimensionsFolder.hide();
-    whdFolder.show();
-  } else {
-    dimensionsFolder.show();
-    whdFolder.hide();
-  }
+  syncFolders();
 
   // Save UI state before page unload
   window.addEventListener("beforeunload", () => {

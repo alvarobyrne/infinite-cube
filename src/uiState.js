@@ -22,6 +22,7 @@ export function saveUIState(folders) {
     dimensionsHidden: folders.dimensions ? folders.dimensions._hidden : undefined,
     whdHidden: folders.whd ? folders.whd._hidden : undefined,
     reports: folders.reports ? !folders.reports._closed : undefined,
+    savedConfigs: folders.savedConfigs ? !folders.savedConfigs._closed : undefined,
     gui: folders.gui ? !folders.gui._closed : undefined
   };
   setItem(UISTATE_KEY, state);
@@ -113,6 +114,13 @@ export function loadUIState(folders) {
         folders.reports.open();
       } else {
         folders.reports.close();
+      }
+    }
+    if (folders.savedConfigs && state.savedConfigs !== undefined) {
+      if (state.savedConfigs) {
+        folders.savedConfigs.open();
+      } else {
+        folders.savedConfigs.close();
       }
     }
 

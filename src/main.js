@@ -16,6 +16,7 @@ import { viewState, loadViewState, saveViewState, VIEW_MODES } from "./viewState
 import { views, setupViews } from "./scene-setup.js";
 import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
 import { migrateFromLegacyKeys } from "./storage-manager.js";
+import { configState, loadAllConfigs } from "./configState.js";
 
 
 // Migrate legacy localStorage keys to the new namespaced object
@@ -146,6 +147,13 @@ controls.addEventListener("change", () => {
 // Helper to set visibility for all clones (bound to local clones and state)
 const setAllClonesVisibilityBound = (visible) => setAllClonesVisibility(clones, cloneVisibilityState, visible);
 
+// Initialize config state
+loadAllConfigs();
+configState.dimensionState = dimensionState;
+configState.whdState = whdState;
+configState.blockRenderState = blockRenderState;
+configState.recreateScene = recreateSceneWrapper;
+
 // Initialize GUI
 const guiResult = setupGUI({
   dimensionState,
@@ -161,6 +169,7 @@ const guiResult = setupGUI({
   saveViewState,
   VIEW_MODES,
   reportState,
+  configState,
 });
 
 const { gui, folders, manager } = guiResult;
