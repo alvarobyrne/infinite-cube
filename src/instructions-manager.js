@@ -1,3 +1,4 @@
+import { getItem, setItem } from "./storage-manager.js";
 import { html as readmeHtml } from "../README.md";
 
 // Instructions visibility state
@@ -5,21 +6,21 @@ const instructionsState = {
   visible: true,
 };
 
+const INSTRUCTIONS_VISIBLE_KEY = "instructionsVisible";
+
 // Load instructions visibility state
 function loadInstructionsState() {
-  const stateStr = localStorage.getItem("instructionsVisible");
-  if (stateStr !== null) {
-    instructionsState.visible = JSON.parse(stateStr);
+  const state = getItem(INSTRUCTIONS_VISIBLE_KEY);
+  if (state !== null) {
+    instructionsState.visible = state;
   }
 }
 
 // Save instructions visibility state
 function saveInstructionsState() {
-  localStorage.setItem(
-    "instructionsVisible",
-    JSON.stringify(instructionsState.visible),
-  );
+  setItem(INSTRUCTIONS_VISIBLE_KEY, instructionsState.visible);
 }
+
 
 // Toggle instructions visibility
 export function toggleInstructions() {

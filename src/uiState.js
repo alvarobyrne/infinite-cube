@@ -1,3 +1,5 @@
+import { getItem, setItem, removeItem } from "./storage-manager.js";
+
 const UISTATE_KEY = "uiState";
 
 /**
@@ -22,7 +24,7 @@ export function saveUIState(folders) {
     reports: folders.reports ? !folders.reports._closed : undefined,
     gui: folders.gui ? !folders.gui._closed : undefined
   };
-  localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
+  setItem(UISTATE_KEY, state);
 }
 
 /**
@@ -32,11 +34,9 @@ export function saveUIState(folders) {
  * @param {Object} folders - Object containing folder references
  */
 export function loadUIState(folders) {
-  const stateStr = localStorage.getItem(UISTATE_KEY);
-  if (!stateStr) return;
+  const state = getItem(UISTATE_KEY);
+  if (!state) return;
   try {
-    const state = JSON.parse(stateStr);
-
     // Restore folder states (state value: true = open, false = closed)
     if (folders.dimensions && state.dimensions !== undefined) {
       if (state.dimensions) {
@@ -149,6 +149,7 @@ export function loadUIState(folders) {
  * Clear UI state from localStorage
  */
 export function clearUIState() {
-  localStorage.removeItem(UISTATE_KEY);
+  removeItem(UISTATE_KEY);
 }
+
 

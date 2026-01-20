@@ -15,8 +15,14 @@ import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handle
 import { viewState, loadViewState, saveViewState, VIEW_MODES } from "./viewState.js";
 import { views, setupViews } from "./scene-setup.js";
 import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
+import { migrateFromLegacyKeys } from "./storage-manager.js";
+
+
+// Migrate legacy localStorage keys to the new namespaced object
+migrateFromLegacyKeys();
 
 console.log("Hello, World!", Math.random());
+
 
 // Load dimension state or use defaults
 const savedDimensionState = loadDimensionState();

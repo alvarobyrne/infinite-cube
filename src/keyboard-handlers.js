@@ -82,9 +82,21 @@ export function setupKeyboardHandlers({
             clearWHDState();
             location.reload();
         } else if (key === "z") {
-            blockRenderState.isOpaque = !blockRenderState.isOpaque;
-            recreateSceneWrapper();
+            // Find the isOpaque controller and toggle it
+            const opaqueController = folders.blockRendering.controllers.find(
+                (c) => c._name === "Is Opaque"
+            );
+
+            if (opaqueController) {
+                opaqueController.setValue(!blockRenderState.isOpaque);
+            } else {
+                blockRenderState.isOpaque = !blockRenderState.isOpaque;
+                saveBlockRenderState(blockRenderState);
+                recreateSceneWrapper();
+            }
         } else if (key === "h") {
+
+
             toggleInstructions();
         }
     });

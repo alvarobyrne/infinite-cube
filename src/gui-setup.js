@@ -9,6 +9,7 @@ import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisi
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 import { instructionsState } from "./instructions-manager.js";
 import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
+import { setItem, removeItem } from "./storage-manager.js";
 
 
 
@@ -43,7 +44,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     if (readmeContainer) {
       readmeContainer.style.display = instructionsState.visible ? "block" : "none";
     }
-    localStorage.setItem("instructionsVisible", JSON.stringify(instructionsState.visible));
+    setItem("instructionsVisible", instructionsState.visible);
   }).listen();
 
   // View Mode selector
@@ -152,7 +153,8 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
-  });
+  }).listen();
+
   blockRenderingFolder.add(blockRenderState, "showXYPlaneSquare").name("Show XY Plane Square").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
@@ -304,7 +306,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   actionsFolder.add({
     clearView: () => {
-      localStorage.removeItem("viewState");
+      removeItem("viewState");
       location.reload();
     }
   }, "clearView").name("Clear View State");
@@ -372,4 +374,3 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     manager: positionRotationManager
   };
 }
-

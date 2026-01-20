@@ -1,4 +1,5 @@
 import * as THREE from "three/webgpu";
+import { getItem, setItem, removeItem } from "./storage-manager.js";
 
 const OBJECT3DSTATE_KEY_PREFIX = "object3DState_clone";
 
@@ -17,7 +18,7 @@ export function saveObject3DState(object3D, cloneIndex) {
     position: object3D.position.toArray(),
     rotation: object3D.rotation.toArray(),
   };
-  localStorage.setItem(getStateKey(cloneIndex), JSON.stringify(state));
+  setItem(getStateKey(cloneIndex), state);
 }
 
 /**
@@ -25,10 +26,9 @@ export function saveObject3DState(object3D, cloneIndex) {
  * @returns {boolean} True if state was loaded successfully
  */
 export function loadObject3DState(object3D, cloneIndex) {
-  const stateStr = localStorage.getItem(getStateKey(cloneIndex));
-  if (!stateStr) return false;
+  const state = getItem(getStateKey(cloneIndex));
+  if (!state) return false;
   try {
-    const state = JSON.parse(stateStr);
     if (state.position && state.rotation) {
       object3D.position.fromArray(state.position);
       object3D.rotation.fromArray(state.rotation);
@@ -69,14 +69,15 @@ export function loadAllClonesState(clones) {
  */
 export function clearObject3DState(cloneIndex = null) {
   if (cloneIndex !== null) {
-    localStorage.removeItem(getStateKey(cloneIndex));
+    removeItem(getStateKey(cloneIndex));
   } else {
     // Clear all clone states
     for (let i = 1; i <= 5; i++) {
-      localStorage.removeItem(getStateKey(i));
+      removeItem(getStateKey(i));
     }
   }
 }
+
 
 
 /**
@@ -161,7 +162,7 @@ export function positionAndRotationManager(clones, cloneSelectorState, gui) {
   switchClone(cloneSelectorState.selectedCloneIndex);
 
   const guiLocal = gui.addFolder("Object3D Position/Rotation");
-  
+
   // Only visible in development
   if (import.meta.env.PROD) {
     guiLocal.hide();

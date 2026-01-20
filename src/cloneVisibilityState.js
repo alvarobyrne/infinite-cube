@@ -1,3 +1,5 @@
+import { getItem, setItem, removeItem } from "./storage-manager.js";
+
 /**
  * Clone visibility state
  */
@@ -9,21 +11,23 @@ export const cloneVisibilityState = {
     groupClone5: true,
 };
 
+const CLONE_VISIBILITY_STATE_KEY = "cloneVisibilityState";
+
 /**
  * Save clone visibility state to localStorage
  */
 export function saveCloneVisibilityState(state) {
-    localStorage.setItem("cloneVisibilityState", JSON.stringify(state));
+    setItem(CLONE_VISIBILITY_STATE_KEY, state);
 }
 
 /**
  * Load clone visibility state from localStorage
  */
 export function loadCloneVisibilityState() {
-    const stateStr = localStorage.getItem("cloneVisibilityState");
-    if (!stateStr) return null;
+    const state = getItem(CLONE_VISIBILITY_STATE_KEY);
+    if (!state) return null;
     try {
-        return JSON.parse(stateStr);
+        return state;
     } catch (e) {
         // Ignore parse errors
         return null;
@@ -34,5 +38,6 @@ export function loadCloneVisibilityState() {
  * Clear clone visibility state from localStorage
  */
 export function clearCloneVisibilityState() {
-    localStorage.removeItem("cloneVisibilityState");
+    removeItem(CLONE_VISIBILITY_STATE_KEY);
 }
+

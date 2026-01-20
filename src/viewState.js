@@ -1,3 +1,5 @@
+import { getItem, setItem, removeItem } from "./storage-manager.js";
+
 const VIEWSTATE_KEY = "viewState";
 
 export const VIEW_MODES = {
@@ -10,16 +12,15 @@ export const viewState = {
 };
 
 export function saveViewState(state) {
-    localStorage.setItem(VIEWSTATE_KEY, JSON.stringify(state));
+    setItem(VIEWSTATE_KEY, state);
 }
 
 export function loadViewState() {
-    const stateStr = localStorage.getItem(VIEWSTATE_KEY);
-    if (stateStr) {
+    const state = getItem(VIEWSTATE_KEY);
+    if (state) {
         try {
-            const saved = JSON.parse(stateStr);
-            if (saved && saved.mode) {
-                return saved;
+            if (state && state.mode) {
+                return state;
             }
         } catch (e) {
             console.warn("Failed to parse view state", e);
@@ -29,5 +30,6 @@ export function loadViewState() {
 }
 
 export function clearViewState() {
-    localStorage.removeItem(VIEWSTATE_KEY);
+    removeItem(VIEWSTATE_KEY);
 }
+

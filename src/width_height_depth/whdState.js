@@ -1,3 +1,7 @@
+import { getItem, setItem, removeItem } from "../storage-manager.js";
+
+const WHD_STATE_KEY = "whdState";
+
 /**
  * Save WHD (Width, Height, Depth) state to localStorage
  */
@@ -9,17 +13,16 @@ export function saveWHDState(whd) {
         blockThickness: whd.blockThickness,
         gap: whd.gap || 1,
     };
-    localStorage.setItem("whdState", JSON.stringify(state));
+    setItem(WHD_STATE_KEY, state);
 }
 
 /**
  * Load WHD (Width, Height, Depth) state from localStorage
  */
 export function loadWHDState() {
-    const stateStr = localStorage.getItem("whdState");
-    if (!stateStr) return null;
+    const state = getItem(WHD_STATE_KEY);
+    if (!state) return null;
     try {
-        const state = JSON.parse(stateStr);
         if (state.width !== undefined && state.height !== undefined && state.depth !== undefined) {
             return state;
         }
@@ -33,5 +36,6 @@ export function loadWHDState() {
  * Clear WHD state from localStorage
  */
 export function clearWHDState() {
-    localStorage.removeItem("whdState");
+    removeItem(WHD_STATE_KEY);
 }
+

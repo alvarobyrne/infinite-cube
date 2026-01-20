@@ -1,3 +1,5 @@
+import { getItem, setItem, removeItem } from "./storage-manager.js";
+
 export const BLOCK_STYLES = [
   "singleColor",
   "coloredFaces",
@@ -44,21 +46,23 @@ export const blockRenderState = {
   z: 0,
 };
 
+const BLOCK_RENDER_STATE_KEY = "blockRenderState";
+
 /**
  * Save block render state to localStorage
  */
 export function saveBlockRenderState(state) {
-  localStorage.setItem("blockRenderState", JSON.stringify(state));
+  setItem(BLOCK_RENDER_STATE_KEY, state);
 }
 
 /**
  * Load block render state from localStorage
  */
 export function loadBlockRenderState() {
-  const stateStr = localStorage.getItem("blockRenderState");
-  if (!stateStr) return null;
+  const state = getItem(BLOCK_RENDER_STATE_KEY);
+  if (!state) return null;
   try {
-    return JSON.parse(stateStr);
+    return state;
   } catch (e) {
     // Ignore parse errors
     return null;
@@ -69,5 +73,6 @@ export function loadBlockRenderState() {
  * Clear block render state from localStorage
  */
 export function clearBlockRenderState() {
-  localStorage.removeItem("blockRenderState");
+  removeItem(BLOCK_RENDER_STATE_KEY);
 }
+

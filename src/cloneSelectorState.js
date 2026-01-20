@@ -1,3 +1,5 @@
+import { getItem, setItem, removeItem } from "./storage-manager.js";
+
 /**
  * Clone selector state - tracks which clone is currently selected for position/rotation management
  */
@@ -12,17 +14,17 @@ export const cloneSelectorState = {
  * Save clone selector state to localStorage
  */
 export function saveCloneSelectorState(state) {
-  localStorage.setItem(CLONE_SELECTOR_STATE_KEY, JSON.stringify(state));
+  setItem(CLONE_SELECTOR_STATE_KEY, state);
 }
 
 /**
  * Load clone selector state from localStorage
  */
 export function loadCloneSelectorState() {
-  const stateStr = localStorage.getItem(CLONE_SELECTOR_STATE_KEY);
-  if (!stateStr) return null;
+  const state = getItem(CLONE_SELECTOR_STATE_KEY);
+  if (!state) return null;
   try {
-    return JSON.parse(stateStr);
+    return state;
   } catch (e) {
     return null;
   }
@@ -32,5 +34,6 @@ export function loadCloneSelectorState() {
  * Clear clone selector state from localStorage
  */
 export function clearCloneSelectorState() {
-  localStorage.removeItem(CLONE_SELECTOR_STATE_KEY);
+  removeItem(CLONE_SELECTOR_STATE_KEY);
 }
+
