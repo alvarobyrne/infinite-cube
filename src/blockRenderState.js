@@ -6,7 +6,13 @@ export const BLOCK_STYLES = [
   "multiColorPlanes",
   "multiColorBox",
   "granularColor",
-  "coloredFacedWHD"
+  "coloredFacedWHD",
+  "singleColorWHD",
+  "unifiedColorWHD",
+  "multiColorWHD",
+  "perDimensionColorWHD",
+  "perBarTypeColorWHD",
+  "perBarTypeLightenColorWHD",
 ];
 
 export const blockRenderState = {

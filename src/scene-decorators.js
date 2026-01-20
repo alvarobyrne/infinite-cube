@@ -12,7 +12,13 @@ import {
     SingleColorStrategy,
     ColoredFacedWHDStrategy,
     UshapeBaseStrategy,
-    WHDBaseStrategy
+    WHDBaseStrategy,
+    SingleColorWHDStrategy,
+    UnifiedColorWHDStrategy,
+    MultiColorWHDStrategy,
+    PerDimensionColorWHDStrategy,
+    PerBarTypeColorWHDStrategy,
+    PerBarTypeLightenColorWHDStrategy
 } from "./block-strategies.js";
 
 
@@ -49,9 +55,9 @@ export class BaseRecreator extends SceneRecreator {
         // Strategy Selection
         let strategy, whdStrategy;
         if (blockRenderState.style === "coloredFaces") {
-            strategy = new ColoredFacesStrategy();
+            strategy = new ColoredFacesStrategy();//createBlock1
         } else if (blockRenderState.style === "unifiedColor") {
-            strategy = new UnifiedColorStrategy();
+            strategy = new UnifiedColorStrategy();//createBlock since it extends singlecolor
         } else if (blockRenderState.style === "hollow") {
             strategy = new HollowStrategy();
         } else if (blockRenderState.style === "multiColorPlanes") {
@@ -61,9 +67,21 @@ export class BaseRecreator extends SceneRecreator {
         } else if (blockRenderState.style === "granularColor") {
             strategy = new GranularColorStrategy();
         } else if (blockRenderState.style === "singleColor") {
-            strategy = new SingleColorStrategy();
+            strategy = new SingleColorStrategy();//createBlock
         } else if (blockRenderState.style === "coloredFacedWHD") {
-            strategy = new ColoredFacedWHDStrategy();
+            strategy = new ColoredFacedWHDStrategy();//createBlock
+        } else if (blockRenderState.style === "singleColorWHD") {
+            strategy = new SingleColorWHDStrategy();//createBlock1
+        } else if (blockRenderState.style === "unifiedColorWHD") {
+            strategy = new UnifiedColorWHDStrategy();//createBlock1
+        } else if (blockRenderState.style === "multiColorWHD") {
+            strategy = new MultiColorWHDStrategy();
+        } else if (blockRenderState.style === "perDimensionColorWHD") {
+            strategy = new PerDimensionColorWHDStrategy();
+        } else if (blockRenderState.style === "perBarTypeColorWHD") {
+            strategy = new PerBarTypeColorWHDStrategy();
+        } else if (blockRenderState.style === "perBarTypeLightenColorWHD") {
+            strategy = new PerBarTypeLightenColorWHDStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");

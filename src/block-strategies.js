@@ -62,10 +62,12 @@ export class UshapeBaseStrategy extends RenderingStrategy {
 
 export class ColoredFacesStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
         return {
-            block1: createBlock1(b1),
-            block2: createBlock1(b2),
-            block3: createBlock1(b3),
+            block1: createBlock1({ ...b1, transparent, opacity }),
+            block2: createBlock1({ ...b2, transparent, opacity }),
+            block3: createBlock1({ ...b3, transparent, opacity }),
         };
     }
 }
@@ -73,10 +75,11 @@ export class ColoredFacesStrategy extends UshapeBaseStrategy {
 export class SingleColorStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
         return {
-            block1: createBlock({ ...b1, transparent: true, opacity }),
-            block2: createBlock({ ...b2, transparent: true, opacity }),
-            block3: createBlock({ ...b3, transparent: true, opacity }),
+            block1: createBlock({ ...b1, transparent, opacity }),
+            block2: createBlock({ ...b2, transparent, opacity }),
+            block3: createBlock({ ...b3, transparent, opacity }),
         };
     }
 }
@@ -232,11 +235,11 @@ export class WHDBaseStrategy extends RenderingStrategy {
     }
 }
 /**
- * New strategy that renders a single box using Width, Height, Depth (WHD) state
+ * Strategy that renders a single box using Width, Height, Depth (WHD) state
  */
 export class ColoredFacedWHDStrategy extends WHDBaseStrategy {
     execute(params) {
-        const { scene, whdState } = params;
+        const { scene, whdState, blockRenderState } = params;
 
         const group = new THREE.Group();
         scene.add(group);
@@ -244,10 +247,12 @@ export class ColoredFacedWHDStrategy extends WHDBaseStrategy {
 
         const configs = getWHDConfigs(whdState);
         const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
 
         const blocks = {};
         for (const key in configs) {
-            const block = createBlock(configs[key]);
+            const block = createBlock({ ...configs[key], transparent, opacity });
             block.name = key;
             const pos = positions[key];
             block.position.set(pos.x, pos.y, pos.z);
@@ -259,3 +264,267 @@ export class ColoredFacedWHDStrategy extends WHDBaseStrategy {
     }
 }
 
+export class SingleColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock1({ ...configs[key], transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+
+export class UnifiedColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock({ ...configs[key], color: blockRenderState.unifiedColor, transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+
+export class MultiColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+        //array in which the firts three colors are the blockrenderstate.unifiedColor, the next three are the blockrenderstate.cloneColor1, the next three are the blockrenderstate.cloneColor2, the next three are the blockrenderstate.cloneColor3, the next three are the blockrenderstate.cloneColor4, the last three are the blockrenderstate.cloneColor5
+        const colorsArray = [
+            blockRenderState.unifiedColor,
+            blockRenderState.cloneColor1,
+            blockRenderState.cloneColor2,
+            blockRenderState.cloneColor3,
+            blockRenderState.cloneColor4,
+            blockRenderState.cloneColor5,
+        ];
+        //object with keys b1 to b18 in which the colors are distributed 
+        const colors = {}
+        const temp = Array.from({ length: 18 }, (_, i) => i);
+        for (let i = 0; i < temp.length; i++) {
+            colors['b' + (i + 1)] = colorsArray[Math.floor(i / 3)];
+        }
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock({ ...configs[key], color: colors[key], transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+
+export class PerDimensionColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+        const widthColor = 'red';
+        const heightColor = 'green';
+        const depthColor = 'blue';
+
+        //object with keys b1 to b18 in which the colors are distributed 
+        const colors = {
+            b1: widthColor,
+            b2: heightColor,
+            b3: heightColor,
+            b4: widthColor,
+            b5: depthColor,
+            b6: widthColor,
+            b7: depthColor,
+            b8: heightColor,
+            b9: depthColor,
+            b10: heightColor,
+            b11: widthColor,
+            b12: heightColor,
+            b13: widthColor,
+            b14: depthColor,
+            b15: widthColor,
+            b16: depthColor,
+            b17: heightColor,
+            b18: depthColor,
+        }
+
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock({ ...configs[key], color: colors[key], transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+
+export class PerBarTypeLightenColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+        const widthColor = 0xff0000;
+        const heightColor = 0x00ff00;
+        const depthColor = 0x0000ff;
+
+        const darkener1 = 0x000000;
+        const darkener2 = 0x666666;
+        const darkener3 = 0xbbbbbb;
+
+        //object with keys b1 to b18 in which the colors are distributed 
+        const colors = {
+            b1: widthColor | darkener1,
+            b2: heightColor | darkener1,
+            b3: heightColor | darkener2,
+            b4: widthColor | darkener2,
+            b5: depthColor | darkener1,
+            b6: widthColor | darkener3,
+            b7: depthColor | darkener2,
+            b8: heightColor | darkener3,
+            b9: depthColor | darkener3,
+            b10: heightColor | darkener1,
+            b11: widthColor | darkener1,
+            b12: heightColor | darkener2,
+            b13: widthColor | darkener2,
+            b14: depthColor | darkener1,
+            b15: widthColor | darkener3,
+            b16: depthColor | darkener2,
+            b17: heightColor | darkener3,
+            b18: depthColor | darkener3,
+        }
+
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock({ ...configs[key], color: colors[key], transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+
+export class PerBarTypeColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+
+        const color1 = 'red';
+        const color2 = 'green';
+        const color3 = 'blue';
+        const color4 = 'cyan';
+        const color5 = 'magenta';
+        const color6 = 'yellow';
+        const color7 = 'orange';
+        const color8 = 'purple';
+        const color9 = 'pink';
+
+        //object with keys b1 to b18 in which the colors are distributed 
+        const colors = {
+            b1: color1,
+            b2: color2,
+            b3: color3,
+            b4: color4,
+            b5: color5,
+            b6: color6,
+            b7: color7,
+            b8: color8,
+            b9: color9,
+            b10: color2,
+            b11: color1,
+            b12: color3,
+            b13: color4,
+            b14: color5,
+            b15: color6,
+            b16: color7,
+            b17: color8,
+            b18: color9,
+        }
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createBlock({ ...configs[key], color: colors[key], transparent, opacity });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
