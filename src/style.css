@@ -3,7 +3,7 @@ body {
     color: whitesmoke;
     font-family: 'Courier New', Courier, monospace;
 }
-canvas,div#readme-container {
+canvas, svg, div#readme-container {
     display: block;
 
     position: absolute;
