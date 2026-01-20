@@ -346,6 +346,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     whd: whdFolder,
     object3DPositionRotation: positionRotationManager.folder,
     reports: reportsFolder,
+    gui: gui
   };
 
   // Load UI state (folder open/closed states)

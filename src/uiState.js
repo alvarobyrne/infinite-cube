@@ -20,6 +20,7 @@ export function saveUIState(folders) {
     dimensionsHidden: folders.dimensions ? folders.dimensions._hidden : undefined,
     whdHidden: folders.whd ? folders.whd._hidden : undefined,
     reports: folders.reports ? !folders.reports._closed : undefined,
+    gui: folders.gui ? !folders.gui._closed : undefined
   };
   localStorage.setItem(UISTATE_KEY, JSON.stringify(state));
 }
@@ -129,6 +130,13 @@ export function loadUIState(folders) {
         folders.whd.hide();
       } else {
         folders.whd.show();
+      }
+    }
+    if (folders.gui && state.gui !== undefined) {
+      if (state.gui) {
+        folders.gui.open();
+      } else {
+        folders.gui.close();
       }
     }
   } catch (e) {
