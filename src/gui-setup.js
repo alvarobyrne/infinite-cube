@@ -213,7 +213,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   const multiColorFolder = gui.addFolder("Multi-Color Palette");
   const updateMultiColor = () => {
     saveBlockRenderState(blockRenderState);
-    if (["multiColorPlanes", "multiColorBox", "granularColor"].includes(blockRenderState.style)) {
+    if (["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(blockRenderState.style)) {
       recreateScene();
     }
   };

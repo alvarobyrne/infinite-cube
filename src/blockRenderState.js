@@ -13,6 +13,7 @@ export const BLOCK_STYLES = [
   "perDimensionColorWHD",
   "perBarTypeColorWHD",
   "perBarTypeLightenColorWHD",
+  "granularColorWHD",
 ];
 
 export const blockRenderState = {

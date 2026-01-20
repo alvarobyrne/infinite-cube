@@ -528,3 +528,53 @@ export class PerBarTypeColorWHDStrategy extends WHDBaseStrategy {
         return { group };
     }
 }
+
+export class GranularColorWHDStrategy extends WHDBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDConfigs(whdState);
+        const positions = getWHDPositions(configs, whdState);
+        const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
+
+        const granularConfigs = {
+            b1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
+            b2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: multiColor4, colorLeft: multiColor3, colorRight: multiColor4 },
+            b3: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor3 },
+            b4: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor4, colorRight: 0 },
+            b5: { colorFront: multiColor2, colorBack: multiColor2, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor1, colorRight: multiColor2 },
+            b6: { colorFront: multiColor2, colorBack: multiColor1, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor4, colorRight: multiColor4 },
+            b7: { colorFront: multiColor2, colorBack: 0, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor2, colorRight: multiColor1 },
+            b8: { colorFront: multiColor3, colorBack: multiColor4, colorTop: multiColor4, colorBottom: multiColor4, colorLeft: multiColor2, colorRight: multiColor1 },
+            b9: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor2, colorRight: multiColor1 },
+            b10: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor2, colorBottom: multiColor4, colorLeft: multiColor2, colorRight: multiColor1 },
+            b11: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor2, colorBottom: multiColor1, colorLeft: multiColor2, colorRight: multiColor2 },
+            b12: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor1, colorRight: multiColor2 },
+            b13: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor1, colorRight: multiColor2 },
+            b14: { colorFront: multiColor4, colorBack: multiColor4, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor4, colorRight: multiColor3 },
+            b15: { colorFront: multiColor3, colorBack: multiColor4, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor4, colorRight: multiColor2 },
+            b16: { colorFront: multiColor3, colorBack: multiColor4, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor3, colorRight: multiColor4 },
+            b17: { colorFront: multiColor2, colorBack: multiColor1, colorTop: multiColor2, colorBottom: multiColor2, colorLeft: multiColor3, colorRight: multiColor4 },
+            b18: { colorFront: multiColor2, colorBack: multiColor2, colorTop: multiColor2, colorBottom: multiColor1, colorLeft: multiColor3, colorRight: multiColor4 },
+        };
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createMultiColorBoxBlock({
+                ...configs[key],
+                ...granularConfigs[key],
+            });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}

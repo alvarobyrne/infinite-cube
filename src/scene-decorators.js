@@ -18,7 +18,8 @@ import {
     MultiColorWHDStrategy,
     PerDimensionColorWHDStrategy,
     PerBarTypeColorWHDStrategy,
-    PerBarTypeLightenColorWHDStrategy
+    PerBarTypeLightenColorWHDStrategy,
+    GranularColorWHDStrategy
 } from "./block-strategies.js";
 
 
@@ -82,6 +83,8 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new PerBarTypeColorWHDStrategy();
         } else if (blockRenderState.style === "perBarTypeLightenColorWHD") {
             strategy = new PerBarTypeLightenColorWHDStrategy();
+        } else if (blockRenderState.style === "granularColorWHD") {
+            strategy = new GranularColorWHDStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
