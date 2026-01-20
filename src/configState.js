@@ -96,21 +96,13 @@ export function loadConfig(name) {
         if (configState.saveDimensionState) configState.saveDimensionState(configState.dimensionState);
     }
 
-    if (configState.saveBlockRenderState) {
-        configState.saveBlockRenderState(configState.blockRenderState);
-    }
+    configState.saveBlockRenderState?.(configState.blockRenderState);
 
-    if (configState.recreateScene) {
-        configState.recreateScene();
-    }
+    configState.recreateScene?.();
 
-    if (configState.syncFolders) {
-        configState.syncFolders();
-    }
+    configState.syncFolders?.();
 
-    if (configState.refreshGUI) {
-        configState.refreshGUI();
-    }
+    configState.refreshGUI?.();
 }
 
 /**
