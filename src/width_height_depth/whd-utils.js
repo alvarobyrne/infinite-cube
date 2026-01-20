@@ -16,6 +16,23 @@ export function getWHDDimensions(whdState) {
 }
 
 /**
+ * Calculates the sum of the six dimensions returned by getWHDDimensions.
+ * @param {Object} whdState - The width, height, depth state.
+ * @returns {number} The sum of the six dimensions.
+ */
+export function getWHDDimensionsSum(whdState) {
+    const {
+        reducedWidth, w_prime,
+        reducedHeight, h_prime,
+        reducedDepth, d_prime
+    } = getWHDDimensions(whdState);
+
+    const { width, height, depth } = whdState;
+
+    return (reducedWidth + w_prime + reducedHeight + h_prime + reducedDepth + d_prime + width + height + depth) * 2;
+}
+
+/**
  * Generates the configurations for the 18 blocks used in WHD (Width, Height, Depth) strategies.
  * @param {Object} whdState - The width, height, depth state from whdState.js.
  * @returns {Object} An object containing configurations for 18 blocks (b1 to b18).

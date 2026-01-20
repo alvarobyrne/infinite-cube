@@ -27,7 +27,7 @@ import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
  * @param {Object} params.VIEW_MODES - View modes constants
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES }) {
+export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -105,8 +105,12 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       // Hide dimensions folder, show whd folder
       dimensionsFolder.hide();
       whdFolder.show();
+      reportsFolder.show()
+      visibilityFolder.hide()
     } else {
       // Show dimensions folder, hide whd folder
+      reportsFolder.hide()
+      visibilityFolder.show()
       dimensionsFolder.show();
       whdFolder.hide();
     }
@@ -305,6 +309,15 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     }
   }, "clearView").name("Clear View State");
 
+  // Reports folder
+  const reportsFolder = gui.addFolder("Reports");
+  reportsFolder.add(reportState, "whdDimensionsSum").name("WHD Dimensions Sum").disable().listen();
+  reportsFolder.add(reportState, "reducedWidth").name("Reduced Width").disable().listen();
+  reportsFolder.add(reportState, "w_prime").name("W' (Width Prime)").disable().listen();
+  reportsFolder.add(reportState, "reducedHeight").name("Reduced Height").disable().listen();
+  reportsFolder.add(reportState, "h_prime").name("H' (Height Prime)").disable().listen();
+  reportsFolder.add(reportState, "reducedDepth").name("Reduced Depth").disable().listen();
+  reportsFolder.add(reportState, "d_prime").name("D' (Depth Prime)").disable().listen();
 
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
@@ -332,6 +345,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     cloneSelector: cloneSelectorFolder,
     whd: whdFolder,
     object3DPositionRotation: positionRotationManager.folder,
+    reports: reportsFolder,
   };
 
   // Load UI state (folder open/closed states)

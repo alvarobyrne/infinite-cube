@@ -14,6 +14,7 @@ import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState
 import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handlers.js";
 import { viewState, loadViewState, saveViewState, VIEW_MODES } from "./viewState.js";
 import { views, setupViews } from "./scene-setup.js";
+import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
 
 console.log("Hello, World!", Math.random());
 
@@ -34,6 +35,11 @@ const whdState = {
   depth: savedWHDState?.depth || 10,
   blockThickness: savedWHDState?.blockThickness || 2,
   gap: savedWHDState?.gap || 2.5,
+};
+
+const reportState = {
+  whdDimensionsSum: getWHDDimensionsSum(whdState),
+  ...getWHDDimensions(whdState),
 };
 
 // Load block render state or use defaults
@@ -112,6 +118,10 @@ function recreateSceneWrapper() {
   if (positionRotationManager) {
     positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex, true);
   }
+  // Update reports
+  reportState.whdDimensionsSum = getWHDDimensionsSum(whdState);
+  Object.assign(reportState, getWHDDimensions(whdState));
+
   scene.add(new THREE.AxesHelper(20));
 }
 
@@ -144,6 +154,7 @@ const guiResult = setupGUI({
   viewState,
   saveViewState,
   VIEW_MODES,
+  reportState,
 });
 
 const { gui, folders, manager } = guiResult;
