@@ -2,7 +2,7 @@ import GUI from "lil-gui";
 import { configState } from "./configState.js";
 import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { saveWHDState, clearWHDState } from "./width_height_depth/whdState.js";
-import { clearCameraState } from "./cameraState.js";
+import { clearCameraState, CAMERA_TYPES, getSavedCameraType, saveCameraState } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
 import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
@@ -10,7 +10,7 @@ import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisi
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 import { instructionsState } from "./instructions-manager.js";
 import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
-import { setItem, removeItem } from "./storage-manager.js";
+import { setItem, removeItem, getItem } from "./storage-manager.js";
 
 
 
@@ -229,6 +229,18 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     }
   });
 
+  // Camera Settings folder
+  const cameraSettingsFolder = gui.addFolder("Camera Settings");
+  const cameraStateProxy = {
+    type: getSavedCameraType(),
+  };
+  cameraSettingsFolder.add(cameraStateProxy, "type", Object.values(CAMERA_TYPES)).name("Camera Type").onChange(() => {
+    const state = getItem("cameraState") || {};
+    state.type = cameraStateProxy.type;
+    setItem("cameraState", state);
+    location.reload();
+  });
+
   // Multi-Color Palette folder
   const multiColorFolder = gui.addFolder("Multi-Color Palette");
   const updateMultiColor = () => {
@@ -391,6 +403,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     object3DPositionRotation: positionRotationManager.folder,
     reports: reportsFolder,
     savedConfigs: configsFolder,
+    cameraSettings: cameraSettingsFolder,
     gui: gui
   };
 

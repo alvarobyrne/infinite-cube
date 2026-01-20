@@ -1,4 +1,5 @@
 import * as THREE from "three/webgpu";
+import { CAMERA_TYPES, getSavedCameraType, DEFAULT_FRUSTUM_SIZE } from "./cameraState.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -9,12 +10,29 @@ export function setupScene() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  const cameraType = getSavedCameraType();
+  let camera;
+
+  if (cameraType === CAMERA_TYPES.ORTHOGRAPHIC) {
+    const aspect = window.innerWidth / window.innerHeight;
+    const frustumSize = DEFAULT_FRUSTUM_SIZE;
+    camera = new THREE.OrthographicCamera(
+      frustumSize * aspect / -2,
+      frustumSize * aspect / 2,
+      frustumSize / 2,
+      frustumSize / -2,
+      0.1,
+      1000
+    );
+  } else {
+    camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+  }
+
   camera.position.z = 5;
   camera.position.y = 5;
   camera.position.x = 5;
@@ -119,6 +137,9 @@ export const views2 = [
 export const views = views2
 
 export function setupViews(mainCamera) {
+  const cameraType = getSavedCameraType();
+  const aspect = window.innerWidth / window.innerHeight;
+
   for (let i = 0; i < views.length; i++) {
     const view = views[i];
 
@@ -127,12 +148,26 @@ export function setupViews(mainCamera) {
       continue;
     }
 
-    const camera = new THREE.PerspectiveCamera(
-      view.fov,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    let camera;
+    if (cameraType === CAMERA_TYPES.ORTHOGRAPHIC) {
+      const frustumSize = DEFAULT_FRUSTUM_SIZE;
+      camera = new THREE.OrthographicCamera(
+        frustumSize * aspect / -2,
+        frustumSize * aspect / 2,
+        frustumSize / 2,
+        frustumSize / -2,
+        0.1,
+        1000
+      );
+    } else {
+      camera = new THREE.PerspectiveCamera(
+        view.fov,
+        aspect,
+        0.1,
+        1000
+      );
+    }
+
     camera.position.fromArray(view.eye);
     camera.up.fromArray(view.up);
     if (view.lookAt) {

@@ -23,6 +23,7 @@ export function saveUIState(folders) {
     whdHidden: folders.whd ? folders.whd._hidden : undefined,
     reports: folders.reports ? !folders.reports._closed : undefined,
     savedConfigs: folders.savedConfigs ? !folders.savedConfigs._closed : undefined,
+    cameraSettings: folders.cameraSettings ? !folders.cameraSettings._closed : undefined,
     gui: folders.gui ? !folders.gui._closed : undefined
   };
   setItem(UISTATE_KEY, state);
@@ -121,6 +122,13 @@ export function loadUIState(folders) {
         folders.savedConfigs.open();
       } else {
         folders.savedConfigs.close();
+      }
+    }
+    if (folders.cameraSettings && state.cameraSettings !== undefined) {
+      if (state.cameraSettings) {
+        folders.cameraSettings.open();
+      } else {
+        folders.cameraSettings.close();
       }
     }
 

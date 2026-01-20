@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
-import { saveCameraState, loadCameraState } from "./cameraState.js";
+import { saveCameraState, loadCameraState, DEFAULT_FRUSTUM_SIZE } from "./cameraState.js";
 import { saveDimensionState, loadDimensionState } from "./dimensionState.js";
 import { saveWHDState, loadWHDState } from "./width_height_depth/whdState.js";
 import { blockRenderState, loadBlockRenderState, saveBlockRenderState } from "./blockRenderState.js";
@@ -192,8 +192,21 @@ async function init() {
   console.log("WebGPU initialized");
 
   window.addEventListener("resize", () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const aspect = width / height;
+
+    renderer.setSize(width, height);
+
+    if (camera.isPerspectiveCamera) {
+      camera.aspect = aspect;
+    } else {
+      const frustumSize = DEFAULT_FRUSTUM_SIZE;
+      camera.left = -frustumSize * aspect / 2;
+      camera.right = frustumSize * aspect / 2;
+      camera.top = frustumSize / 2;
+      camera.bottom = -frustumSize / 2;
+    }
     camera.updateProjectionMatrix();
   });
 
@@ -222,7 +235,16 @@ async function init() {
         renderer.setScissorTest(true);
         renderer.setClearColor(view.background);
 
-        viewCamera.aspect = width / height;
+        if (viewCamera.isPerspectiveCamera) {
+          viewCamera.aspect = width / height;
+        } else {
+          const aspect = width / height;
+          const frustumSize = DEFAULT_FRUSTUM_SIZE;
+          viewCamera.left = -frustumSize * aspect / 2;
+          viewCamera.right = frustumSize * aspect / 2;
+          viewCamera.top = frustumSize / 2;
+          viewCamera.bottom = -frustumSize / 2;
+        }
         viewCamera.updateProjectionMatrix();
 
         renderer.render(scene, viewCamera);
