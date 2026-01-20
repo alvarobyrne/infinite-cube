@@ -168,21 +168,24 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff
   return cube;
 }
 
-export function createBlock1({ width = 5, height = 1, depth = 1 } = {}) {
+export function createBlock1({ width = 5, height = 1, depth = 1, opacity = 1, transparent = false } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
 
   // Create an array of materials for each face:
   // [right, left, top, bottom, front, back]
   const materials = [
-    new THREE.MeshToonMaterial({ color: 0x0000ff }), // +X (right)  -> blue (zx plane)
-    new THREE.MeshToonMaterial({ color: 0x0000ff }), // -X (left)   -> blue (zx plane)
-    new THREE.MeshToonMaterial({ color: 0xff0000 }), // +Y (top)    -> red  (xy plane)
-    new THREE.MeshToonMaterial({ color: 0xff0000 }), // -Y (bottom) -> red  (xy plane)
-    new THREE.MeshToonMaterial({ color: 0x00ff00 }), // +Z (front)  -> green (yz plane)
-    new THREE.MeshToonMaterial({ color: 0x00ff00 }), // -Z (back)   -> green (yz plane)
+    new THREE.MeshToonMaterial({ color: 0x0000ff, transparent, opacity }), // +X (right)  -> blue (zx plane)
+    new THREE.MeshToonMaterial({ color: 0x0000ff, transparent, opacity }), // -X (left)   -> blue (zx plane)
+    new THREE.MeshToonMaterial({ color: 0xff0000, transparent, opacity }), // +Y (top)    -> red  (xy plane)
+    new THREE.MeshToonMaterial({ color: 0xff0000, transparent, opacity }), // -Y (bottom) -> red  (xy plane)
+    new THREE.MeshToonMaterial({ color: 0x00ff00, transparent, opacity }), // +Z (front)  -> green (yz plane)
+    new THREE.MeshToonMaterial({ color: 0x00ff00, transparent, opacity }), // -Z (back)   -> green (yz plane)
   ];
 
   const cube = new THREE.Mesh(geometry, materials);
+  // cube.material.transparent = transparent;
+  // cube.material.opacity = opacity;
+  // cube.material.needsUpdate = true;
   return cube;
 }
 
