@@ -56,15 +56,15 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Dimensions folder
   const dimensionsFolder = gui.addFolder("Dimensions");
-  dimensionsFolder.add(dimensionState, "dimension1", 1, 20, 0.1).name('dimension 1, r').onChange(() => {
+  dimensionsFolder.add(dimensionState, "dimension1", 1, 40, 0.1).name('dimension 1, r').onChange(() => {
     saveDimensionState(dimensionState);
     recreateScene();
   });
-  dimensionsFolder.add(dimensionState, "dimension2", 1, 20, 0.1).name('dimension 2, g').onChange(() => {
+  dimensionsFolder.add(dimensionState, "dimension2", 1, 40, 0.1).name('dimension 2, g').onChange(() => {
     saveDimensionState(dimensionState);
     recreateScene();
   });
-  dimensionsFolder.add(dimensionState, "dimension3", 1, 20, 0.1).name('dimension 3, b').onChange(() => {
+  dimensionsFolder.add(dimensionState, "dimension3", 1, 40, 0.1).name('dimension 3, b').onChange(() => {
     saveDimensionState(dimensionState);
     recreateScene();
   });
@@ -75,15 +75,15 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // WHD (Width, Height, Depth) folder
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
-  whdFolder.add(whdState, "width", 1, 30, 0.1).name('Width').onChange(() => {
+  whdFolder.add(whdState, "width", 1, 40, 0.1).name('Width').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
-  whdFolder.add(whdState, "height", 1, 30, 0.1).name('Height').onChange(() => {
+  whdFolder.add(whdState, "height", 1, 40, 0.1).name('Height').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
-  whdFolder.add(whdState, "depth", 1, 30, 0.1).name('Depth').onChange(() => {
+  whdFolder.add(whdState, "depth", 1, 40, 0.1).name('Depth').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
@@ -112,6 +112,16 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   };
 
   configState.syncFolders = syncFolders;
+
+  const refreshGUI = () => {
+    const iterateFolders = (f) => {
+      f.controllers.forEach(c => c.updateDisplay());
+      Object.values(f.folders).forEach(iterateFolders);
+    };
+    iterateFolders(gui);
+  };
+
+  configState.refreshGUI = refreshGUI;
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");

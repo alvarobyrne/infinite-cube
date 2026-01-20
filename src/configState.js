@@ -13,6 +13,10 @@ export const configState = {
     whdState: null,
     blockRenderState: null,
     syncFolders: null,
+    refreshGUI: null,
+    saveDimensionState: null,
+    saveWHDState: null,
+    saveBlockRenderState: null,
     // Methods for GUI
     save: saveConfig,
     load: () => loadConfig(),
@@ -86,8 +90,14 @@ export function loadConfig(name) {
     // Restore dimensions based on strategy type
     if (config.strategyType === STRATEGY_TYPES.WHD_BASE) {
         Object.assign(configState.whdState, config.dimensions);
+        if (configState.saveWHDState) configState.saveWHDState(configState.whdState);
     } else {
         Object.assign(configState.dimensionState, config.dimensions);
+        if (configState.saveDimensionState) configState.saveDimensionState(configState.dimensionState);
+    }
+
+    if (configState.saveBlockRenderState) {
+        configState.saveBlockRenderState(configState.blockRenderState);
     }
 
     if (configState.recreateScene) {
@@ -96,6 +106,10 @@ export function loadConfig(name) {
 
     if (configState.syncFolders) {
         configState.syncFolders();
+    }
+
+    if (configState.refreshGUI) {
+        configState.refreshGUI();
     }
 }
 

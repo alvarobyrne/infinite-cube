@@ -3,9 +3,9 @@ import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
 import { saveCameraState, loadCameraState } from "./cameraState.js";
-import { loadDimensionState } from "./dimensionState.js";
-import { loadWHDState } from "./width_height_depth/whdState.js";
-import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
+import { saveDimensionState, loadDimensionState } from "./dimensionState.js";
+import { saveWHDState, loadWHDState } from "./width_height_depth/whdState.js";
+import { blockRenderState, loadBlockRenderState, saveBlockRenderState } from "./blockRenderState.js";
 import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
 import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
@@ -153,6 +153,9 @@ configState.dimensionState = dimensionState;
 configState.whdState = whdState;
 configState.blockRenderState = blockRenderState;
 configState.recreateScene = recreateSceneWrapper;
+configState.saveDimensionState = saveDimensionState;
+configState.saveWHDState = saveWHDState;
+configState.saveBlockRenderState = saveBlockRenderState;
 
 // Initialize GUI
 const guiResult = setupGUI({
