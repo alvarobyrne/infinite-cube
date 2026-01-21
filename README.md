@@ -13,6 +13,7 @@ Start dragging in order to remove the instructions. Press the **H** key to toggl
 - **1-5** - Show/Hide specific dimension parameterization clones (only works in Dimension Parameterization mode)
 - **A** - Show all dimension parameterization clones
 - **S** - Hide all dimension parameterization clones
+- **D** - Toggle dimension lines visibility
 
 ### Mouse Controls
 
