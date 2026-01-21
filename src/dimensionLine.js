@@ -80,7 +80,9 @@ export function addDimensionLine({
     );
     group.add(arrow);
 
-    // Add perpendicular tick
+    // Add perpendicular ticks
+    const perp2 = new THREE.Vector3().crossVectors(dir, perp).normalize();
+
     const tickGeom = new THREE.BufferGeometry().setFromPoints([
       point.clone().add(perp.clone().multiplyScalar(tickSize / 2)),
       point.clone().add(perp.clone().multiplyScalar(-tickSize / 2)),
@@ -90,6 +92,16 @@ export function addDimensionLine({
       new THREE.LineBasicMaterial({ color })
     );
     group.add(tick);
+
+    const tickGeom2 = new THREE.BufferGeometry().setFromPoints([
+      point.clone().add(perp2.clone().multiplyScalar(tickSize / 2)),
+      point.clone().add(perp2.clone().multiplyScalar(-tickSize / 2)),
+    ]);
+    const tick2 = new THREE.Line(
+      tickGeom2,
+      new THREE.LineBasicMaterial({ color })
+    );
+    group.add(tick2);
   });
 
   // Add label as a sprite
