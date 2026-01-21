@@ -103,11 +103,13 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       whdFolder.show();
       reportsFolder.show();
       visibilityFolder.hide();
+      whdDimensionLinesFolder.show();
     } else {
       reportsFolder.hide();
       visibilityFolder.show();
       dimensionsFolder.show();
       whdFolder.hide();
+      whdDimensionLinesFolder.hide();
     }
   };
 
@@ -140,23 +142,25 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
-  blockRenderingFolder.add(blockRenderState, "showTopDimensionLines").name("Show Top Dimension Lines").onChange(() => {
+
+  const whdDimensionLinesFolder = blockRenderingFolder.addFolder("WHD Dimension Lines");
+  whdDimensionLinesFolder.add(blockRenderState, "showTopDimensionLines").name("Show Top Dimension Lines").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
-  blockRenderingFolder.add(blockRenderState, "showRightDimensionLines").name("Show Right Dimension Lines").onChange(() => {
+  whdDimensionLinesFolder.add(blockRenderState, "showRightDimensionLines").name("Show Right Dimension Lines").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
-  blockRenderingFolder.add(blockRenderState, "showFrontDimensionLines").name("Show Front Dimension Lines").onChange(() => {
+  whdDimensionLinesFolder.add(blockRenderState, "showFrontDimensionLines").name("Show Front Dimension Lines").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
-  blockRenderingFolder.add(blockRenderState, "showExtraDimensionLines").name("Show Extra Dimension Lines").onChange(() => {
+  whdDimensionLinesFolder.add(blockRenderState, "showExtraDimensionLines").name("Show Extra Dimension Lines").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
-  blockRenderingFolder.add(blockRenderState, "showGSGroup").name("Show gaps Group").onChange(() => {
+  whdDimensionLinesFolder.add(blockRenderState, "showGSGroup").name("Show gaps Group").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
@@ -400,6 +404,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     actions: actionsFolder,
     cloneSelector: cloneSelectorFolder,
     whd: whdFolder,
+    whdDimensionLines: whdDimensionLinesFolder,
     object3DPositionRotation: positionRotationManager.folder,
     reports: reportsFolder,
     savedConfigs: configsFolder,

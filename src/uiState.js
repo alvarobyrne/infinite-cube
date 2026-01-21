@@ -24,6 +24,10 @@ export function saveUIState(folders) {
     reports: folders.reports ? !folders.reports._closed : undefined,
     savedConfigs: folders.savedConfigs ? !folders.savedConfigs._closed : undefined,
     cameraSettings: folders.cameraSettings ? !folders.cameraSettings._closed : undefined,
+    whdDimensionLines: folders.whdDimensionLines ? !folders.whdDimensionLines._closed : undefined,
+    whdDimensionLinesHidden: folders.whdDimensionLines ? folders.whdDimensionLines._hidden : undefined,
+    reportsHidden: folders.reports ? folders.reports._hidden : undefined,
+    visibilityHidden: folders.visibility ? folders.visibility._hidden : undefined,
     gui: folders.gui ? !folders.gui._closed : undefined
   };
   setItem(UISTATE_KEY, state);
@@ -131,6 +135,13 @@ export function loadUIState(folders) {
         folders.cameraSettings.close();
       }
     }
+    if (folders.whdDimensionLines && state.whdDimensionLines !== undefined) {
+      if (state.whdDimensionLines) {
+        folders.whdDimensionLines.open();
+      } else {
+        folders.whdDimensionLines.close();
+      }
+    }
 
     // Restore folder hidden states
     if (folders.dimensions && state.dimensionsHidden !== undefined) {
@@ -146,6 +157,27 @@ export function loadUIState(folders) {
         folders.whd.hide();
       } else {
         folders.whd.show();
+      }
+    }
+    if (folders.whdDimensionLines && state.whdDimensionLinesHidden !== undefined) {
+      if (state.whdDimensionLinesHidden) {
+        folders.whdDimensionLines.hide();
+      } else {
+        folders.whdDimensionLines.show();
+      }
+    }
+    if (folders.reports && state.reportsHidden !== undefined) {
+      if (state.reportsHidden) {
+        folders.reports.hide();
+      } else {
+        folders.reports.show();
+      }
+    }
+    if (folders.visibility && state.visibilityHidden !== undefined) {
+      if (state.visibilityHidden) {
+        folders.visibility.hide();
+      } else {
+        folders.visibility.show();
       }
     }
     if (folders.gui && state.gui !== undefined) {
