@@ -29,7 +29,7 @@ import { setItem, removeItem, getItem } from "./storage-manager.js";
  * @param {Object} params.VIEW_MODES - View modes constants
  * @returns {Object} Object containing gui instance and all folders
  */
-export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState, configState }) {
+export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState, configState, cameraSettings, saveCameraSettings, views }) {
   const gui = new GUI();
 
   // Reload page control (outside folders, at the top)
@@ -234,12 +234,43 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   const cameraStateProxy = {
     type: getSavedCameraType(),
   };
+
+  const updateCameraProjection = () => {
+    saveCameraSettings(cameraSettings);
+    const cameras = viewState.mode === VIEW_MODES.MULTI ? views.map(v => v.camera) : [camera];
+    const aspect = window.innerWidth / window.innerHeight;
+
+    cameras.forEach(cam => {
+      if (!cam) return;
+      cam.near = cameraSettings.near;
+      cam.far = cameraSettings.far;
+      cam.zoom = cameraSettings.zoom;
+
+      if (cam.isPerspectiveCamera) {
+        cam.fov = cameraSettings.fov;
+      } else {
+        const frustumSize = cameraSettings.frustumSize;
+        cam.left = -frustumSize * aspect / 2;
+        cam.right = frustumSize * aspect / 2;
+        cam.top = frustumSize / 2;
+        cam.bottom = -frustumSize / 2;
+      }
+      cam.updateProjectionMatrix();
+    });
+  };
+
   cameraSettingsFolder.add(cameraStateProxy, "type", Object.values(CAMERA_TYPES)).name("Camera Type").onChange(() => {
     const state = getItem("cameraState") || {};
     state.type = cameraStateProxy.type;
     setItem("cameraState", state);
     location.reload();
   });
+
+  cameraSettingsFolder.add(cameraSettings, "fov", 1, 150).name("FOV (Perspective)").onChange(updateCameraProjection);
+  cameraSettingsFolder.add(cameraSettings, "frustumSize", 1, 100).name("Frustum Size (Ortho)").onChange(updateCameraProjection);
+  cameraSettingsFolder.add(cameraSettings, "near", 0.001, 10).name("Near").onChange(updateCameraProjection);
+  cameraSettingsFolder.add(cameraSettings, "far", 10, 10000).name("Far").onChange(updateCameraProjection);
+  cameraSettingsFolder.add(cameraSettings, "zoom", 0.1, 10).name("Zoom").onChange(updateCameraProjection).listen();
 
   // Multi-Color Palette folder
   const multiColorFolder = gui.addFolder("Multi-Color Palette");

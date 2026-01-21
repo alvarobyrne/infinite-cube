@@ -1,26 +1,34 @@
 import { getItem, setItem, removeItem } from "./storage-manager.js";
 
 const CAMERA_STATE_KEY = "cameraState";
+const CAMERA_SETTINGS_KEY = "cameraSettings";
 
 export const CAMERA_TYPES = {
   PERSPECTIVE: "Perspective",
   ORTHOGRAPHIC: "Orthographic",
 };
 
-export const DEFAULT_FRUSTUM_SIZE = 20;
+export const DEFAULT_CAMERA_SETTINGS = {
+  fov: 75,
+  near: 0.1,
+  far: 1000,
+  frustumSize: 20,
+  zoom: 1,
+};
 
 /**
  * Save camera position and controls target to localStorage
  */
 export function saveCameraState(camera, controls) {
   const type = camera.isPerspectiveCamera ? CAMERA_TYPES.PERSPECTIVE : CAMERA_TYPES.ORTHOGRAPHIC;
-  const state = {
-    position: camera.position.toArray(),
-    target: controls.target.toArray(),
-    type,
-    // Orthographic specific
-    zoom: camera.isOrthographicCamera ? camera.zoom : 1,
-  };
+  const state = getItem(CAMERA_STATE_KEY) || {};
+
+  state.position = camera.position.toArray();
+  state.target = controls.target.toArray();
+  state.type = type;
+  // Zoom is often changed via controls, so we keep it here
+  state.zoom = camera.zoom;
+
   setItem(CAMERA_STATE_KEY, state);
 }
 
@@ -36,13 +44,28 @@ export function loadCameraState(camera, controls) {
       controls.target.fromArray(state.target);
       camera.lookAt(controls.target);
     }
-    if (state.zoom && camera.isOrthographicCamera) {
+    if (state.zoom !== undefined) {
       camera.zoom = state.zoom;
       camera.updateProjectionMatrix();
     }
   } catch (e) {
     // Ignore parse errors
   }
+}
+
+/**
+ * Save camera settings (params like fov, near, far)
+ */
+export function saveCameraSettings(settings) {
+  setItem(CAMERA_SETTINGS_KEY, settings);
+}
+
+/**
+ * Load camera settings
+ */
+export function loadCameraSettings() {
+  const settings = getItem(CAMERA_SETTINGS_KEY);
+  return { ...DEFAULT_CAMERA_SETTINGS, ...settings };
 }
 
 /**
@@ -58,5 +81,6 @@ export function getSavedCameraType() {
  */
 export function clearCameraState() {
   removeItem(CAMERA_STATE_KEY);
+  removeItem(CAMERA_SETTINGS_KEY);
 }
 

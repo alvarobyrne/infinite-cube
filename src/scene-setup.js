@@ -1,35 +1,36 @@
 import * as THREE from "three/webgpu";
-import { CAMERA_TYPES, getSavedCameraType, DEFAULT_FRUSTUM_SIZE } from "./cameraState.js";
+import { CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
+ * @param {Object} cameraSettings - Camera settings (fov, near, far, frustumSize)
  */
-export function setupScene() {
+export function setupScene(cameraSettings) {
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGPURenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   const cameraType = getSavedCameraType();
+  const { fov, near, far, frustumSize } = cameraSettings;
   let camera;
 
   if (cameraType === CAMERA_TYPES.ORTHOGRAPHIC) {
     const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = DEFAULT_FRUSTUM_SIZE;
     camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
       frustumSize * aspect / 2,
       frustumSize / 2,
       frustumSize / -2,
-      0.1,
-      1000
+      near,
+      far
     );
   } else {
     camera = new THREE.PerspectiveCamera(
-      75,
+      fov,
       window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+      near,
+      far
     );
   }
 
@@ -136,9 +137,15 @@ export const views2 = [
 ];
 export const views = views2
 
-export function setupViews(mainCamera) {
+/**
+ * Setup multiple views
+ * @param {THREE.Camera} mainCamera - The main camera
+ * @param {Object} cameraSettings - Camera settings
+ */
+export function setupViews(mainCamera, cameraSettings) {
   const cameraType = getSavedCameraType();
   const aspect = window.innerWidth / window.innerHeight;
+  const { fov: defaultFov, near, far, frustumSize } = cameraSettings;
 
   for (let i = 0; i < views.length; i++) {
     const view = views[i];
@@ -150,21 +157,20 @@ export function setupViews(mainCamera) {
 
     let camera;
     if (cameraType === CAMERA_TYPES.ORTHOGRAPHIC) {
-      const frustumSize = DEFAULT_FRUSTUM_SIZE;
       camera = new THREE.OrthographicCamera(
         frustumSize * aspect / -2,
         frustumSize * aspect / 2,
         frustumSize / 2,
         frustumSize / -2,
-        0.1,
-        1000
+        near,
+        far
       );
     } else {
       camera = new THREE.PerspectiveCamera(
-        view.fov,
+        view.fov || defaultFov,
         aspect,
-        0.1,
-        1000
+        near,
+        far
       );
     }
 

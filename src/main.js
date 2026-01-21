@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three/webgpu";
 import { OrbitControls } from "three-stdlib";
 import { setupScene } from "./scene-setup.js";
-import { saveCameraState, loadCameraState, DEFAULT_FRUSTUM_SIZE } from "./cameraState.js";
+import { saveCameraState, loadCameraState, loadCameraSettings, saveCameraSettings } from "./cameraState.js";
 import { saveDimensionState, loadDimensionState } from "./dimensionState.js";
 import { saveWHDState, loadWHDState } from "./width_height_depth/whdState.js";
 import { blockRenderState, loadBlockRenderState, saveBlockRenderState } from "./blockRenderState.js";
@@ -73,10 +73,13 @@ if (savedViewState) {
   Object.assign(viewState, savedViewState);
 }
 
-const { scene, renderer, camera } = setupScene();
+// Load camera settings
+const cameraSettings = loadCameraSettings();
+
+const { scene, renderer, camera } = setupScene(cameraSettings);
 
 if (viewState.mode === VIEW_MODES.MULTI) {
-  setupViews(camera);
+  setupViews(camera, cameraSettings);
 }
 
 const isAddingGaps = false;
@@ -139,9 +142,14 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // Load camera state if available
 loadCameraState(camera, controls);
+cameraSettings.zoom = camera.zoom;
 
 controls.addEventListener("change", () => {
   saveCameraState(camera, controls);
+  // Sync zoom for Orthographic camera
+  if (camera.isOrthographicCamera) {
+    cameraSettings.zoom = camera.zoom;
+  }
 });
 
 // Helper to set visibility for all clones (bound to local clones and state)
@@ -173,6 +181,9 @@ const guiResult = setupGUI({
   VIEW_MODES,
   reportState,
   configState,
+  cameraSettings,
+  saveCameraSettings,
+  views,
 });
 
 const { gui, folders, manager } = guiResult;
@@ -201,7 +212,7 @@ async function init() {
     if (camera.isPerspectiveCamera) {
       camera.aspect = aspect;
     } else {
-      const frustumSize = DEFAULT_FRUSTUM_SIZE;
+      const frustumSize = cameraSettings.frustumSize;
       camera.left = -frustumSize * aspect / 2;
       camera.right = frustumSize * aspect / 2;
       camera.top = frustumSize / 2;
@@ -239,7 +250,7 @@ async function init() {
           viewCamera.aspect = width / height;
         } else {
           const aspect = width / height;
-          const frustumSize = DEFAULT_FRUSTUM_SIZE;
+          const frustumSize = cameraSettings.frustumSize;
           viewCamera.left = -frustumSize * aspect / 2;
           viewCamera.right = frustumSize * aspect / 2;
           viewCamera.top = frustumSize / 2;
