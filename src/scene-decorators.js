@@ -693,22 +693,36 @@ export class BlockNumberDecorator extends RecreatorDecorator {
             for (let i = 1; i <= 5; i++) {
                 if (obj[`groupClone${i}`]) objectsToCheck.push(obj[`groupClone${i}`]);
             }
-
+            const LABEL_TYPE = {
+                number: "number",
+                largestDimension: 'largestDimension'
+            }
+            const labelType = LABEL_TYPE.largestDimension;
             objectsToCheck.forEach(container => {
                 if (container instanceof THREE.Object3D) {
                     container.traverse(child => {
                         if (child instanceof THREE.Mesh) {
-                            let num = null;
-                            if (child.name.startsWith('b')) {
-                                num = child.name.replace('b', '');
-                            } else if (child.name.startsWith('block')) {
-                                num = child.name.replace('block', '');
-                            }
-
-                            if (num && !isNaN(num) && !child.userData.numberMesh) {
-                                const numberMesh = createTextNumberMesh(num);
+                            if(labelType === LABEL_TYPE.largestDimension){
+                                if(!child.userData.largestDimension) return;
+                                const { size } = child.userData.largestDimension;
+                                const numberMesh = createTextNumberMesh(size);
                                 if (numberMesh) {
                                     child.userData.numberMesh = numberMesh;
+                                }
+
+                            }else if(labelType === LABEL_TYPE.number) { 
+                                let num = null;
+                                if (child.name.startsWith('b')) {
+                                    num = child.name.replace('b', '');
+                                } else if (child.name.startsWith('block')) {
+                                    num = child.name.replace('block', '');
+                                }
+
+                                if (num && !isNaN(num) && !child.userData.numberMesh) {
+                                    const numberMesh = createTextNumberMesh(num);
+                                    if (numberMesh) {
+                                        child.userData.numberMesh = numberMesh;
+                                    }
                                 }
                             }
                         }
