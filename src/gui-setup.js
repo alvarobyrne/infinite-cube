@@ -164,6 +164,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "showNumbers").name("Show Block Numbers").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
   blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();

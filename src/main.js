@@ -17,6 +17,7 @@ import { views, setupViews } from "./scene-setup.js";
 import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
 import { migrateFromLegacyKeys } from "./storage-manager.js";
 import { configState, loadAllConfigs } from "./configState.js";
+import { loadFont, updateBlockNumbers } from "./text-manager.js";
 
 
 // Migrate legacy localStorage keys to the new namespaced object
@@ -94,6 +95,7 @@ const clones = {
 
 // Position and rotation manager reference
 let positionRotationManager = null;
+let blocksWithNumbers = [];
 
 function recreateSceneWrapper() {
   const result = recreateScene({
@@ -110,6 +112,14 @@ function recreateSceneWrapper() {
   clones.groupClone3 = result.groupClone3;
   clones.groupClone4 = result.groupClone4;
   clones.groupClone5 = result.groupClone5;
+
+  // Collect blocks with numbers
+  blocksWithNumbers = [];
+  scene.traverse((child) => {
+    if (child instanceof THREE.Mesh && child.userData.numberMesh) {
+      blocksWithNumbers.push(child);
+    }
+  });
 
   // Apply initial visibility
   if (clones.groupClone1) clones.groupClone1.visible = cloneVisibilityState.groupClone1;
@@ -188,8 +198,12 @@ setupKeyboardHandlers({
 });
 
 async function init() {
+  await loadFont();
   await renderer.init();
   console.log("WebGPU initialized");
+
+  // Re-run scene creation after font is loaded to ensure numbers are created
+  recreateSceneWrapper();
 
   window.addEventListener("resize", () => {
     const width = window.innerWidth;
@@ -214,6 +228,7 @@ async function init() {
     controls.update();
 
     if (viewState.mode === VIEW_MODES.SINGLE) {
+      updateBlockNumbers(blocksWithNumbers, camera);
       renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.setScissorTest(false);
       renderer.render(scene, camera);
@@ -224,6 +239,8 @@ async function init() {
       for (let i = 0; i < views.length; i++) {
         const view = views[i];
         const viewCamera = view.camera;
+
+        updateBlockNumbers(blocksWithNumbers, viewCamera);
 
         const left = Math.floor(windowWidth * view.left);
         const bottom = Math.floor(windowHeight * view.bottom);

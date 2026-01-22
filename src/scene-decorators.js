@@ -21,6 +21,7 @@ import {
     PerBarTypeLightenColorWHDStrategy,
     GranularColorWHDStrategy
 } from "./block-strategies.js";
+import { loadFont, createTextNumberMesh, updateBlockNumbers } from "./text-manager.js";
 
 
 export const STRATEGY_TYPES = {
@@ -671,6 +672,74 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             textColor: "white",
             textSize,
         });
+
+        return result;
+    }
+}
+
+export class BlockNumberDecorator extends RecreatorDecorator {
+    recreate(params) {
+        const result = super.recreate(params);
+        if (!params.blockRenderState.showNumbers) return result;
+
+        const attachNumbers = (obj) => {
+            if (!obj || typeof obj !== 'object') return;
+
+            // List of objects to check for blocks
+            const objectsToCheck = [obj];
+            if (obj.group) objectsToCheck.push(obj.group);
+
+            // Add all clones to check list
+            for (let i = 1; i <= 5; i++) {
+                if (obj[`groupClone${i}`]) objectsToCheck.push(obj[`groupClone${i}`]);
+            }
+
+            objectsToCheck.forEach(container => {
+                if (container instanceof THREE.Object3D) {
+                    container.traverse(child => {
+                        if (child instanceof THREE.Mesh) {
+                            let num = null;
+                            if (child.name.startsWith('b')) {
+                                num = child.name.replace('b', '');
+                            } else if (child.name.startsWith('block')) {
+                                num = child.name.replace('block', '');
+                            }
+
+                            if (num && !isNaN(num) && !child.userData.numberMesh) {
+                                const numberMesh = createTextNumberMesh(num);
+                                if (numberMesh) {
+                                    child.userData.numberMesh = numberMesh;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Also check top-level properties of the result object
+                if (container === obj) {
+                    Object.keys(obj).forEach(key => {
+                        const block = obj[key];
+                        if (block instanceof THREE.Mesh) {
+                            let num = null;
+                            if (key.startsWith('b')) {
+                                num = key.replace('b', '');
+                            } else if (key.startsWith('block')) {
+                                num = key.replace('block', '');
+                            }
+
+                            if (num && !isNaN(num) && !block.userData.numberMesh) {
+                                const numberMesh = createTextNumberMesh(num);
+                                if (numberMesh) {
+                                    block.userData.numberMesh = numberMesh;
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        };
+
+        attachNumbers(result);
 
         return result;
     }
