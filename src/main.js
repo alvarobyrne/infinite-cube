@@ -24,6 +24,7 @@ import { loadFont, updateBlockNumbers } from "./text-manager.js";
 migrateFromLegacyKeys();
 
 console.log("Hello, World!", Math.random());
+console.log("Deployed from the add-text-on-faces branch")
 
 
 // Load dimension state or use defaults

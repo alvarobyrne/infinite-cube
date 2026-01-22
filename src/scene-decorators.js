@@ -715,7 +715,7 @@ export class BlockNumberDecorator extends RecreatorDecorator {
                 }
 
                 if (text !== null) {
-                    const numberMesh = createTextNumberMesh(text);
+                    const numberMesh = createTextNumberMesh(text, params.blockRenderState.numberSize);
                     if (numberMesh) {
                         mesh.userData.numberMesh = numberMesh;
                     }

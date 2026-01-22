@@ -17,14 +17,14 @@ export async function loadFont() {
 /**
  * Creates a text mesh for a number using ShapeGeometry and outlines
  * @param {string|number} text 
+ * @param {number} size
  * @returns {THREE.Group}
  */
-export function createTextNumberMesh(text) {
+export function createTextNumberMesh(text, size = 0.7) {
     if (!font) return new THREE.Group();
 
     const group = new THREE.Group();
     const message = String(text);
-    const size = 0.7;
 
     // Generate shapes from the font
     const shapes = font.generateShapes(message, size);
