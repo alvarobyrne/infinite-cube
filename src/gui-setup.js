@@ -168,6 +168,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "numberType", ["number", "largestDimension", "both"]).name("Number Type").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
   blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();

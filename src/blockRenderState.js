@@ -36,6 +36,7 @@ export const blockRenderState = {
   showVertices: true, // Whether to show vertices
   showXYPlaneSquare: false, // Whether to show the XY plane square
   showNumbers: true, // Whether to show block numbers
+  numberType: "largestDimension", // "number", "largestDimension", "both"
   multiColor1: 0xff0000,
   multiColor2: 0x00ff00,
   multiColor3: 0x0000ff,
