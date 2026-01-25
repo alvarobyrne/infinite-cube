@@ -173,6 +173,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "showBox").name("Show Box").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
   blockRenderingFolder.add(blockRenderState, "scale", 0.1, 10, 0.1).name('Scale').onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();

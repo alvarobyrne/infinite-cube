@@ -106,6 +106,8 @@ export class BaseRecreator extends SceneRecreator {
             activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         }
 
+        // const s = new WHDNodesStrategy();
+        // s.execute(params);
         const result = strategy.execute(params);
         const group = new THREE.Group();
         group.add(result.group);
@@ -715,3 +717,13 @@ export class XYPlaneSquareDecorator extends RecreatorDecorator {
     }
 }
 
+export class BoxDecorator extends RecreatorDecorator {
+    recreate(params) {
+        const result = super.recreate(params);
+        const box = new THREE.BoxHelper(result.group, 0xffff00);
+        params.scene.add(box);
+        box.geometry.computeBoundingBox();
+        const size = box.geometry.boundingBox.getSize(new THREE.Vector3());
+        return result;
+    }
+}

@@ -45,6 +45,7 @@ export const blockRenderState = {
   x: 0,
   y: 0,
   z: 0,
+  showBox: true,
 };
 
 const BLOCK_RENDER_STATE_KEY = "blockRenderState";
