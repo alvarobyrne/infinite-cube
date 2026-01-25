@@ -11,7 +11,7 @@ import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } f
 import { instructionsState } from "./instructions-manager.js";
 import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 import { setItem, removeItem, getItem } from "./storage-manager.js";
-
+import { RENDERER_TYPES } from "./viewState.js";
 
 
 /**
@@ -53,6 +53,13 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveViewState(viewState);
     location.reload(); // Reload to re-initialize cameras and render loop
   });
+
+  // Renderer Type selector
+  gui.add(viewState, "rendererType", Object.values(RENDERER_TYPES)).name("Renderer").onChange(() => {
+    saveViewState(viewState);
+    location.reload(); // Reload to re-initialize renderer
+  });
+
 
   // Dimensions folder
   const dimensionsFolder = gui.addFolder("Dimensions");

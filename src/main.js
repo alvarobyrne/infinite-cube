@@ -12,7 +12,8 @@ import { setupGUI } from "./gui-setup.js";
 import { loadAllClonesState } from "./object3DState.js";
 import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState.js";
 import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handlers.js";
-import { viewState, loadViewState, saveViewState, VIEW_MODES } from "./viewState.js";
+import { viewState, loadViewState, saveViewState, VIEW_MODES, RENDERER_TYPES } from "./viewState.js";
+
 import { views, setupViews } from "./scene-setup.js";
 import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
 import { migrateFromLegacyKeys } from "./storage-manager.js";
@@ -76,7 +77,7 @@ if (savedViewState) {
 // Load camera settings
 const cameraSettings = loadCameraSettings();
 
-const { scene, renderer, camera } = setupScene(cameraSettings);
+const { scene, renderer, camera } = setupScene(cameraSettings, viewState.rendererType);
 
 if (viewState.mode === VIEW_MODES.MULTI) {
   setupViews(camera, cameraSettings);
@@ -199,8 +200,13 @@ setupKeyboardHandlers({
 });
 
 async function init() {
-  await renderer.init();
-  console.log("WebGPU initialized");
+  if (renderer.init) {
+    await renderer.init();
+    console.log("WebGPU initialized");
+  } else {
+    console.log("Renderer initialized (SVG or WebGL fallback)");
+  }
+
 
   window.addEventListener("resize", () => {
     const width = window.innerWidth;
@@ -224,9 +230,13 @@ async function init() {
   function animate() {
     controls.update();
 
-    if (viewState.mode === VIEW_MODES.SINGLE) {
-      renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-      renderer.setScissorTest(false);
+    if (viewState.mode === VIEW_MODES.SINGLE || viewState.rendererType === RENDERER_TYPES.SVG) {
+      if (renderer.setViewport) {
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+      }
+      if (renderer.setScissorTest) {
+        renderer.setScissorTest(false);
+      }
       renderer.render(scene, camera);
     } else {
       const windowWidth = window.innerWidth;
@@ -241,10 +251,10 @@ async function init() {
         const width = Math.floor(windowWidth * view.width);
         const height = Math.floor(windowHeight * view.height);
 
-        renderer.setViewport(left, bottom, width, height);
-        renderer.setScissor(left, bottom, width, height);
-        renderer.setScissorTest(true);
-        renderer.setClearColor(view.background);
+        if (renderer.setViewport) renderer.setViewport(left, bottom, width, height);
+        if (renderer.setScissor) renderer.setScissor(left, bottom, width, height);
+        if (renderer.setScissorTest) renderer.setScissorTest(true);
+        if (renderer.setClearColor) renderer.setClearColor(view.background);
 
         if (viewCamera.isPerspectiveCamera) {
           viewCamera.aspect = width / height;
@@ -261,6 +271,7 @@ async function init() {
         renderer.render(scene, viewCamera);
       }
     }
+
 
     requestAnimationFrame(animate);
   }

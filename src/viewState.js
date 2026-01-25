@@ -7,8 +7,14 @@ export const VIEW_MODES = {
     MULTI: "multi",
 };
 
+export const RENDERER_TYPES = {
+    WEBGL: "webgl",
+    SVG: "svg",
+};
+
 export const viewState = {
     mode: VIEW_MODES.SINGLE,
+    rendererType: RENDERER_TYPES.WEBGL,
 };
 
 export function saveViewState(state) {

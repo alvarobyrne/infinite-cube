@@ -1,13 +1,21 @@
 import * as THREE from "three/webgpu";
 import { CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
+import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
  * @param {Object} cameraSettings - Camera settings (fov, near, far, frustumSize)
+ * @param {string} rendererType - One of 'webgl' or 'svg'
  */
-export function setupScene(cameraSettings) {
+export function setupScene(cameraSettings, rendererType = "webgl") {
   const scene = new THREE.Scene();
-  const renderer = new THREE.WebGPURenderer();
+  let renderer;
+  if (rendererType === "svg") {
+    renderer = new SVGRenderer();
+  } else {
+    renderer = new THREE.WebGPURenderer({ antialias: true });
+  }
+
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
