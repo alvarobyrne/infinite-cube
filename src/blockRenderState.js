@@ -18,6 +18,8 @@ export const BLOCK_STYLES = [
   "granularColorWHD",
 ];
 
+const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
+
 export const blockRenderState = {
   style: BLOCK_STYLES[0], // "singleColor"
   unifiedColor: 0xffffff, // Color used when style is "unifiedColor"
@@ -35,6 +37,9 @@ export const blockRenderState = {
   showGSGroup: true, // Whether to show the GS group
   showVertices: true, // Whether to show vertices
   showXYPlaneSquare: false, // Whether to show the XY plane square
+  showNumbers: true, // Whether to show block numbers
+  numberType: "largestDimension", // "number", "largestDimension", "both"
+  numberSize: isMobile ? 1.5 : 0.7, // Font size for block numbers
   multiColor1: 0xff0000,
   multiColor2: 0x00ff00,
   multiColor3: 0x0000ff,

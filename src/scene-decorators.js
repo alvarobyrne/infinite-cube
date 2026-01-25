@@ -21,6 +21,7 @@ import {
     PerBarTypeLightenColorWHDStrategy,
     GranularColorWHDStrategy
 } from "./block-strategies.js";
+import { loadFont, createTextNumberMesh, updateBlockNumbers } from "./text-manager.js";
 
 
 export const STRATEGY_TYPES = {
@@ -671,6 +672,73 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             textColor: "white",
             textSize,
         });
+
+        return result;
+    }
+}
+
+export class BlockNumberDecorator extends RecreatorDecorator {
+    recreate(params) {
+        const result = super.recreate(params);
+        if (!params.blockRenderState.showNumbers) return result;
+
+        const attachNumbers = (obj) => {
+            if (!obj || typeof obj !== 'object') return;
+
+            // List of objects to check for blocks
+            const objectsToCheck = [obj];
+            if (obj.group) objectsToCheck.push(obj.group);
+
+            // Add all clones to check list
+            for (let i = 1; i <= 5; i++) {
+                if (obj[`groupClone${i}`]) objectsToCheck.push(obj[`groupClone${i}`]);
+            }
+
+            const labelType = params.blockRenderState.numberType || "largestDimension";
+
+            const processMesh = (mesh, identifier) => {
+                if (!(mesh instanceof THREE.Mesh) || mesh.userData.numberMesh) return;
+
+                const numRaw = identifier.replace('block', '').replace('b', '');
+                const num = (numRaw && !isNaN(numRaw)) ? numRaw : null;
+                const size = mesh.userData.largestDimension?.size;
+                let text = null;
+
+                if (labelType === 'number') {
+                    if (num) text = num;
+                } else if (labelType === 'largestDimension') {
+                    if (size) text = size;
+                } else if (labelType === 'both') {
+                    if (num && size) text = `${num}:${size}`;
+                    else if (num) text = num;
+                    else if (size) text = size;
+                }
+
+                if (text !== null) {
+                    const numberMesh = createTextNumberMesh(text, params.blockRenderState.numberSize);
+                    if (numberMesh) {
+                        mesh.userData.numberMesh = numberMesh;
+                    }
+                }
+            };
+
+            objectsToCheck.forEach(container => {
+                if (container instanceof THREE.Object3D) {
+                    container.traverse(child => {
+                        processMesh(child, child.name);
+                    });
+                }
+
+                // Also check top-level properties of the result object
+                if (container === obj) {
+                    Object.keys(obj).forEach(key => {
+                        processMesh(obj[key], key);
+                    });
+                }
+            });
+        };
+
+        attachNumbers(result);
 
         return result;
     }

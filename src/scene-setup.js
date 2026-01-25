@@ -214,6 +214,11 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff
   const material = new THREE.MeshToonMaterial({ color, wireframe: isWireframe, transparent, opacity });
 
   const cube = new THREE.Mesh(geometry, material);
+  cube.userData.largestDimension = getLargestDimension({
+    width,
+    height,
+    depth,
+  });
   return cube;
 }
 
@@ -235,6 +240,11 @@ export function createBlock1({ width = 5, height = 1, depth = 1, opacity = 1, tr
   // cube.material.transparent = transparent;
   // cube.material.opacity = opacity;
   // cube.material.needsUpdate = true;
+  cube.userData.largestDimension = getLargestDimension({
+    width,
+    height,
+    depth,
+  });
   return cube;
 }
 
@@ -428,5 +438,21 @@ export function createMultiColorPlaneBlock({
   return group;
 }
 
-
-
+/**
+ * Create the cube geometry and materials
+ * @param {Object} params - Parameters object
+ * @param {number} params.width - Width of the cube
+ * @param {number} params.height - Height of the cube
+ * @param {number} params.depth - Depth of the cube
+ * @returns {Object} output largest dimension info
+ * @param {number} output.size - Largest dimension size
+ * @param {string} output.dimension - 'width', 'height', or 'depth'
+ */
+function getLargestDimension(params) {
+  const { width, height, depth } = params;
+  const size = Math.max(width, height, depth);
+  let dimension = 'width';
+  if (size === height) dimension = 'height';
+  if (size === depth) dimension = 'depth';
+  return { size, dimension };
+}

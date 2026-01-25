@@ -175,6 +175,18 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });
+  blockRenderingFolder.add(blockRenderState, "showNumbers").name("Show Block Numbers").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "numberType", ["number", "largestDimension", "both"]).name("Number Type").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "numberSize", 0.1, 5, 0.1).name("Number Size").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
   blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
