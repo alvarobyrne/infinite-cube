@@ -19,13 +19,16 @@ import {
     PerDimensionColorWHDStrategy,
     PerBarTypeColorWHDStrategy,
     PerBarTypeLightenColorWHDStrategy,
-    GranularColorWHDStrategy
+    GranularColorWHDStrategy,
+    WHDNodesStrategy,
+    WHDNodesBaseStrategy
 } from "./block-strategies.js";
 
 
 export const STRATEGY_TYPES = {
     USHAPE_BASE: "UshapeBaseStrategy",
-    WHD_BASE: "WHDBaseStrategy"
+    WHD_BASE: "WHDBaseStrategy",
+    NODES_BASE: "NodesBaseStrategy"
 };
 
 export let activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
@@ -85,6 +88,8 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new PerBarTypeLightenColorWHDStrategy();
         } else if (blockRenderState.style === "granularColorWHD") {
             strategy = new GranularColorWHDStrategy();
+        } else if (blockRenderState.style === "whdNodes") {
+            strategy = new WHDNodesStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
@@ -95,6 +100,8 @@ export class BaseRecreator extends SceneRecreator {
             activeStrategyType = STRATEGY_TYPES.WHD_BASE;
         } else if (strategy instanceof UshapeBaseStrategy) {
             activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
+        } else if (strategy instanceof WHDNodesBaseStrategy) {
+            activeStrategyType = STRATEGY_TYPES.NODES_BASE;
         } else {
             activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         }
@@ -128,7 +135,7 @@ export class RecreatorDecorator extends SceneRecreator {
 export class WHDDimensionLineDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (activeStrategyType !== STRATEGY_TYPES.WHD_BASE) return result;
+        if (activeStrategyType !== STRATEGY_TYPES.WHD_BASE || activeStrategyType !== STRATEGY_TYPES.NODES_BASE) return result;
         const textColor = "white";
         const { scene, whdState, blockRenderState } = params;
         const { width: w, height: h, depth: d, blockThickness: t, gap: g } = whdState;

@@ -98,7 +98,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Block Rendering folder
   const syncFolders = () => {
-    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
+    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE || activeStrategyType === STRATEGY_TYPES.NODES_BASE) {
       dimensionsFolder.hide();
       whdFolder.show();
       reportsFolder.show();
