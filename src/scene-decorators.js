@@ -21,7 +21,7 @@ import {
     PerBarTypeLightenColorWHDStrategy,
     GranularColorWHDStrategy
 } from "./block-strategies.js";
-import { loadFont, createTextNumberMesh, updateBlockNumbers } from "./text-manager.js";
+import { createTextNumberMesh } from "./text-manager.js";
 
 
 export const STRATEGY_TYPES = {

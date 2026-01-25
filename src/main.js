@@ -211,6 +211,7 @@ setupKeyboardHandlers({
 });
 
 async function init() {
+  await loadFont();
   if (renderer.init) {
     await renderer.init();
     console.log("WebGPU initialized");
@@ -245,6 +246,7 @@ async function init() {
     controls.update();
 
     if (viewState.mode === VIEW_MODES.SINGLE || viewState.rendererType === RENDERER_TYPES.SVG) {
+      updateBlockNumbers(blocksWithNumbers, camera);
       if (renderer.setViewport) {
         renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
       }
