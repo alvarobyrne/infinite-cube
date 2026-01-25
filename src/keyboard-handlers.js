@@ -98,6 +98,19 @@ export function setupKeyboardHandlers({
 
 
             toggleInstructions();
+        } else if (key === "d") {
+            // Find the showDimensionLines controller and toggle it
+            const dimLinesController = folders.blockRendering.controllers.find(
+                (c) => c._name === "Show Dimension Lines"
+            );
+
+            if (dimLinesController) {
+                dimLinesController.setValue(!blockRenderState.showDimensionLines);
+            } else {
+                blockRenderState.showDimensionLines = !blockRenderState.showDimensionLines;
+                saveBlockRenderState(blockRenderState);
+                recreateSceneWrapper();
+            }
         }
     });
 }
