@@ -105,7 +105,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Block Rendering folder
   const syncFolders = () => {
-    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
+    if (activeStrategyType === STRATEGY_TYPES.WHD_BASE || activeStrategyType === STRATEGY_TYPES.NODES_BASE) {
       dimensionsFolder.hide();
       whdFolder.show();
       reportsFolder.show();
@@ -193,6 +193,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   }).listen();
 
   blockRenderingFolder.add(blockRenderState, "showXYPlaneSquare").name("Show XY Plane Square").onChange(() => {
+    saveBlockRenderState(blockRenderState);
+    recreateScene();
+  });
+  blockRenderingFolder.add(blockRenderState, "showBox").name("Show Box").onChange(() => {
     saveBlockRenderState(blockRenderState);
     recreateScene();
   });

@@ -1,6 +1,7 @@
 import * as THREE from "three/webgpu";
 import { CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
 import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
+import { BoxLineGeometry } from "three-stdlib";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -220,6 +221,35 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff
     depth,
   });
   return cube;
+}
+/**
+ * Create the cube geometry and materials
+ * @param {Object} params - Parameters object
+ * @param {number} params.width - Width of the cube
+ * @param {number} params.height - Height of the cube
+ * @param {number} params.depth - Depth of the cube
+ * @param {number} params.color - Color of the cube
+ * @param {Object} params.nodePosition - End position of the block
+ * @param {number} params.t - thicknes of the block, i.e., dimension of the square section of the block
+ */
+export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePosition, t } = {}) {
+  // console.log("🔍 ~ createLinesBlock ~ src/scene-setup.js:214 ~ end:", end);
+  const geometry = new BoxLineGeometry(width, height, depth);
+
+  const material = new THREE.LineBasicMaterial({ color: 'white' });
+  const lines = new THREE.LineSegments(geometry, material);
+  //draw a box of size t*t*t
+  const g = new THREE.Group();
+  g.add(lines);
+  if (nodePosition) {
+    let thickness = t;
+    const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
+    const material2 = new THREE.LineBasicMaterial({ color: 'white' });
+    const lines2 = new THREE.LineSegments(geometry2, material2);
+    lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
+    g.add(lines2);
+  }
+  return g;
 }
 
 export function createBlock1({ width = 5, height = 1, depth = 1, opacity = 1, transparent = false } = {}) {

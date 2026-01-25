@@ -1,7 +1,7 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock } from "./scene-setup.js";
 import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
-import { getWHDConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
+import { getNodesWHDPositions, getWHDConfigs, getWHDNodesConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
 
 
 // --- Strategy Pattern for Block Rendering ---
@@ -568,6 +568,41 @@ export class GranularColorWHDStrategy extends WHDBaseStrategy {
                 ...configs[key],
                 ...granularConfigs[key],
             });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+/**
+ * Base strategy for the WHD nodes (Width, Height, Depth) object (18 independent blocks)
+ */
+export class WHDNodesBaseStrategy extends RenderingStrategy {
+    execute(params) {
+        throw new Error("execute must be implemented");
+    }
+}
+
+export class WHDNodesStrategy extends WHDNodesBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDNodesConfigs(whdState);
+        const positions = getNodesWHDPositions(configs, whdState);
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
+
+        const blocks = {};
+        for (const key in configs) {
+            const block = createLinesBlock({ ...configs[key], transparent, opacity });
             block.name = key;
             const pos = positions[key];
             block.position.set(pos.x, pos.y, pos.z);

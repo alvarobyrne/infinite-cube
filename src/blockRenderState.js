@@ -16,6 +16,7 @@ export const BLOCK_STYLES = [
   "perBarTypeColorWHD",
   "perBarTypeLightenColorWHD",
   "granularColorWHD",
+  "whdNodes",
 ];
 
 const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
@@ -49,6 +50,7 @@ export const blockRenderState = {
   x: 0,
   y: 0,
   z: 0,
+  showBox: true,
 };
 
 const BLOCK_RENDER_STATE_KEY = "blockRenderState";

@@ -64,6 +64,8 @@ export function saveConfig() {
 
     if (activeStrategyType === STRATEGY_TYPES.WHD_BASE) {
         config.dimensions = JSON.parse(JSON.stringify(configState.whdState));
+    } else if (activeStrategyType === STRATEGY_TYPES.NODES_BASE) {
+        config.dimensions = JSON.parse(JSON.stringify(configState.whdState));
     } else {
         config.dimensions = JSON.parse(JSON.stringify(configState.dimensionState));
     }

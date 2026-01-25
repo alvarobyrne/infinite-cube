@@ -1,4 +1,4 @@
-import { BaseRecreator, DimensionLineDecorator, VertexDecorator, WHDDimensionLineDecorator, XYPlaneSquareDecorator, BlockNumberDecorator, STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
+import { BaseRecreator, DimensionLineDecorator, VertexDecorator, WHDDimensionLineDecorator, XYPlaneSquareDecorator, BoxDecorator, BlockNumberDecorator } from "./scene-decorators.js";
 
 /**
  * Recreate the scene with blocks, dimension lines, vertices, and clones
@@ -23,6 +23,10 @@ export function recreateScene(params) {
 
   if (blockRenderState.showNumbers) {
     recreator = new BlockNumberDecorator(recreator);
+  }
+
+  if (blockRenderState.showBox) {
+    recreator = new BoxDecorator(recreator);
   }
 
   return recreator.recreate(params);
