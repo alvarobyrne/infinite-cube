@@ -106,8 +106,6 @@ export class BaseRecreator extends SceneRecreator {
             activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
         }
 
-        // const s = new WHDNodesStrategy();
-        // s.execute(params);
         const result = strategy.execute(params);
         const group = new THREE.Group();
         group.add(result.group);
