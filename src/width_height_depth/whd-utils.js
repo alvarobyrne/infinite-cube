@@ -42,24 +42,24 @@ export function getWHDConfigs(whdState) {
     const { reducedWidth, w_prime, reducedHeight, h_prime, reducedDepth, d_prime } = getWHDDimensions(whdState);
 
     return {
-        b1: { width: w, height: t, depth: t, color: 'red', isWireframe: false },
-        b2: { width: t, height: h_prime, depth: t, color: 'lime', isWireframe: false },
-        b3: { width: t, height: reducedHeight, depth: t, color: 'blue', isWireframe: false },
-        b4: { width: w_prime, height: t, depth: t, color: 'lime', isWireframe: false },
-        b5: { width: t, height: t, depth: d, color: 'red', isWireframe: false },
-        b6: { width: reducedWidth, height: t, depth: t, color: 'blue', isWireframe: false },
-        b7: { width: t, height: t, depth: d_prime, color: 'lime', isWireframe: false },
-        b8: { width: t, height: h, depth: t, color: 'red', isWireframe: false },
-        b9: { width: t, height: t, depth: reducedDepth, color: 'blue', isWireframe: false },
-        b10: { width: t, height: h_prime, depth: t, color: 'lime', isWireframe: false },
-        b11: { width: w, height: t, depth: t, color: 'red', isWireframe: false },
-        b12: { width: t, height: reducedHeight, depth: t, color: 'blue', isWireframe: false },
-        b13: { width: w_prime, height: t, depth: t, color: 'lime', isWireframe: false },
-        b14: { width: t, height: t, depth: d, color: 'red', isWireframe: false },
-        b15: { width: reducedWidth, height: t, depth: t, color: 'blue', isWireframe: false },
-        b16: { width: t, height: t, depth: d_prime, color: 'lime', isWireframe: false },
-        b17: { width: t, height: h, depth: t, color: 'red', isWireframe: false },
-        b18: { width: t, height: t, depth: reducedDepth, color: 'blue', isWireframe: false },
+        b1: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
+        b2: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
+        b3: { width: t, height: reducedHeight, depth: t, t, color: 'blue', isWireframe: false },
+        b4: { width: w_prime, height: t, depth: t, t, color: 'lime', isWireframe: false },
+        b5: { width: t, height: t, depth: d, t, color: 'red', isWireframe: false },
+        b6: { width: reducedWidth, height: t, depth: t, t, color: 'blue', isWireframe: false },
+        b7: { width: t, height: t, depth: d_prime, t, color: 'lime', isWireframe: false },
+        b8: { width: t, height: h, depth: t, t, color: 'red', isWireframe: false },
+        b9: { width: t, height: t, depth: reducedDepth, t, color: 'blue', isWireframe: false },
+        b10: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
+        b11: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
+        b12: { width: t, height: reducedHeight, depth: t, t, color: 'blue', isWireframe: false },
+        b13: { width: w_prime, height: t, depth: t, t, color: 'lime', isWireframe: false },
+        b14: { width: t, height: t, depth: d, t, color: 'red', isWireframe: false },
+        b15: { width: reducedWidth, height: t, depth: t, t, color: 'blue', isWireframe: false },
+        b16: { width: t, height: t, depth: d_prime, t, color: 'lime', isWireframe: false },
+        b17: { width: t, height: h, depth: t, t, color: 'red', isWireframe: false },
+        b18: { width: t, height: t, depth: reducedDepth, t, color: 'blue', isWireframe: false },
     };
 }
 /**
@@ -67,9 +67,8 @@ export function getWHDConfigs(whdState) {
  * @param {Object} whdState - The width, height, depth state from whdState.js.
  * @returns {Object} An object containing configurations for 18 blocks (b1 to b18).
  */
-export function getWHDConsecutiveBarsConfigs(whdState) {
+export function getWHDNodesConfigs(whdState) {
     const { blockThickness: t, width: w, height: h, depth: d } = whdState;
-    const { reducedWidth, w_prime, reducedHeight, h_prime, reducedDepth, d_prime } = getWHDDimensions(whdState);
 
     const preConfigs = getWHDConfigs(whdState);
 
@@ -86,7 +85,60 @@ export function getWHDConsecutiveBarsConfigs(whdState) {
     configs.b16.depth -= t
     configs.b17.height -= 2 * t
     configs.b2.height -= t
+    const factors = {
+        b1: -1,
+        b2: -1,
+        b3: 1,
+        b4: 1,
+        b5: 1,
+        b6: -1,
+        b7: -1,
+        b8: -1,
+        b9: 1,
+        b10: 1,
+        b11: 1,
+        b12: -1,
+        b13: -1,
+        b14: -1,
+        b15: 1,
+        b16: 1,
+        b17: 1,
+        b18: -1
+    }
+    Object.keys(configs).forEach(key => {
+        configs[key].nodePosition = getEnd(configs[key], factors[key]);
+    });
     return configs;
+}
+/**
+ * Figure out which key is the longest in the config object.
+ * @param {Object} config 
+ * @param {number} config.width 
+ * @param {number} config.height 
+ * @param {number} config.depth 
+ * @param {number} factor : orientation factor
+ */
+function getEnd(config, factor) {
+    const keys = Object.keys(config);
+    let max = 0;
+    let maxKey = '';
+    for (let i = 0; i < keys.length; i++) {
+        if (config[keys[i]] > max) {
+            max = config[keys[i]];
+            maxKey = keys[i];
+        }
+    }
+    const p = { x: 0, y: 0, z: 0 }
+    const dict = { width: 'x', height: 'y', depth: 'z' }
+    const thickness = config.t;
+    if (factor === undefined) {
+        p[dict[maxKey]] = 0
+
+    } else {
+
+        p[dict[maxKey]] = factor * (max / 2 + thickness / 2);
+    }
+    return p;
 }
 
 /**
@@ -255,7 +307,7 @@ export function getWHDPositions(configs, whdState) {
  * @param {Object} whdState - The width, height, depth state.
  * @returns {Object} An object containing x, y, z positions for 18 blocks (b1 to b18).
  */
-export function getConsecutiveBarsWHDPositions(configs, whdState) {
+export function getNodesWHDPositions(configs, whdState) {
     const { blockThickness: t, width: w, height: h, depth: d } = whdState;
 
     // Abstracted divisions for optimization
