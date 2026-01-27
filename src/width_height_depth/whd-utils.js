@@ -470,6 +470,13 @@ export function getNodesWHDPositions(configs, whdState) {
         y: pos.b17.y + HB17 + T2,
         z: pos.b17.z - DB18 - T2
     };
-
-    return pos;
+    const keys = Object.keys(configs)
+    const nodes = {};
+    keys.forEach((key, i) => {
+        const c0 = configs[key];
+        const p0 = pos[key];
+        const absoluteNodePosition = { x: p0.x + c0.nodePosition.x, y: p0.y + c0.nodePosition.y, z: p0.z + c0.nodePosition.z };
+        nodes[key] = absoluteNodePosition;
+    });
+    return { positions: pos, nodes };
 }
