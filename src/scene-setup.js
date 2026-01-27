@@ -236,7 +236,7 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
   // console.log("🔍 ~ createLinesBlock ~ src/scene-setup.js:214 ~ end:", end);
   const geometry = new BoxLineGeometry(width, height, depth);
 
-  const material = new THREE.LineBasicMaterial({ color: 'white' });
+  const material = new THREE.LineBasicMaterial({ color: 'gray' });
   const lines = new THREE.LineSegments(geometry, material);
   //draw a box of size t*t*t
   const g = new THREE.Group();
@@ -248,6 +248,63 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
     const lines2 = new THREE.LineSegments(geometry2, material2);
     lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
     g.add(lines2);
+  }
+  return g;
+}
+
+/**
+ * Create the cube geometry and materials
+ * @param {Object} params - Parameters object
+ * @param {number} params.width - Width of the cube
+ * @param {number} params.height - Height of the cube
+ * @param {number} params.depth - Depth of the cube
+ * @param {number} params.color - Color of the cube
+ * @param {Object} params.nodePosition - End position of the block
+ * @param {number} params.t - thicknes of the block, i.e., dimension of the square section of the block
+ */
+export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePosition, t, isTrapezoid, direction } = {}) {
+  const geometry = new BoxLineGeometry(width, height, depth);
+
+  const material = new THREE.LineBasicMaterial({ color: 'white' });
+  const lines = new THREE.LineSegments(geometry, material);
+  //draw a box of size t*t*t
+  const g = new THREE.Group();
+  g.add(lines);
+  if (isTrapezoid) {
+    let thickness = t * 0.1;
+    const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
+    const material2 = new THREE.LineBasicMaterial({ color: 'white' });
+    const lines2 = new THREE.LineSegments(geometry2, material2);
+    lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
+    g.add(lines2);
+    const triangleShapeRight = new THREE.Shape();
+    triangleShapeRight.moveTo(-t / 2, -t / 2);
+    triangleShapeRight.lineTo(t / 2, -t / 2);
+    triangleShapeRight.lineTo(t / 2, t / 2);
+    triangleShapeRight.closePath();
+    const triangleShapeLeft = new THREE.Shape();
+    triangleShapeLeft.moveTo(-t / 2, -t / 2);
+    triangleShapeLeft.lineTo(t / 2, -t / 2);
+    triangleShapeLeft.lineTo(-t / 2, t / 2);
+    triangleShapeLeft.closePath();
+
+    const extrudeSettings = { depth: t, bevelEnabled: false };
+    const triangleRightGeometry = new THREE.ExtrudeGeometry(triangleShapeRight, extrudeSettings);
+    const triangleLeftGeometry = new THREE.ExtrudeGeometry(triangleShapeLeft, extrudeSettings);
+    const material = new THREE.LineBasicMaterial({ color: 'red' });
+    const triangleRightLines = new THREE.LineSegments(
+      new THREE.EdgesGeometry(triangleRightGeometry),
+      material
+    );
+    triangleRightLines.position.set(nodePosition.x, nodePosition.y, nodePosition.z - t / 2);
+    g.add(triangleRightLines);
+    const triangleLeftLines = new THREE.LineSegments(
+      new THREE.EdgesGeometry(triangleLeftGeometry),
+      material2
+    );
+    triangleLeftLines.position.set(direction * (width / 2 + t / 2), nodePosition.y, nodePosition.z - t / 2);
+    g.add(triangleLeftLines);
+
   }
   return g;
 }
@@ -327,7 +384,7 @@ export function createBlock2({ width = 5, height = 1, depth = 1, color = 0xfffff
  */
 export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x00ff00, exclude = [] } = {}) {
   const group = new THREE.Group();
-  const material = new THREE.MeshToonMaterial({ color, side: THREE.DoubleSide });
+  const material = new THREE.MeshNormalMaterial({ color, side: THREE.DoubleSide });
 
   // Front and Back (Verticals)
   if (!exclude.includes("verticals")) {
@@ -465,6 +522,18 @@ export function createMultiColorPlaneBlock({
     group.add(mesh);
   }
 
+  return group;
+}
+
+export function createLine(node0, node1) {
+  const group = new THREE.Group();
+  const material = new THREE.LineBasicMaterial({ color: 'red' });
+  const points = [];
+  points.push(node0);
+  points.push(node1);
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, material);
+  group.add(line);
   return group;
 }
 

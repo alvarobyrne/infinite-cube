@@ -17,6 +17,8 @@ export const BLOCK_STYLES = [
   "perBarTypeLightenColorWHD",
   "granularColorWHD",
   "whdNodes",
+  "whdNodesLine",
+  "whdNodesHollow",
 ];
 
 const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);

@@ -21,7 +21,9 @@ import {
     PerBarTypeLightenColorWHDStrategy,
     GranularColorWHDStrategy,
     WHDNodesStrategy,
-    WHDNodesBaseStrategy
+    WHDNodesBaseStrategy,
+    WHDNodesLineStrategy,
+    WHDNodesHollowStrategy
 } from "./block-strategies.js";
 import { createTextNumberMesh } from "./text-manager.js";
 
@@ -91,6 +93,10 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new GranularColorWHDStrategy();
         } else if (blockRenderState.style === "whdNodes") {
             strategy = new WHDNodesStrategy();
+        } else if (blockRenderState.style === "whdNodesLine") {
+            strategy = new WHDNodesLineStrategy();
+        } else if (blockRenderState.style === "whdNodesHollow") {
+            strategy = new WHDNodesHollowStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");

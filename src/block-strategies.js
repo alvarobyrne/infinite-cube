@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createBlock2, createLine } from "./scene-setup.js";
 import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
 import { getNodesWHDPositions, getWHDConfigs, getWHDNodesConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
 
@@ -597,12 +597,92 @@ export class WHDNodesStrategy extends WHDNodesBaseStrategy {
 
         const configs = getWHDNodesConfigs(whdState);
         const positions = getNodesWHDPositions(configs, whdState);
-        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
-        const transparent = !blockRenderState.isOpaque;
 
         const blocks = {};
         for (const key in configs) {
-            const block = createLinesBlock({ ...configs[key], transparent, opacity });
+            const block = createLinesBlock({ ...configs[key] });
+            block.name = key;
+            const pos = positions[key];
+            block.position.set(pos.x, pos.y, pos.z);
+            group.add(block);
+            blocks[key] = block;
+        }
+
+        return { group };
+    }
+}
+//TODO:
+export class WHDNodesLineStrategy extends WHDNodesBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDNodesConfigs(whdState);
+        const positions = getNodesWHDPositions(configs, whdState);
+
+        const blocks = {};
+
+
+        const keys = Object.keys(configs)
+        const length = keys.length;
+        keys.forEach((key, i) => {
+            const nextKey = keys[(i + 1) % length];
+            const c0 = configs[key];
+            const c1 = configs[nextKey];
+            const p0 = positions[key];
+            const p1 = positions[nextKey];
+            const absoluteNodePosition0 = { x: p0.x + c0.nodePosition.x, y: p0.y + c0.nodePosition.y, z: p0.z + c0.nodePosition.z };
+            const absoluteNodePosition1 = { x: p1.x + c1.nodePosition.x, y: p1.y + c1.nodePosition.y, z: p1.z + c1.nodePosition.z };
+            const line = createLine(absoluteNodePosition0, absoluteNodePosition1);
+            line.name = key;
+            group.add(line);
+            blocks[key] = line;
+        });
+
+        return { group };
+    }
+}
+export class WHDNodesHollowStrategy extends WHDNodesBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        const group = new THREE.Group();
+        scene.add(group);
+        group.add(new THREE.AxesHelper(6));
+
+        const configs = getWHDNodesConfigs(whdState);
+        const positions = getNodesWHDPositions(configs, whdState);
+        const faceExclusion = {
+            b1: { exclude: 'laterals' },
+            b2: { exclude: 'horizontals', isTrapezoid: true, direction: 1 },
+            b3: { exclude: 'horizontals' },
+            b4: { exclude: 'laterals' },
+            b5: { exclude: 'verticals' },
+            b6: { exclude: 'laterals' },
+            b7: { exclude: 'verticals' },
+            b8: { exclude: 'horizontals' },
+            b9: { exclude: 'verticals' },
+            b10: { exclude: 'horizontals' },
+            b11: { exclude: 'laterals', isTrapezoid: true, direction: -1 },
+            b12: { exclude: 'horizontals' },
+            b13: { exclude: 'laterals' },
+            b14: { exclude: 'verticals' },
+            b15: { exclude: 'laterals' },
+            b16: { exclude: 'verticals' },
+            b17: { exclude: 'horizontals' },
+            b18: { exclude: 'horizontals' },
+        }
+
+        const blocks = {};
+        for (const key in configs) {
+            // const block = createTrapezoidBlock({ ...configs[key] });
+            const block = createTrapezoidBlock({
+                ...configs[key],
+                ...faceExclusion[key]
+            });
             block.name = key;
             const pos = positions[key];
             block.position.set(pos.x, pos.y, pos.z);
