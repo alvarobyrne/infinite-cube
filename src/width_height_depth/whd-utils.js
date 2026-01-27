@@ -42,8 +42,8 @@ export function getWHDConfigs(whdState) {
     const { reducedWidth, w_prime, reducedHeight, h_prime, reducedDepth, d_prime } = getWHDDimensions(whdState);
 
     return {
-        b1: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
-        b2: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
+        b1: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
+        b2: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
         b3: { width: t, height: reducedHeight, depth: t, t, color: 'blue', isWireframe: false },
         b4: { width: w_prime, height: t, depth: t, t, color: 'lime', isWireframe: false },
         b5: { width: t, height: t, depth: d, t, color: 'red', isWireframe: false },
@@ -73,7 +73,8 @@ export function getWHDNodesConfigs(whdState) {
     const preConfigs = getWHDConfigs(whdState);
 
     const configs = Object.assign({}, preConfigs);
-    configs.b1.width -= 2 * t;
+    configs.b1.height -= t
+    configs.b2.width -= 2 * t;
     configs.b4.width -= t
     configs.b5.depth -= 2 * t
     configs.b7.depth -= t
@@ -84,7 +85,6 @@ export function getWHDNodesConfigs(whdState) {
     configs.b14.depth -= 2 * t
     configs.b16.depth -= t
     configs.b17.height -= 2 * t
-    configs.b2.height -= t
     const factors = {
         b1: -1,
         b2: -1,
@@ -106,7 +106,9 @@ export function getWHDNodesConfigs(whdState) {
         b18: -1
     }
     Object.keys(configs).forEach(key => {
-        configs[key].nodePosition = getEnd(configs[key], factors[key]);
+        const { p, maxKey } = getEnd(configs[key], factors[key]);
+        configs[key].nodePosition = p;
+        configs[key].maxKey = maxKey;
     });
     return configs;
 }
@@ -138,7 +140,7 @@ function getEnd(config, factor) {
 
         p[dict[maxKey]] = factor * (max / 2 + thickness / 2);
     }
-    return p;
+    return { p, maxKey };
 }
 
 /**
@@ -157,7 +159,7 @@ export function getWHDPositions(configs, whdState) {
     const D2 = d * 0.5;
 
     // Block-specific half-dimensions
-    const HB2 = configs.b2.height * 0.5;
+    const HB1 = configs.b1.height * 0.5;
     const HB3 = configs.b3.height * 0.5;
     const WB4 = configs.b4.width * 0.5;
     const DB5 = configs.b5.depth * 0.5;
@@ -178,20 +180,24 @@ export function getWHDPositions(configs, whdState) {
     const pos = {};
 
     // b1 at origin
-    pos.b1 = { x: 0, y: 0, z: 0 };
+    pos.b1 = {
+        x: W2 - T2,
+        y: HB1 + T2,
+        z: 0
+    };
 
     // b2 relative to b1
     pos.b2 = {
-        x: pos.b1.x + W2 - T2,
-        y: pos.b1.y + HB2 + T2,
-        z: pos.b1.z
+        x: 0,
+        y: 0,
+        z: 0
     };
 
     // b3 relative to b1
     pos.b3 = {
-        x: pos.b1.x - (W2 - T2),
-        y: pos.b1.y + HB3 + T2,
-        z: pos.b1.z
+        x: pos.b2.x - (W2 - T2),
+        y: pos.b2.y + HB3 + T2,
+        z: pos.b2.z
     };
 
     // b4 relative to b3
@@ -317,7 +323,7 @@ export function getNodesWHDPositions(configs, whdState) {
     const D2 = d * 0.5;
 
     // Block-specific half-dimensions
-    const HB2 = configs.b2.height * 0.5;
+    const HB1 = configs.b1.height * 0.5;
     const HB3 = configs.b3.height * 0.5;
     const WB4 = configs.b4.width * 0.5;
     const DB5 = configs.b5.depth * 0.5;
@@ -340,20 +346,24 @@ export function getNodesWHDPositions(configs, whdState) {
     const pos = {};
 
     // b1 at origin
-    pos.b1 = { x: 0, y: 0, z: 0 };
+    pos.b1 = {
+        x: W2 - T2,
+        y: HB1 + T2,
+        z: 0
+    };
 
     // b2 relative to b1
     pos.b2 = {
-        x: pos.b1.x + W2 - T2,
-        y: pos.b1.y + HB2 + T2,
+        x: pos.b1.x - (W2 - T2),
+        y: pos.b1.y - (HB1 + T2),
         z: pos.b1.z
     };
 
     // b3 relative to b1
     pos.b3 = {
-        x: pos.b1.x - (W2 - T2),
-        y: pos.b1.y + HB3 + T2,
-        z: pos.b1.z
+        x: pos.b2.x - (W2 - T2),
+        y: pos.b2.y + HB3 + T2,
+        z: pos.b2.z
     };
 
     // b4 relative to b3
