@@ -147,7 +147,7 @@ function recreateSceneWrapper() {
 }
 
 // Initial scene creation
-recreateSceneWrapper();
+// recreateSceneWrapper();
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
