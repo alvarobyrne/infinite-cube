@@ -15,6 +15,7 @@ export const RENDERER_TYPES = {
 export const viewState = {
     mode: VIEW_MODES.SINGLE,
     rendererType: RENDERER_TYPES.WEBGL,
+    theme: 'dark', // Default theme
 };
 
 export function saveViewState(state) {

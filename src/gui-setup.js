@@ -63,15 +63,21 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   });
 
   // Theme selector
-  gui.add({ theme: themeManager.currentTheme }, "theme", Object.keys(themeManager.themes))
+  // 1. Sync themeManager with saved viewState
+  if (viewState.theme && viewState.theme !== themeManager.currentTheme) {
+    themeManager.setTheme(viewState.theme);
+  } else {
+    // Ensure default viewState matches current theme if not set (though viewState init handles default)
+    themeManager.setTheme(themeManager.currentTheme);
+  }
+
+  gui.add(viewState, "theme", Object.keys(themeManager.themes))
     .name("Theme")
     .onChange((value) => {
       themeManager.setTheme(value);
+      saveViewState(viewState);
       recreateScene();
     });
-
-  // Initialize theme
-  themeManager.setTheme(themeManager.currentTheme);
 
 
   // Dimensions folder
