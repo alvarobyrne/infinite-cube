@@ -1,3 +1,5 @@
+import { themeManager } from "../theme-manager.js";
+
 /**
  * Calculates the dimensions for the WHD blocks.
  * @param {Object} whdState - The width, height, depth state.
@@ -41,25 +43,29 @@ export function getWHDConfigs(whdState) {
     const { blockThickness: t, width: w, height: h, depth: d } = whdState;
     const { reducedWidth, w_prime, reducedHeight, h_prime, reducedDepth, d_prime } = getWHDDimensions(whdState);
 
+    const cWidth = themeManager.colors.dimensionLine.width;
+    const cHeight = themeManager.colors.dimensionLine.height;
+    const cDepth = themeManager.colors.dimensionLine.depth;
+
     return {
-        b1: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
-        b2: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
-        b3: { width: t, height: reducedHeight, depth: t, t, color: 'blue', isWireframe: false },
-        b4: { width: w_prime, height: t, depth: t, t, color: 'lime', isWireframe: false },
-        b5: { width: t, height: t, depth: d, t, color: 'red', isWireframe: false },
-        b6: { width: reducedWidth, height: t, depth: t, t, color: 'blue', isWireframe: false },
-        b7: { width: t, height: t, depth: d_prime, t, color: 'lime', isWireframe: false },
-        b8: { width: t, height: h, depth: t, t, color: 'red', isWireframe: false },
-        b9: { width: t, height: t, depth: reducedDepth, t, color: 'blue', isWireframe: false },
-        b10: { width: t, height: h_prime, depth: t, t, color: 'lime', isWireframe: false },
-        b11: { width: w, height: t, depth: t, t, color: 'red', isWireframe: false },
-        b12: { width: t, height: reducedHeight, depth: t, t, color: 'blue', isWireframe: false },
-        b13: { width: w_prime, height: t, depth: t, t, color: 'lime', isWireframe: false },
-        b14: { width: t, height: t, depth: d, t, color: 'red', isWireframe: false },
-        b15: { width: reducedWidth, height: t, depth: t, t, color: 'blue', isWireframe: false },
-        b16: { width: t, height: t, depth: d_prime, t, color: 'lime', isWireframe: false },
-        b17: { width: t, height: h, depth: t, t, color: 'red', isWireframe: false },
-        b18: { width: t, height: t, depth: reducedDepth, t, color: 'blue', isWireframe: false },
+        b1: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false },
+        b2: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false },
+        b3: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false },
+        b4: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false },
+        b5: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false },
+        b6: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false },
+        b7: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false },
+        b8: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false },
+        b9: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false },
+        b10: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false },
+        b11: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false },
+        b12: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false },
+        b13: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false },
+        b14: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false },
+        b15: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false },
+        b16: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false },
+        b17: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false },
+        b18: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false },
     };
 }
 /**

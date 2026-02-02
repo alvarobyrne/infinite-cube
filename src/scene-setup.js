@@ -4,6 +4,7 @@ import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
 import { BoxLineGeometry } from "three-stdlib";
 import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
 import { PathManager } from "./node_based/PathManager.js";
+import { themeManager } from "./theme-manager.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -16,15 +17,32 @@ export function setupScene(cameraSettings, rendererType = "webgl") {
   if (rendererType === "svg") {
     renderer = new SVGRenderer();
   } else {
-    renderer = new THREE.WebGPURenderer({ antialias: true });
+    renderer = new THREE.WebGPURenderer({ antialias: true, alpha: true });
   }
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  // Apply theme background
+  const applyTheme = () => {
+    const color = themeManager.colors.background;
+    scene.background = new THREE.Color(color);
+    if (renderer.setClearColor) {
+      renderer.setClearColor(color);
+    }
+    // Update views backgrounds
+    views.forEach(view => {
+      view.background.set(color);
+    });
+  };
+
+  themeManager.subscribe(applyTheme);
+  applyTheme();
+
   const cameraType = getSavedCameraType();
   const { fov, near, far, frustumSize } = cameraSettings;
   let camera;
+
 
   if (cameraType === CAMERA_TYPES.ORTHOGRAPHIC) {
     const aspect = window.innerWidth / window.innerHeight;
@@ -205,11 +223,12 @@ export function setupViews(mainCamera, cameraSettings) {
  * @param {number} params.color - Color of the cube
  * @param {boolean} params.isWireframe - Whether to use wireframe
  */
-export function createBlock({ width = 5, height = 1, depth = 1, color = 0x0000ff, isWireframe = false, opacity = 1, transparent = false } = {}) {
+export function createBlock({ width = 5, height = 1, depth = 1, color = themeManager.colors.block.tertiary, isWireframe = false, opacity = 1, transparent = false } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
   // if isWireframe, lighten the color
   if (isWireframe) {
-    color = color | 0x777777;
+    // color = color | 0x777777; // This bitwise OR with color string/hex might be risky if color is string. 
+    // Simplify wireframe color handling or rely on material
   }
 
   // Create an array of materials for each face:
@@ -238,7 +257,7 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
   // console.log("🔍 ~ createLinesBlock ~ src/scene-setup.js:214 ~ end:", end);
   const geometry = new BoxLineGeometry(width, height, depth);
 
-  const material = new THREE.LineBasicMaterial({ color: 'gray' });
+  const material = new THREE.LineBasicMaterial({ color: themeManager.colors.dimensionLine.default });
   const lines = new THREE.LineSegments(geometry, material);
   //draw a box of size t*t*t
   const g = new THREE.Group();
@@ -246,7 +265,7 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
   if (nodePosition) {
     let thickness = t;
     const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
-    const material2 = new THREE.LineBasicMaterial({ color: 'white' });
+    const material2 = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
     const lines2 = new THREE.LineSegments(geometry2, material2);
     lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
     g.add(lines2);
@@ -267,7 +286,7 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
 export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePosition, t, isTrapezoid, direction } = {}) {
   const geometry = new BoxLineGeometry(width, height, depth);
 
-  const material = new THREE.LineBasicMaterial({ color: 'white' });
+  const material = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
   const lines = new THREE.LineSegments(geometry, material);
   //draw a box of size t*t*t
   const g = new THREE.Group();
@@ -275,7 +294,7 @@ export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePos
   if (isTrapezoid) {
     let thickness = t * 0.1;
     const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
-    const material2 = new THREE.LineBasicMaterial({ color: 'white' });
+    const material2 = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
     const lines2 = new THREE.LineSegments(geometry2, material2);
     lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
     g.add(lines2);
@@ -293,7 +312,7 @@ export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePos
     const extrudeSettings = { depth: t, bevelEnabled: false };
     const triangleRightGeometry = new THREE.ExtrudeGeometry(triangleShapeRight, extrudeSettings);
     const triangleLeftGeometry = new THREE.ExtrudeGeometry(triangleShapeLeft, extrudeSettings);
-    const material = new THREE.LineBasicMaterial({ color: 'red' });
+    const material = new THREE.LineBasicMaterial({ color: themeManager.colors.block.secondary });
     const triangleRightLines = new THREE.LineSegments(
       new THREE.EdgesGeometry(triangleRightGeometry),
       material
@@ -317,12 +336,12 @@ export function createBlock1({ width = 5, height = 1, depth = 1, opacity = 1, tr
   // Create an array of materials for each face:
   // [right, left, top, bottom, front, back]
   const materials = [
-    new THREE.MeshToonMaterial({ color: 0x0000ff, transparent, opacity }), // +X (right)  -> blue (zx plane)
-    new THREE.MeshToonMaterial({ color: 0x0000ff, transparent, opacity }), // -X (left)   -> blue (zx plane)
-    new THREE.MeshToonMaterial({ color: 0xff0000, transparent, opacity }), // +Y (top)    -> red  (xy plane)
-    new THREE.MeshToonMaterial({ color: 0xff0000, transparent, opacity }), // -Y (bottom) -> red  (xy plane)
-    new THREE.MeshToonMaterial({ color: 0x00ff00, transparent, opacity }), // +Z (front)  -> green (yz plane)
-    new THREE.MeshToonMaterial({ color: 0x00ff00, transparent, opacity }), // -Z (back)   -> green (yz plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.depth, transparent, opacity }), // +X (right)  -> blue (zx plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.depth, transparent, opacity }), // -X (left)   -> blue (zx plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.width, transparent, opacity }), // +Y (top)    -> red  (xy plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.width, transparent, opacity }), // -Y (bottom) -> red  (xy plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.height, transparent, opacity }), // +Z (front)  -> green (yz plane)
+    new THREE.MeshToonMaterial({ color: themeManager.colors.dimensionLine.height, transparent, opacity }), // -Z (back)   -> green (yz plane)
   ];
 
   const cube = new THREE.Mesh(geometry, materials);
@@ -344,12 +363,12 @@ export function createMultiColorBoxBlock({
   width = 5,
   height = 1,
   depth = 1,
-  colorRight = 0x0000ff,
-  colorLeft = 0x0000ff,
-  colorTop = 0xff0000,
-  colorBottom = 0xff0000,
-  colorFront = 0x00ff00,
-  colorBack = 0x00ff00
+  colorRight = themeManager.colors.dimensionLine.depth,
+  colorLeft = themeManager.colors.dimensionLine.depth,
+  colorTop = themeManager.colors.dimensionLine.width,
+  colorBottom = themeManager.colors.dimensionLine.width,
+  colorFront = themeManager.colors.dimensionLine.height,
+  colorBack = themeManager.colors.dimensionLine.height
 } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
   const materials = [
@@ -372,7 +391,7 @@ export function createMultiColorBoxBlock({
  * @param {number} params.depth - Depth of the cube
  * @param {number} params.color - Color for the block
  */
-export function createBlock2({ width = 5, height = 1, depth = 1, color = 0xffffff } = {}) {
+export function createBlock2({ width = 5, height = 1, depth = 1, color = themeManager.colors.block.primary } = {}) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
   const material = new THREE.MeshToonMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
@@ -384,7 +403,7 @@ export function createBlock2({ width = 5, height = 1, depth = 1, color = 0xfffff
  * @param {Object} params - Parameters object
  * @param {string[]} params.exclude - Pairs of faces to exclude: 'verticals', 'horizontals', 'laterals'
  */
-export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x00ff00, exclude = [] } = {}) {
+export function createHollowBlock({ width = 5, height = 1, depth = 1, color = themeManager.colors.block.secondary, exclude = [] } = {}) {
   const group = new THREE.Group();
   const material = new THREE.MeshNormalMaterial({ color, side: THREE.DoubleSide });
 
@@ -392,10 +411,10 @@ export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x
   if (!exclude.includes("verticals")) {
     const verticalPlane = new THREE.PlaneGeometry(width, height);
     const front = new THREE.Mesh(verticalPlane, material);
+    const back = new THREE.Mesh(verticalPlane, material);
     front.position.z = depth / 2;
     group.add(front);
 
-    const back = new THREE.Mesh(verticalPlane, material);
     back.position.z = -depth / 2;
     back.rotation.y = Math.PI;
     group.add(back);
@@ -405,11 +424,11 @@ export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x
   if (!exclude.includes("horizontals")) {
     const horizontalPlane = new THREE.PlaneGeometry(width, depth);
     const top = new THREE.Mesh(horizontalPlane, material);
+    const bottom = new THREE.Mesh(horizontalPlane, material);
     top.position.y = height / 2;
     top.rotation.x = -Math.PI / 2;
     group.add(top);
 
-    const bottom = new THREE.Mesh(horizontalPlane, material);
     bottom.position.y = -height / 2;
     bottom.rotation.x = Math.PI / 2;
     group.add(bottom);
@@ -419,11 +438,11 @@ export function createHollowBlock({ width = 5, height = 1, depth = 1, color = 0x
   if (!exclude.includes("laterals")) {
     const lateralPlane = new THREE.PlaneGeometry(depth, height);
     const left = new THREE.Mesh(lateralPlane, material);
+    const right = new THREE.Mesh(lateralPlane, material);
     left.position.x = -width / 2;
     left.rotation.y = -Math.PI / 2;
     group.add(left);
 
-    const right = new THREE.Mesh(lateralPlane, material);
     right.position.x = width / 2;
     right.rotation.y = Math.PI / 2;
     group.add(right);
@@ -455,12 +474,12 @@ export function createMultiColorPlaneBlock({
   width = 5,
   height = 1,
   depth = 1,
-  colorFront = 0x00ff00,
-  colorBack = 0x00ff00,
-  colorTop = 0xff0000,
-  colorBottom = 0xff0000,
-  colorLeft = 0x0000ff,
-  colorRight = 0x0000ff,
+  colorFront = themeManager.colors.dimensionLine.height,
+  colorBack = themeManager.colors.dimensionLine.height,
+  colorTop = themeManager.colors.dimensionLine.width,
+  colorBottom = themeManager.colors.dimensionLine.width,
+  colorLeft = themeManager.colors.dimensionLine.depth,
+  colorRight = themeManager.colors.dimensionLine.depth,
   exclude = []
 } = {}) {
   const group = new THREE.Group();
@@ -529,7 +548,7 @@ export function createMultiColorPlaneBlock({
 
 export function createLine(node0, node1) {
   const group = new THREE.Group();
-  const material = new THREE.LineBasicMaterial({ color: 'red' });
+  const material = new THREE.LineBasicMaterial({ color: themeManager.colors.block.secondary });
   const points = [];
   points.push(node0);
   points.push(node1);
@@ -543,15 +562,12 @@ export function create45AngleCornerBar(whdState, nodes) {
   const { blockThickness } = whdState;
   const group = new THREE.Group();
   const colors = [
-    'red',
-    'green',
-    'blue',
-    'yellow',
-    'magenta',
-    'cyan',
-    'purple',
-    'orange',
-    'pink'
+    themeManager.colors.block.primary,
+    themeManager.colors.block.secondary,
+    themeManager.colors.block.tertiary,
+    themeManager.colors.dimensionLine.width,
+    themeManager.colors.dimensionLine.height,
+    themeManager.colors.dimensionLine.depth,
   ];
   const partialNodes = nodes.slice(0, 3)
   const bars = PathManager.generateBars(nodes, blockThickness, blockThickness);

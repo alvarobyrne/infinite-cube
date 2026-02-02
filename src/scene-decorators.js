@@ -27,6 +27,7 @@ import {
     WHD45DegreeEndsBarStrategy
 } from "./block-strategies.js";
 import { createTextNumberMesh } from "./text-manager.js";
+import { themeManager } from "./theme-manager.js";
 
 
 export const STRATEGY_TYPES = {
@@ -147,8 +148,10 @@ export class RecreatorDecorator extends SceneRecreator {
 export class WHDDimensionLineDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (activeStrategyType !== STRATEGY_TYPES.WHD_BASE || activeStrategyType !== STRATEGY_TYPES.NODES_BASE) return result;
-        const textColor = "white";
+        if (activeStrategyType !== STRATEGY_TYPES.WHD_BASE && activeStrategyType !== STRATEGY_TYPES.NODES_BASE) return result;
+        const textColor = themeManager.colors.dimensionLine.text;
+        const palette = themeManager.colors.palette;
+
         const { scene, whdState, blockRenderState } = params;
         const { width: w, height: h, depth: d, blockThickness: t, gap: g } = whdState;
         const { showDimensionLines } = blockRenderState;
@@ -195,7 +198,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left2, top, back),
             end: new THREE.Vector3(realRightFar, top, back),
             label: 'w',
-            color: 'yellow',
+            color: palette.yellow,
             textColor,
             textSize,
             tickSize: 2,
@@ -207,7 +210,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left2, top, back2 + gap),
             end: new THREE.Vector3(left2 - t, top, back2 + gap),
             label: 't',
-            color: 'red',
+            color: palette.red,
             textColor,
             textSize,
             tickSize: 2,
@@ -219,7 +222,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(realRightFar + t, top, back2 + gap),
             end: new THREE.Vector3(realRightFar, top, back2 + gap),
             label: 't',
-            color: 'green',
+            color: palette.green,
             textColor,
             textSize,
             tickSize: 2,
@@ -231,7 +234,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(realRightFar + t, top, back2 + gap),
             end: new THREE.Vector3(left2 - t, top, back2 + gap),
             label: 'w-2*t',
-            color: 'blue',
+            color: palette.blue,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -243,7 +246,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left2 + gap, top, back2),
             end: new THREE.Vector3(left2 + gap, top, front),
             label: 'd',
-            color: 'white',
+            color: palette.white,
             textColor,
             textSize,
             tickSize: 2,
@@ -255,7 +258,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(-w / 2, top, -z2),
             end: new THREE.Vector3(w / 2, top, -z2),
             label: 'w',
-            color: 'magenta',
+            color: palette.magenta,
             textColor,
             textSize,
             tickSize: 2,
@@ -267,7 +270,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(w / 2, top + 2 * gap, -z2),
             end: new THREE.Vector3(w / 2 - g, top + 2 * gap, -z2),
             label: 'g',
-            color: 'blue',
+            color: palette.blue,
             textColor,
             textSize,
             tickSize: 2,
@@ -279,7 +282,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(w / 2 - g, top + 2 * gap, -z2),
             end: new THREE.Vector3(w / 2 - g - t, top + 2 * gap, -z2),
             label: 't',
-            color: 'red',
+            color: palette.red,
             textColor,
             textSize,
             tickSize: 2,
@@ -291,7 +294,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(w / 2 - g - t, top + 2 * gap, -z2),
             end: new THREE.Vector3(-w / 2, top + 2 * gap, -z2),
             label: 'w-g-t',
-            color: 'blue',
+            color: palette.blue,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -303,7 +306,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(-w / 2, bottom2, -z2),
             end: new THREE.Vector3(w / 2, bottom2, -z2),
             label: 'w',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize,
             tickSize: 2,
@@ -315,7 +318,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, top, -z2),
             end: new THREE.Vector3(right, -t2, -z2),
             label: 'h',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize,
             tickSize: 2,
@@ -327,7 +330,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left + 3 * gap, top, -z2),
             end: new THREE.Vector3(left + 3 * gap, -t2, -z2),
             label: 'h',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize,
             tickSize: 2,
@@ -339,7 +342,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right - t2, -t * 1.5 + h, -z2),
             end: new THREE.Vector3(right - t2, t2, -z2),
             label: 'h - 2t',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -351,7 +354,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right - t2, top, -z2),
             end: new THREE.Vector3(right - t2, -t * 1.5 + h, -z2),
             label: 't',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -363,7 +366,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right - t2, t2, -z2),
             end: new THREE.Vector3(right - t2, -t2, -z2),
             label: 't',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -375,7 +378,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left + gap, top, -z2),
             end: new THREE.Vector3(left + gap, -g + top, -z2),
             label: 'g',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -387,7 +390,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left + gap, -g + top, -z2),
             end: new THREE.Vector3(left + gap, t2, -z2),
             label: 'h-t-g',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -399,7 +402,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left + gap, t2, -z2),
             end: new THREE.Vector3(left + gap, -t2, -z2),
             label: 't',
-            color: 'cyan',
+            color: palette.cyan,
             textColor,
             textSize: 25,
             tickSize: 2,
@@ -411,7 +414,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, -t2, -t2),
             end: new THREE.Vector3(right, -t2, t - t2),
             label: 't',
-            color: 'white',
+            color: palette.white,
             textColor,
             textSize,
             tickSize: 1,
@@ -423,7 +426,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left, -t2, -t2),
             end: new THREE.Vector3(left, -t2, t - t2),
             label: 't',
-            color: 'white',
+            color: palette.white,
             textColor,
             textSize,
             tickSize: 1,
@@ -435,7 +438,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar, -t2, -t2),
             end: new THREE.Vector3(rightFar, -t2, g - t2),
             label: 'g',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -447,7 +450,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar, bottom2, front2),
             end: new THREE.Vector3(rightFar, bottom2, front2 + d),
             label: 'd',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -459,7 +462,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar, top, front2),
             end: new THREE.Vector3(rightFar, top, front2 + d),
             label: 'd',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -471,7 +474,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, bottom2, front2),
             end: new THREE.Vector3(rightFar - 3 * gap, bottom2, front2 + t),
             label: 't',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -486,7 +489,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(x, y, front2),
             end: new THREE.Vector3(x, y, front2 + t),
             label: 't',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -498,7 +501,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(x, y, back - g),
             end: new THREE.Vector3(x, y, back),
             label: 'g',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -510,7 +513,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(x, y, back - g),
             end: new THREE.Vector3(x, y, front2 + t),
             label: 'd-g-t',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize: 25,
             tickSize: 1,
@@ -522,7 +525,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             end: new THREE.Vector3(rightFar - 6 * gap, bottom2, front2 + t + d - 2 * t),
             start: new THREE.Vector3(rightFar - 6 * gap, bottom2, front2 + t),
             label: 'd-2*t',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize: 25,
             tickSize: 1,
@@ -534,7 +537,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, bottom2, back),
             end: new THREE.Vector3(rightFar - 3 * gap, bottom2, back - t),
             label: 't',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -546,7 +549,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, bottom2, front2),
             end: new THREE.Vector3(rightFar - 3 * gap, bottom2 + h, front2),
             label: 'h',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -558,7 +561,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, bottom2, back),
             end: new THREE.Vector3(rightFar - 3 * gap, top, back),
             label: 'h',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -570,7 +573,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, top, back + 3 * gap),
             end: new THREE.Vector3(rightFar - 3 * gap, top - g, back + 3 * gap),
             label: 'g',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -582,7 +585,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, bottom2, back + 3 * gap),
             end: new THREE.Vector3(rightFar - 3 * gap, bottom2 + h - g - t, back + 3 * gap),
             label: 'h-g-t',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize: 25,
             tickSize: 1,
@@ -594,7 +597,7 @@ export class WHDDimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(rightFar - 3 * gap, top - g, back + 3 * gap),
             end: new THREE.Vector3(rightFar - 3 * gap, bottom2 + h - g - t, back + 3 * gap),
             label: 't',
-            color: 'orange',
+            color: palette.orange,
             textColor,
             textSize,
             tickSize: 1,
@@ -620,14 +623,16 @@ export class DimensionLineDecorator extends RecreatorDecorator {
         const textSize = 20;
         const right = d1 / 2 + dimensionLineOffset;
         const left = -d1 / 2 - dimensionLineOffset;
+        const textCol = themeManager.colors.dimensionLine.text;
+        const palette = themeManager.colors.palette;
 
         addDimensionLine({
             object3d: scene,
             start: new THREE.Vector3(left, y / 2, -z2),
             end: new THREE.Vector3(d1 / 2, y / 2, -z2),
             label: d1.toString(),
-            color: 'red',
-            textColor: "white",
+            color: themeManager.colors.dimensionLine.width,
+            textColor: textCol,
             textSize,
         });
 
@@ -636,8 +641,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(-d1 / 2, -y / 2, -z2),
             end: new THREE.Vector3(d1 / 2, -y / 2, -z2),
             label: 'd1',
-            color: 'white',
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -646,8 +651,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, -y / 2, z / 2),
             end: new THREE.Vector3(right, y / 2, z / 2),
             label: y.toString(),
-            color: 'white',
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -656,8 +661,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, y / 2, z / 2),
             end: new THREE.Vector3(right, y / 2, -z / 2),
             label: z.toString(),
-            color: 'white',
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -666,8 +671,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, -y / 2, -z / 2),
             end: new THREE.Vector3(right, y / 2, -z / 2),
             label: "t",
-            color: 0xffffff,
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -676,8 +681,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(left, -y / 2 + t, -z / 2),
             end: new THREE.Vector3(left, -y / 2 + t + d3, -z / 2),
             label: "d2",
-            color: 'white',
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -686,8 +691,8 @@ export class DimensionLineDecorator extends RecreatorDecorator {
             start: new THREE.Vector3(right, -y / 2 + t, -z / 2),
             end: new THREE.Vector3(right, -y / 2 + t + d2, -z / 2),
             label: "d3",
-            color: 0xffffff,
-            textColor: "white",
+            color: palette.white,
+            textColor: textCol,
             textSize,
         });
 
@@ -733,6 +738,9 @@ export class BlockNumberDecorator extends RecreatorDecorator {
                 }
 
                 if (text !== null) {
+                    // Update: Pass color to createTextNumberMesh if supported (it seems currently it takes text and size)
+                    // src/text-manager.js handles creation. It probably uses a default color (black?).
+                    // Checking text-manager.js might be needed to support theme color for text numbers.
                     const numberMesh = createTextNumberMesh(text, params.blockRenderState.numberSize);
                     if (numberMesh) {
                         mesh.userData.numberMesh = numberMesh;
@@ -786,7 +794,7 @@ export class XYPlaneSquareDecorator extends RecreatorDecorator {
         points.push(new THREE.Vector3(-size, -size, 0));
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
+        const material = new THREE.LineBasicMaterial({ color: themeManager.colors.palette.magenta });
         const line = new THREE.Line(geometry, material);
 
         scene.add(line);
@@ -797,10 +805,10 @@ export class XYPlaneSquareDecorator extends RecreatorDecorator {
 export class BoxDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        const box = new THREE.BoxHelper(result.group, 0xffff00);
-        params.scene.add(box);
-        box.geometry.computeBoundingBox();
-        const size = box.geometry.boundingBox.getSize(new THREE.Vector3());
+        if (params.blockRenderState.showBoxHelper) {
+            const box = new THREE.BoxHelper(result.group, themeManager.colors.palette.yellow);
+            params.scene.add(box);
+        }
         return result;
     }
 }

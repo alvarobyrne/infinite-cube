@@ -12,6 +12,7 @@ import { instructionsState } from "./instructions-manager.js";
 import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 import { setItem, removeItem, getItem } from "./storage-manager.js";
 import { RENDERER_TYPES } from "./viewState.js";
+import { themeManager } from "./theme-manager.js";
 
 
 /**
@@ -57,8 +58,20 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Renderer Type selector
   gui.add(viewState, "rendererType", Object.values(RENDERER_TYPES)).name("Renderer").onChange(() => {
     saveViewState(viewState);
+    saveViewState(viewState);
     location.reload(); // Reload to re-initialize renderer
   });
+
+  // Theme selector
+  gui.add({ theme: themeManager.currentTheme }, "theme", Object.keys(themeManager.themes))
+    .name("Theme")
+    .onChange((value) => {
+      themeManager.setTheme(value);
+      recreateScene();
+    });
+
+  // Initialize theme
+  themeManager.setTheme(themeManager.currentTheme);
 
 
   // Dimensions folder

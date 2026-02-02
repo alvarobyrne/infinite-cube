@@ -1,5 +1,6 @@
 import * as THREE from "three/webgpu";
 import { FontLoader, TextGeometry } from "three-stdlib";
+import { themeManager } from "./theme-manager.js";
 
 let font = null;
 const fontLoader = new FontLoader();
@@ -40,7 +41,7 @@ export function createTextNumberMesh(text, size = 0.7) {
     geometry.translate(xMid, yMid, z);
 
     const matLite = new THREE.MeshToonMaterial({
-        color: 0,
+        color: themeManager.colors.text,
         transparent: true,
         opacity: 0.8,
         side: THREE.DoubleSide
@@ -63,7 +64,7 @@ export function createTextNumberMesh(text, size = 0.7) {
     }
     const allShapes = [...shapes, ...holeShapes];
 
-    const matDark = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const matDark = new THREE.LineBasicMaterial({ color: themeManager.colors.dimensionLine.text });
 
     for (let i = 0; i < allShapes.length; i++) {
         const shape = allShapes[i];

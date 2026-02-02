@@ -2,6 +2,7 @@ import * as THREE from "three/webgpu";
 import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createBlock2, createLine, create45AngleCornerBar } from "./scene-setup.js";
 import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
 import { getNodesWHDPositions, getWHDConfigs, getWHDNodesConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
+import { themeManager } from "./theme-manager.js";
 
 
 // --- Strategy Pattern for Block Rendering ---
@@ -30,9 +31,9 @@ export class UshapeBaseStrategy extends RenderingStrategy {
         group.add(new THREE.AxesHelper(6));
 
         const configs = {
-            b1: { width: dimensionState.dimension1, height: blockThickness, depth: blockThickness, color: 0xff0000 },
-            b2: { width: blockThickness, height: dimensionState.dimension2, depth: blockThickness, color: 0x00ff00 },
-            b3: { width: blockThickness, height: dimensionState.dimension3, depth: blockThickness, color: 0x0000ff },
+            b1: { width: dimensionState.dimension1, height: blockThickness, depth: blockThickness, color: themeManager.colors.dimensionLine.width },
+            b2: { width: blockThickness, height: dimensionState.dimension2, depth: blockThickness, color: themeManager.colors.dimensionLine.height },
+            b3: { width: blockThickness, height: dimensionState.dimension3, depth: blockThickness, color: themeManager.colors.dimensionLine.depth },
         };
 
         const { block1, block2, block3 } = this.createBlocks(configs, blockRenderState);
@@ -372,9 +373,9 @@ export class PerDimensionColorWHDStrategy extends WHDBaseStrategy {
         const positions = getWHDPositions(configs, whdState);
         const opacity = blockRenderState.isOpaque ? 1 : 0.4;
         const transparent = !blockRenderState.isOpaque;
-        const widthColor = 'red';
-        const heightColor = 'green';
-        const depthColor = 'blue';
+        const widthColor = themeManager.colors.dimensionLine.width;
+        const heightColor = themeManager.colors.dimensionLine.height;
+        const depthColor = themeManager.colors.dimensionLine.depth;
 
         //object with keys b1 to b18 in which the colors are distributed 
         const colors = {
@@ -425,7 +426,14 @@ export class PerBarTypeLightenColorWHDStrategy extends WHDBaseStrategy {
         const positions = getWHDPositions(configs, whdState);
         const opacity = blockRenderState.isOpaque ? 1 : 0.4;
         const transparent = !blockRenderState.isOpaque;
-        const widthColor = 0xff0000;
+        const widthColor = 0xff0000; // Keep explicit or map? Let's map to theme colors but need integer for bitwise operations
+        // Bitwise operations on non-integer colors will fail.
+        // themeManager.colors returns strings or hex references.
+        // If themeManager returns strings (e.g. 'orange'), bitwise won't work.
+        // I need to ensure themeManager has hex values for these if I want to use bitwise.
+        // In theme-manager.js I defined dimensionLine colors as strings ('orange', 'green').
+        // I should probably skip bitwise for now or use THREE.Color to darken.
+        // For now I'll leave this strategy as is, as it relies on specific bitwise darkening which expects integers.
         const heightColor = 0x00ff00;
         const depthColor = 0x0000ff;
 
