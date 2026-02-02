@@ -2,6 +2,8 @@ import * as THREE from "three/webgpu";
 import { CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
 import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
 import { BoxLineGeometry } from "three-stdlib";
+import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
+import { PathManager } from "./node_based/PathManager.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -535,6 +537,58 @@ export function createLine(node0, node1) {
   const line = new THREE.Line(geometry, material);
   group.add(line);
   return group;
+}
+
+export function create45AngleCornerBar(whdState, nodes) {
+  const { blockThickness } = whdState;
+  const group = new THREE.Group();
+  const colors = [
+    'red',
+    'green',
+    'blue',
+    'yellow',
+    'magenta',
+    'cyan',
+    'purple',
+    'orange',
+    'pink'
+  ];
+  const partialNodes = nodes.slice(0, 3)
+  const bars = PathManager.generateBars(nodes, blockThickness, blockThickness);
+  // return group
+  bars.forEach((bar, index) => {
+    // Generate Geometry
+    const geometry = BarGeometryGenerator.generate(bar);
+    geometry.computeVertexNormals(); // For smooth shading if needed, but we use flat
+
+    const material = new THREE.MeshToonMaterial({
+      color: colors[index % colors.length],
+      // roughness: 0.2,
+      // metalness: 0.1,
+      // flatShading: true // Better for sharp edges
+    });
+    // Create Mesh
+    const mesh = new THREE.Mesh(geometry, material);
+
+    // Apply Transform
+    // The Bar object stores the center position and rotation
+    if (bar.position) mesh.position.copy(bar.position);
+    if (bar.quaternion) mesh.setRotationFromQuaternion(bar.quaternion);
+
+    group.add(mesh);
+
+    // Wireframe for debugging
+    const wireframe = new THREE.WireframeGeometry(geometry);
+    const edges = new THREE.EdgesGeometry(geometry);
+    const line = new THREE.LineSegments(edges);
+    // line.material.depthTest = false;
+    // line.material.opacity = 0.25;
+    // line.material.transparent = true;
+    line.position.copy(mesh.position);
+    line.quaternion.copy(mesh.quaternion);
+    group.add(line);
+  })
+  return group
 }
 
 /**
