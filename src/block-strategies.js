@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createBlock2, createLine } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createBlock2, createLine, create45AngleCornerBar } from "./scene-setup.js";
 import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
 import { getNodesWHDPositions, getWHDConfigs, getWHDNodesConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
 
@@ -701,16 +701,16 @@ export class WHD45DegreeEndsBarStrategy extends WHDNodesBaseStrategy {
         const configs = getWHDNodesConfigs(whdState);
         const { positions, nodes } = getNodesWHDPositions(configs, whdState);
 
-        const blocks = {};
-        for (const key in configs) {
-            break
-            const block = create45AngleCornerBar({ ...configs[key] });
-            block.name = key;
-            const pos = positions[key];
-            block.position.set(pos.x, pos.y, pos.z);
-            group.add(block);
-            blocks[key] = block;
+        // turn the nodes object into an array
+        const nodesArray = []
+        for (const key in nodes) {
+            const obj = nodes[key];
+            nodesArray.push(new THREE.Vector3(obj.x, obj.y, obj.z));
         }
+        nodesArray.push(nodesArray[0])
+
+        const block = create45AngleCornerBar(whdState, nodesArray);
+        group.add(block);
 
         return { group };
     }
