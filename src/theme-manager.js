@@ -102,28 +102,32 @@ export class ThemeManager {
         this.currentTheme = themeName;
         const theme = this.themes[themeName];
 
-        // Apply CSS variables to .lil-gui elements (or body if needed globally)
-        // Since .lil-gui is usually appended to body or has a specific root, we can try setting on body 
-        // which will cascade if variables are used.
-        // The user request specified: .lil-gui { ... }
-        // We can inject a style tag or set variables on the root.
-
-        const root = document.querySelector('.lil-gui') || document.body;
-        if (root) {
-            Object.entries(theme.css).forEach(([key, value]) => {
-                root.style.setProperty(key, value);
-            });
-        }
-
-        // Also good to set on body just in case
-        Object.entries(theme.css).forEach(([key, value]) => {
-            document.body.style.setProperty(key, value);
-        });
-
+        this._injectStyles(theme.css);
 
         // Notify listeners
         this.notifyListeners();
     }
+
+    _injectStyles(css) {
+        if (!this.styleElement) {
+            this.styleElement = document.createElement('style');
+            document.head.appendChild(this.styleElement);
+        }
+
+        let rules = '';
+        for (const [key, value] of Object.entries(css)) {
+            rules += `\t${key}: ${value};\n`;
+        }
+
+        // Apply to .lil-gui for specific overrides
+        let styleString = `.lil-gui {\n${rules}}\n`;
+
+        // Apply to body for global app theming
+        styleString += `body {\n${rules}}\n`;
+
+        this.styleElement.innerHTML = styleString;
+    }
+
 
     subscribe(callback) {
         this.listeners.push(callback);
