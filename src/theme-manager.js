@@ -1,6 +1,7 @@
 export class ThemeManager {
     constructor() {
         this.currentTheme = 'dark'; // Default to dark
+        this.isTransparent = false;
         this.listeners = [];
 
         this.themes = {
@@ -100,12 +101,34 @@ export class ThemeManager {
         }
 
         this.currentTheme = themeName;
-        const theme = this.themes[themeName];
-
-        this._injectStyles(theme.css);
+        this.applyStyles();
 
         // Notify listeners
         this.notifyListeners();
+    }
+
+    setTransparency(isTransparent) {
+        this.isTransparent = isTransparent;
+        this.applyStyles();
+    }
+
+    applyStyles() {
+        const theme = this.themes[this.currentTheme];
+        const css = { ...theme.css };
+
+        if (this.isTransparent && css['--background-color']) {
+            // Append 00 to the background color to make it transparent
+            // Assuming the color is a hex string
+            let color = css['--background-color'];
+            if (color.length === 7) { // #RRGGBB
+                color += '00';
+            } else if (color.length === 9) { // #RRGGBBAA
+                color = color.substring(0, 7) + '00';
+            }
+            css['--background-color'] = color;
+        }
+
+        this._injectStyles(css);
     }
 
     _injectStyles(css) {

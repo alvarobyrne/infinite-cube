@@ -16,6 +16,7 @@ export const viewState = {
     mode: VIEW_MODES.SINGLE,
     rendererType: RENDERER_TYPES.WEBGL,
     theme: 'dark', // Default theme
+    transparentUI: false,
 };
 
 export function saveViewState(state) {

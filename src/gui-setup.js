@@ -62,7 +62,9 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     location.reload(); // Reload to re-initialize renderer
   });
 
-  // Theme selector
+  // Theme Settings folder
+  const themeSettingsFolder = gui.addFolder("Theme Settings");
+
   // 1. Sync themeManager with saved viewState
   if (viewState.theme && viewState.theme !== themeManager.currentTheme) {
     themeManager.setTheme(viewState.theme);
@@ -71,12 +73,27 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     themeManager.setTheme(themeManager.currentTheme);
   }
 
-  gui.add(viewState, "theme", Object.keys(themeManager.themes))
+  // 2. Sync transparency
+  if (viewState.transparentUI !== undefined) {
+    themeManager.setTransparency(viewState.transparentUI);
+  } else {
+    // Initialize viewState if undefined
+    viewState.transparentUI = themeManager.isTransparent;
+  }
+
+  themeSettingsFolder.add(viewState, "theme", Object.keys(themeManager.themes))
     .name("Theme")
     .onChange((value) => {
       themeManager.setTheme(value);
       saveViewState(viewState);
       recreateScene();
+    });
+
+  themeSettingsFolder.add(viewState, "transparentUI")
+    .name("Transparent GUI")
+    .onChange((value) => {
+      themeManager.setTransparency(value);
+      saveViewState(viewState);
     });
 
 
