@@ -499,6 +499,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     reports: reportsFolder,
     savedConfigs: configsFolder,
     cameraSettings: cameraSettingsFolder,
+    themeSettings: themeSettingsFolder,
     gui: gui
   };
 

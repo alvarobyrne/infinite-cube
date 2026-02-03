@@ -14,6 +14,7 @@ Start dragging in order to remove the instructions. Press the **H** key to toggl
 - **A** - Show all dimension parameterization clones
 - **S** - Hide all dimension parameterization clones
 - **D** - Toggle dimension lines visibility
+- **E** - Cycle through themes (Light/Dark)
 
 ### Mouse Controls
 

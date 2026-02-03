@@ -1,3 +1,4 @@
+import { themeManager } from "./theme-manager.js";
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
 import { saveBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
 import { clearWHDState } from "./width_height_depth/whdState.js";
@@ -109,6 +110,28 @@ export function setupKeyboardHandlers({
             } else {
                 blockRenderState.showDimensionLines = !blockRenderState.showDimensionLines;
                 saveBlockRenderState(blockRenderState);
+                recreateSceneWrapper();
+            }
+        } else if (key === "e") {
+            // Cycle themes
+            const themes = Object.keys(themeManager.themes);
+            const currentIndex = themes.indexOf(themeManager.currentTheme);
+            const nextIndex = (currentIndex + 1) % themes.length;
+            const nextTheme = themes[nextIndex];
+
+            // Find the theme controller in themeSettings folder
+            let themeController = null;
+            if (folders.themeSettings) {
+                themeController = folders.themeSettings.controllers.find(
+                    (c) => c._name === "Theme" || c.property === "theme"
+                );
+            }
+
+            if (themeController) {
+                themeController.setValue(nextTheme);
+            } else {
+                // Fallback if controller not found
+                themeManager.setTheme(nextTheme);
                 recreateSceneWrapper();
             }
         }
