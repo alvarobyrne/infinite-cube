@@ -604,7 +604,7 @@ export class WHDNodesStrategy extends WHDNodesBaseStrategy {
         group.add(new THREE.AxesHelper(6));
 
         const configs = getWHDNodesConfigs(whdState);
-        const positions = getNodesWHDPositions(configs, whdState);
+        const positions = getNodesWHDPositions(configs, whdState).positions;
 
         const blocks = {};
         for (const key in configs) {
