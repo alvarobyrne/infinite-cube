@@ -16,6 +16,7 @@ export class ThemeManager {
                     '--focus-color': '#fafafa',
                     '--number-color': '#07aacf',
                     '--string-color': '#8da300',
+                    '--instructions-text-color': '#3d3d3d',
                 },
                 colors: {
                     background: 0xf6f6f6,
@@ -57,6 +58,7 @@ export class ThemeManager {
                     '--focus-color': '#595959',
                     '--number-color': '#2cc9ff',
                     '--string-color': '#a2db3c',
+                    '--instructions-text-color': '#ebebeb',
                 },
                 colors: {
                     background: 0x1f1f1f,

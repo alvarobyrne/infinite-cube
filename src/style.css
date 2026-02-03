@@ -3,7 +3,10 @@ body {
     color: whitesmoke;
     font-family: 'Courier New', Courier, monospace;
 }
-canvas, svg, div#readme-container {
+
+canvas,
+svg,
+div#readme-container {
     display: block;
 
     position: absolute;
@@ -17,6 +20,7 @@ div#readme-container {
     padding: 20px;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.3);
+    color: var(--instructions-text-color);
     z-index: 10;
     zoom: 0.75;
 }
