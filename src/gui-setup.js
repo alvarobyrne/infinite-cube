@@ -141,6 +141,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Block Rendering folder
   const syncFolders = () => {
+    // TODO: This shouldn't be done with an if statement, but rather with a more object-oriented approach
     if (activeStrategyType === STRATEGY_TYPES.WHD_BASE || activeStrategyType === STRATEGY_TYPES.NODES_BASE) {
       dimensionsFolder.hide();
       whdFolder.show();

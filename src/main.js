@@ -221,6 +221,7 @@ async function init() {
 
   // Re-run scene creation after font is loaded to ensure numbers are created
   recreateSceneWrapper();
+  configState.syncFolders?.();
 
   window.addEventListener("resize", () => {
     const width = window.innerWidth;
