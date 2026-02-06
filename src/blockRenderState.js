@@ -20,6 +20,7 @@ export const BLOCK_STYLES = [
   "whdNodesLine",
   "whdNodesHollow",
   "whdNodes45AngleCornerBar",
+  "whdNodesWedgesAtBarEnds",
 ];
 
 const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);

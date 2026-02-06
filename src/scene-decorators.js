@@ -24,7 +24,8 @@ import {
     WHDNodesBaseStrategy,
     WHDNodesLineStrategy,
     WHDNodesHollowStrategy,
-    WHD45DegreeEndsBarStrategy
+    WHD45DegreeEndsBarStrategy,
+    WHDWedgesAtBarEndsStrategy
 } from "./block-strategies.js";
 import { createTextNumberMesh } from "./text-manager.js";
 import { themeManager } from "./theme-manager.js";
@@ -101,6 +102,8 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new WHDNodesHollowStrategy();
         } else if (blockRenderState.style === "whdNodes45AngleCornerBar") {
             strategy = new WHD45DegreeEndsBarStrategy();
+        } else if (blockRenderState.style === "whdNodesWedgesAtBarEnds") {
+            strategy = new WHDWedgesAtBarEndsStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
@@ -119,7 +122,6 @@ export class BaseRecreator extends SceneRecreator {
         }
 
         const result = strategy.execute(params);
-        console.log("🔍 ~ recreate ~ src/scene-decorators.js:120 ~ result:", result);
         const group = new THREE.Group();
         group.add(result.group);
         if (result.groupClone1) group.add(result.groupClone1);

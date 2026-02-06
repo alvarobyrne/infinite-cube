@@ -5,6 +5,7 @@ import { BoxLineGeometry } from "three-stdlib";
 import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
 import { PathManager } from "./node_based/PathManager.js";
 import { themeManager } from "./theme-manager.js";
+import { createGeometryFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -605,6 +606,38 @@ export function create45AngleCornerBar(whdState, nodes) {
     group.add(line);
   })
   return group
+}
+
+export function createWedgeAtBarEnds(whdState, nodes) {
+  const { blockThickness } = whdState;
+  const configurations = generateWedgeConfigurations(nodes);
+  const configValues = Object.values(configurations);
+  const group = new THREE.Group();
+
+  for (let i = 0; i < configValues.length; i++) {
+    const currentConfiguration = configValues[i];
+    const nextConfiguration = configValues[(i + 1) % configValues.length];
+
+    const convexGeo = createGeometryFromPoints(currentConfiguration, nextConfiguration, blockThickness);
+    if (convexGeo) {
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xcccccc,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide,
+        flatShading: true
+      });
+      const edgeWedgeMesh = new THREE.Mesh(convexGeo, material);
+
+      // Add edges for visual clarity
+      const edges = new THREE.EdgesGeometry(convexGeo);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }));
+      edgeWedgeMesh.add(line);
+
+      group.add(edgeWedgeMesh);
+    }
+  }
+  return group;
 }
 
 /**
