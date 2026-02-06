@@ -621,7 +621,7 @@ export function createWedgeAtBarEnds(whdState, nodes) {
     const convexGeo = createGeometryFromPoints(currentConfiguration, nextConfiguration, blockThickness);
     if (convexGeo) {
       const material = new THREE.MeshStandardMaterial({
-        color: 0xcccccc,
+        color: themeManager.colors.block.primary,
         transparent: true,
         opacity: 0.5,
         side: THREE.DoubleSide,
@@ -631,7 +631,7 @@ export function createWedgeAtBarEnds(whdState, nodes) {
 
       // Add edges for visual clarity
       const edges = new THREE.EdgesGeometry(convexGeo);
-      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }));
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary }));
       edgeWedgeMesh.add(line);
 
       group.add(edgeWedgeMesh);
