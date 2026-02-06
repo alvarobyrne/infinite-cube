@@ -636,15 +636,20 @@ export class WHDNodesLineStrategy extends WHDNodesBaseStrategy {
 
         const keys = Object.keys(configs)
         const length = keys.length;
+        let stringOfVector3 = "\n[\n"
         keys.forEach((key, i) => {
             const nextKey = keys[(i + 1) % length];
             const n0 = nodes[key];
+            // console.log("🔍 ~ execute ~ src/block-strategies.js:641 ~ n0:", n0);
+            stringOfVector3 += `    new THREE.Vector3(${n0.x.toFixed(2)}, ${n0.y.toFixed(2)}, ${n0.z.toFixed(2)}),\n`
             const n1 = nodes[nextKey];
             const line = createLine(n0, n1);
             line.name = key;
             group.add(line);
             blocks[key] = line;
         });
+        stringOfVector3 += "]"
+        console.log("🔍 ~ execute ~ src/block-strategies.js:644 ~ stringOfVector3:", stringOfVector3);
 
         return { group };
     }
