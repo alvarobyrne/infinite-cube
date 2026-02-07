@@ -118,25 +118,37 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // WHD (Width, Height, Depth) folder
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
-  whdFolder.add(whdState, "width", 1, 40, 0.1).name('Width').onChange(() => {
+  const { blockThickness } = whdState;
+  const t2 = 2 * blockThickness;
+  const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
-  whdFolder.add(whdState, "height", 1, 40, 0.1).name('Height').onChange(() => {
+  const whdHeightController = whdFolder.add(whdState, "height", t2, 40, 0.1).name('Height').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
-  whdFolder.add(whdState, "depth", 1, 40, 0.1).name('Depth').onChange(() => {
+  const whdDepthController = whdFolder.add(whdState, "depth", t2, 40, 0.1).name('Depth').onChange(() => {
     saveWHDState(whdState);
     recreateScene();
   });
-  whdFolder.add(whdState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
+  const whdBlockThicknessController = whdFolder.add(whdState, "blockThickness", 0.1, whdState.gap, 0.1).name('Block Thickness').onChange((value) => {
     saveWHDState(whdState);
     recreateScene();
+    whdWidthController.min(2 * value);
+    whdWidthController.updateDisplay();
+    whdHeightController.min(2 * value);
+    whdHeightController.updateDisplay();
+    whdDepthController.min(2 * value);
+    whdDepthController.updateDisplay();
+    whdGapController.min(value);
+    whdGapController.updateDisplay();
   });
-  whdFolder.add(whdState, "gap", 0.1, 5, 0.1).name('Gap').onChange(() => {
+  const whdGapController = whdFolder.add(whdState, "gap", whdState.blockThickness, 5, 0.1).name('Gap').onChange((value) => {
     saveWHDState(whdState);
     recreateScene();
+    whdBlockThicknessController.max(value);
+    whdBlockThicknessController.updateDisplay();
   });
 
   // Block Rendering folder
