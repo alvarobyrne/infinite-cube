@@ -446,13 +446,13 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Reports folder
   const reportsFolder = gui.addFolder("Reports");
-  reportsFolder.add(reportState, "whdDimensionsSum").name("WHD Dimensions Sum").disable().listen();
-  reportsFolder.add(reportState, "reducedWidth").name("Reduced Width").disable().listen();
-  reportsFolder.add(reportState, "w_prime").name("W' (Width Prime)").disable().listen();
-  reportsFolder.add(reportState, "reducedHeight").name("Reduced Height").disable().listen();
-  reportsFolder.add(reportState, "h_prime").name("H' (Height Prime)").disable().listen();
-  reportsFolder.add(reportState, "reducedDepth").name("Reduced Depth").disable().listen();
-  reportsFolder.add(reportState, "d_prime").name("D' (Depth Prime)").disable().listen();
+  reportsFolder.add(reportState, "whdDimensionsSum").name("WHD Dimensions Sum").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "reducedWidth").name("Reduced Width").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "w_prime").name("W' (Width Prime)").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "reducedHeight").name("Reduced Height").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "h_prime").name("H' (Height Prime)").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "reducedDepth").name("Reduced Depth").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "d_prime").name("D' (Depth Prime)").disable().listen().decimals(2);
 
   // Saved Configurations folder
   const configsFolder = gui.addFolder("Saved Configurations");
