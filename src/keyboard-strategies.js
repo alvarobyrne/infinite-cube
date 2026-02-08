@@ -107,6 +107,10 @@ export class UshapeKeyboardStrategy extends BaseKeyboardStrategy {
             const cloneName = `groupClone${cloneIndex}`;
             const currentVisibility = cloneVisibilityState[cloneName];
             const newVisibility = !currentVisibility;
+            
+            // Update state first (like GUI dropdown does)
+            cloneVisibilityState[cloneName] = newVisibility;
+            
             CommandFactory.executeCommand(cloneName, { ...commandContext, state: cloneVisibilityState }, newVisibility);
             return true;
         } else if (key === "a") {
