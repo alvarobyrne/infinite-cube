@@ -1,6 +1,6 @@
 import { themeManager } from "./theme-manager.js";
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
-import { saveBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
+import { BLOCK_STYLES } from "./blockRenderState.js";
 import { clearWHDState } from "./width_height_depth/whdState.js";
 import { toggleInstructions } from "./instructions-manager.js";
 import { CommandFactory } from "./commands/CommandFactory.js";
@@ -107,10 +107,10 @@ export class UshapeKeyboardStrategy extends BaseKeyboardStrategy {
             const cloneName = `groupClone${cloneIndex}`;
             const currentVisibility = cloneVisibilityState[cloneName];
             const newVisibility = !currentVisibility;
-            
+
             // Update state first (like GUI dropdown does)
             cloneVisibilityState[cloneName] = newVisibility;
-            
+
             CommandFactory.executeCommand(cloneName, { ...commandContext, state: cloneVisibilityState }, newVisibility);
             return true;
         } else if (key === "a") {

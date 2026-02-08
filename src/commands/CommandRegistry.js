@@ -1,16 +1,14 @@
-import { 
-  SaveStateCommand, 
-  SaveStateWithRecreateCommand, 
+import {
+  SaveStateWithRecreateCommand,
   ConditionalSaveCommand,
-  SaveStateWithCallbackCommand 
+  SaveStateWithCallbackCommand
 } from './StateCommands.js';
-import { 
-  UIUpdateCommand, 
-  MultiUIUpdateCommand,
+import {
+  UIUpdateCommand,
   ThemeCommand,
-  TransparencyCommand 
+  TransparencyCommand
 } from './UICommands.js';
-import { 
+import {
   CameraProjectionCommand,
   ViewModeCommand,
   RendererTypeCommand,
@@ -51,117 +49,117 @@ class CommandRegistry {
    */
   setupDefaultCommands() {
     // View and renderer commands
-    this.register('mode', new ViewModeCommand(() => {}));
-    this.register('rendererType', new RendererTypeCommand(() => {}));
-    this.register('type', new CameraTypeCommand({}, () => {}, () => {}));
-    this.register('theme', new ThemeCommand({}, () => {}, true));
-    this.register('transparentUI', new TransparencyCommand({}, () => {}));
+    this.register('mode', new ViewModeCommand(() => { }));
+    this.register('rendererType', new RendererTypeCommand(() => { }));
+    this.register('type', new CameraTypeCommand({}, () => { }, () => { }));
+    this.register('theme', new ThemeCommand({}, () => { }, true));
+    this.register('transparentUI', new TransparencyCommand({}, () => { }));
 
     // Instructions command
-    this.register('visible', new InstructionsCommand({}, () => {}));
+    this.register('visible', new InstructionsCommand({}, () => { }));
 
     // Dimension commands
-    this.register('dimension1', new SaveStateWithRecreateCommand(() => {}));
-    this.register('dimension2', new SaveStateWithRecreateCommand(() => {}));
-    this.register('dimension3', new SaveStateWithRecreateCommand(() => {}));
-    this.register('blockThickness', new SaveStateWithRecreateCommand(() => {}));
+    this.register('dimension1', new SaveStateWithRecreateCommand(() => { }));
+    this.register('dimension2', new SaveStateWithRecreateCommand(() => { }));
+    this.register('dimension3', new SaveStateWithRecreateCommand(() => { }));
+    this.register('blockThickness', new SaveStateWithRecreateCommand(() => { }));
 
     // WHD commands
-    this.register('width', new SaveStateWithRecreateCommand(() => {}));
-    this.register('height', new SaveStateWithRecreateCommand(() => {}));
-    this.register('depth', new SaveStateWithRecreateCommand(() => {}));
-    this.register('whdBlockThickness', new UIUpdateCommand(() => {}, () => {}, true));
-    this.register('gap', new UIUpdateCommand(() => {}, () => {}, true));
+    this.register('width', new SaveStateWithRecreateCommand(() => { }));
+    this.register('height', new SaveStateWithRecreateCommand(() => { }));
+    this.register('depth', new SaveStateWithRecreateCommand(() => { }));
+    this.register('whdBlockThickness', new UIUpdateCommand(() => { }, () => { }, true));
+    this.register('gap', new UIUpdateCommand(() => { }, () => { }, true));
 
     // Block rendering commands
     this.register('style', new SaveStateWithCallbackCommand(
-      () => {},
+      () => { },
       (context) => context.syncFolders && context.syncFolders(),
       true
     ));
     this.register('unifiedColor', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor"
     ));
     this.register('useCloneColors', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor"
     ));
     this.register('cloneColor1', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
     ));
     this.register('cloneColor2', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
     ));
     this.register('cloneColor3', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
     ));
     this.register('cloneColor4', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
     ));
     this.register('cloneColor5', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
     ));
 
     // Multi-color commands
     this.register('multiColor1', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
     ));
     this.register('multiColor2', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
     ));
     this.register('multiColor3', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
     ));
     this.register('multiColor4', new ConditionalSaveCommand(
-      () => {},
+      () => { },
       (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
     ));
 
     // Dimension lines and display commands
-    this.register('showDimensionLines', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showTopDimensionLines', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showRightDimensionLines', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showFrontDimensionLines', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showExtraDimensionLines', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showGSGroup', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showVertices', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showNumbers', new SaveStateWithRecreateCommand(() => {}));
-    this.register('numberType', new SaveStateWithRecreateCommand(() => {}));
-    this.register('numberSize', new SaveStateWithRecreateCommand(() => {}));
-    this.register('isOpaque', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showXYPlaneSquare', new SaveStateWithRecreateCommand(() => {}));
-    this.register('showBox', new SaveStateWithRecreateCommand(() => {}));
-    this.register('scale', new SaveStateWithRecreateCommand(() => {}));
-    this.register('x', new SaveStateWithRecreateCommand(() => {}));
-    this.register('y', new SaveStateWithRecreateCommand(() => {}));
-    this.register('z', new SaveStateWithRecreateCommand(() => {}));
+    this.register('showDimensionLines', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showTopDimensionLines', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showRightDimensionLines', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showFrontDimensionLines', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showExtraDimensionLines', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showGSGroup', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showVertices', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showNumbers', new SaveStateWithRecreateCommand(() => { }));
+    this.register('numberType', new SaveStateWithRecreateCommand(() => { }));
+    this.register('numberSize', new SaveStateWithRecreateCommand(() => { }));
+    this.register('isOpaque', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showXYPlaneSquare', new SaveStateWithRecreateCommand(() => { }));
+    this.register('showBox', new SaveStateWithRecreateCommand(() => { }));
+    this.register('scale', new SaveStateWithRecreateCommand(() => { }));
+    this.register('x', new SaveStateWithRecreateCommand(() => { }));
+    this.register('y', new SaveStateWithRecreateCommand(() => { }));
+    this.register('z', new SaveStateWithRecreateCommand(() => { }));
 
     // Camera commands
-    this.register('fov', new CameraProjectionCommand(() => {}));
-    this.register('frustumSize', new CameraProjectionCommand(() => {}));
-    this.register('near', new CameraProjectionCommand(() => {}));
-    this.register('far', new CameraProjectionCommand(() => {}));
-    this.register('zoom', new CameraProjectionCommand(() => {}));
+    this.register('fov', new CameraProjectionCommand(() => { }));
+    this.register('frustumSize', new CameraProjectionCommand(() => { }));
+    this.register('near', new CameraProjectionCommand(() => { }));
+    this.register('far', new CameraProjectionCommand(() => { }));
+    this.register('zoom', new CameraProjectionCommand(() => { }));
 
     // Clone visibility commands
-    this.register('groupClone1', new CloneVisibilityCommand('groupClone1', {}, () => {}));
-    this.register('groupClone2', new CloneVisibilityCommand('groupClone2', {}, () => {}));
-    this.register('groupClone3', new CloneVisibilityCommand('groupClone3', {}, () => {}));
-    this.register('groupClone4', new CloneVisibilityCommand('groupClone4', {}, () => {}));
-    this.register('groupClone5', new CloneVisibilityCommand('groupClone5', {}, () => {}));
+    this.register('groupClone1', new CloneVisibilityCommand('groupClone1', {}, () => { }));
+    this.register('groupClone2', new CloneVisibilityCommand('groupClone2', {}, () => { }));
+    this.register('groupClone3', new CloneVisibilityCommand('groupClone3', {}, () => { }));
+    this.register('groupClone4', new CloneVisibilityCommand('groupClone4', {}, () => { }));
+    this.register('groupClone5', new CloneVisibilityCommand('groupClone5', {}, () => { }));
 
     // Clone selector
     this.register('selectedCloneIndex', new SaveStateWithCallbackCommand(
-      () => {},
+      () => { },
       (context) => context.positionRotationManager && context.positionRotationManager.switchClone(context.state.selectedCloneIndex)
     ));
   }
@@ -173,7 +171,7 @@ class CommandRegistry {
   initializeWithContext(context) {
     // Re-register all commands with proper context
     this.commands.clear();
-    
+
     // View and renderer commands
     this.register('mode', new ViewModeCommand(context.saveViewState));
     this.register('rendererType', new RendererTypeCommand(context.saveViewState));
@@ -231,7 +229,7 @@ class CommandRegistry {
     // Block rendering commands
     this.register('style', new SaveStateWithCallbackCommand(
       context.saveBlockRenderState,
-      (context) => {}, // No callback needed - syncFolders is now a listener
+      (context) => { }, // No callback needed - syncFolders is now a listener
       true
     ));
     this.register('unifiedColor', new ConditionalSaveCommand(

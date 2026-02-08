@@ -1,8 +1,7 @@
 import GUI from "lil-gui";
-import { configState } from "./configState.js";
 import { saveDimensionState, clearDimensionState } from "./dimensionState.js";
 import { saveWHDState, clearWHDState } from "./width_height_depth/whdState.js";
-import { clearCameraState, CAMERA_TYPES, getSavedCameraType, saveCameraState } from "./cameraState.js";
+import { clearCameraState, CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
 import { clearUIState, loadUIState, saveUIState } from "./uiState.js";
 import { positionAndRotationManager } from "./object3DState.js";
 import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";

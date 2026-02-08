@@ -1,4 +1,4 @@
-import { STRATEGY_TYPES, activeStrategyType, onStrategyTypeChange } from "./scene-decorators.js";
+import { activeStrategyType, onStrategyTypeChange } from "./scene-decorators.js";
 import { getKeyboardStrategy } from "./keyboard-strategies.js";
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
 

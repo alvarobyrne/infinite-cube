@@ -1,7 +1,6 @@
 import * as THREE from "three/webgpu";
 import { addDimensionLine } from "./dimensionLine.js";
 import { addVertices } from "./vertices.js";
-import { createCloneGroups } from "./scene-utils.js";
 import {
     ColoredFacesStrategy,
     UnifiedColorStrategy,

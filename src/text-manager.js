@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { FontLoader, TextGeometry } from "three-stdlib";
+import { FontLoader } from "three-stdlib";
 import { themeManager } from "./theme-manager.js";
 
 let font = null;
