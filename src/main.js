@@ -149,7 +149,7 @@ const guiResult = setupGUI({
   views,
 });
 
-const { gui, folders, manager } = guiResult;
+const { gui, folders, manager, commandContext } = guiResult;
 positionRotationManager = manager;
 
 // Initialize Keyboard Handlers
@@ -159,6 +159,7 @@ setupKeyboardHandlers({
   blockRenderState,
   recreateSceneWrapper,
   folders,
+  commandContext
 });
 
 async function init() {

@@ -13,6 +13,8 @@ import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 import { setItem, removeItem, getItem } from "./storage-manager.js";
 import { RENDERER_TYPES } from "./viewState.js";
 import { themeManager } from "./theme-manager.js";
+import { commandRegistry } from "./commands/CommandRegistry.js";
+import { CommandFactory } from "./commands/CommandFactory.js";
 
 
 /**
@@ -33,6 +35,41 @@ import { themeManager } from "./theme-manager.js";
 export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisibilityState, recreateScene, setAllClonesVisibility, camera, controls, clones, viewState, saveViewState, VIEW_MODES, reportState, configState, cameraSettings, saveCameraSettings, views }) {
   const gui = new GUI();
 
+  // Initialize command registry with context
+  const commandContext = {
+    dimensionState,
+    whdState,
+    blockRenderState,
+    cloneVisibilityState,
+    cloneSelectorState,
+    viewState,
+    cameraSettings,
+    saveDimensionState,
+    saveWHDState,
+    saveBlockRenderState,
+    saveCloneVisibilityState,
+    saveCloneSelectorState,
+    saveViewState,
+    saveCameraSettings,
+    recreateScene,
+    syncFolders: null, // Will be set later
+    themeManager,
+    getItem,
+    setItem,
+    instructionsState,
+    clones,
+    positionRotationManager: null, // Will be set later
+    // Controller references for UI updates
+    whdWidthController: null,
+    whdHeightController: null,
+    whdDepthController: null,
+    whdBlockThicknessController: null,
+    whdGapController: null,
+    updateCameraProjection: null // Will be set later
+  };
+
+  commandRegistry.initializeWithContext(commandContext);
+
   // Reload page control (outside folders, at the top)
   gui.add({
     reload: () => {
@@ -41,25 +78,18 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   }, "reload").name("Reload Page");
 
   // Instructions checkbox at the beginning
-  gui.add(instructionsState, "visible").name("Show Instructions (H)").onChange(() => {
-    const readmeContainer = document.getElementById("readme-container");
-    if (readmeContainer) {
-      readmeContainer.style.display = instructionsState.visible ? "block" : "none";
-    }
-    setItem("instructionsVisible", instructionsState.visible);
+  gui.add(instructionsState, "visible").name("Show Instructions (H)").onChange((value) => {
+    CommandFactory.executeCommand('visible', { ...commandContext, state: instructionsState }, value);
   }).listen();
 
   // View Mode selector
-  gui.add(viewState, "mode", Object.values(VIEW_MODES)).name("View Mode").onChange(() => {
-    saveViewState(viewState);
-    location.reload(); // Reload to re-initialize cameras and render loop
+  gui.add(viewState, "mode", Object.values(VIEW_MODES)).name("View Mode").onChange((value) => {
+    CommandFactory.executeCommand('mode', { ...commandContext, state: viewState }, value);
   });
 
   // Renderer Type selector
-  gui.add(viewState, "rendererType", Object.values(RENDERER_TYPES)).name("Renderer").onChange(() => {
-    saveViewState(viewState);
-    saveViewState(viewState);
-    location.reload(); // Reload to re-initialize renderer
+  gui.add(viewState, "rendererType", Object.values(RENDERER_TYPES)).name("Renderer").onChange((value) => {
+    CommandFactory.executeCommand('rendererType', { ...commandContext, state: viewState }, value);
   });
 
   // Theme Settings folder
@@ -84,72 +114,60 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   themeSettingsFolder.add(viewState, "theme", Object.keys(themeManager.themes))
     .name("Theme")
     .onChange((value) => {
-      themeManager.setTheme(value);
-      saveViewState(viewState);
-      recreateScene();
+      CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, value);
     });
 
   themeSettingsFolder.add(viewState, "transparentUI")
     .name("Transparent GUI")
     .onChange((value) => {
-      themeManager.setTransparency(value);
-      saveViewState(viewState);
+      CommandFactory.executeCommand('transparentUI', { ...commandContext, state: viewState }, value);
     });
 
 
   // Dimensions folder
   const dimensionsFolder = gui.addFolder("Dimensions");
-  dimensionsFolder.add(dimensionState, "dimension1", 1, 40, 0.1).name('dimension 1, r').onChange(() => {
-    saveDimensionState(dimensionState);
-    recreateScene();
+  dimensionsFolder.add(dimensionState, "dimension1", 1, 40, 0.1).name('dimension 1, r').onChange((value) => {
+    CommandFactory.executeCommand('dimension1', { ...commandContext, state: dimensionState }, value);
   });
-  dimensionsFolder.add(dimensionState, "dimension2", 1, 40, 0.1).name('dimension 2, g').onChange(() => {
-    saveDimensionState(dimensionState);
-    recreateScene();
+  dimensionsFolder.add(dimensionState, "dimension2", 1, 40, 0.1).name('dimension 2, g').onChange((value) => {
+    CommandFactory.executeCommand('dimension2', { ...commandContext, state: dimensionState }, value);
   });
-  dimensionsFolder.add(dimensionState, "dimension3", 1, 40, 0.1).name('dimension 3, b').onChange(() => {
-    saveDimensionState(dimensionState);
-    recreateScene();
+  dimensionsFolder.add(dimensionState, "dimension3", 1, 40, 0.1).name('dimension 3, b').onChange((value) => {
+    CommandFactory.executeCommand('dimension3', { ...commandContext, state: dimensionState }, value);
   });
-  dimensionsFolder.add(dimensionState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange(() => {
-    saveDimensionState(dimensionState);
-    recreateScene();
+  dimensionsFolder.add(dimensionState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange((value) => {
+    CommandFactory.executeCommand('blockThickness', { ...commandContext, state: dimensionState }, value);
   });
 
   // WHD (Width, Height, Depth) folder
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
   const { blockThickness } = whdState;
   const t2 = 2 * blockThickness;
-  const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange(() => {
-    saveWHDState(whdState);
-    recreateScene();
+  const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange((value) => {
+    CommandFactory.executeCommand('width', { ...commandContext, state: whdState }, value);
   });
-  const whdHeightController = whdFolder.add(whdState, "height", t2, 40, 0.1).name('Height').onChange(() => {
-    saveWHDState(whdState);
-    recreateScene();
+  const whdHeightController = whdFolder.add(whdState, "height", t2, 40, 0.1).name('Height').onChange((value) => {
+    CommandFactory.executeCommand('height', { ...commandContext, state: whdState }, value);
   });
-  const whdDepthController = whdFolder.add(whdState, "depth", t2, 40, 0.1).name('Depth').onChange(() => {
-    saveWHDState(whdState);
-    recreateScene();
+  const whdDepthController = whdFolder.add(whdState, "depth", t2, 40, 0.1).name('Depth').onChange((value) => {
+    CommandFactory.executeCommand('depth', { ...commandContext, state: whdState }, value);
   });
+
+  // Update command context with WHD controllers
+  commandContext.whdWidthController = whdWidthController;
+  commandContext.whdHeightController = whdHeightController;
+  commandContext.whdDepthController = whdDepthController;
+
   const whdBlockThicknessController = whdFolder.add(whdState, "blockThickness", 0.1, whdState.gap, 0.1).name('Block Thickness').onChange((value) => {
-    saveWHDState(whdState);
-    recreateScene();
-    whdWidthController.min(2 * value);
-    whdWidthController.updateDisplay();
-    whdHeightController.min(2 * value);
-    whdHeightController.updateDisplay();
-    whdDepthController.min(2 * value);
-    whdDepthController.updateDisplay();
-    whdGapController.min(value);
-    whdGapController.updateDisplay();
+    CommandFactory.executeCommand('whdBlockThickness', { ...commandContext, state: whdState }, value);
   });
   const whdGapController = whdFolder.add(whdState, "gap", whdState.blockThickness, 5, 0.1).name('Gap').onChange((value) => {
-    saveWHDState(whdState);
-    recreateScene();
-    whdBlockThicknessController.max(value);
-    whdBlockThicknessController.updateDisplay();
+    CommandFactory.executeCommand('gap', { ...commandContext, state: whdState }, value);
   });
+
+  // Update command context with remaining WHD controllers
+  commandContext.whdBlockThicknessController = whdBlockThicknessController;
+  commandContext.whdGapController = whdGapController;
 
   // Block Rendering folder
   const syncFolders = () => {
@@ -171,6 +189,9 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   configState.syncFolders = syncFolders;
 
+  // Update command context with syncFolders
+  commandContext.syncFolders = syncFolders;
+
   const refreshGUI = () => {
     const iterateFolders = (f) => {
       f.controllers.forEach(c => c.updateDisplay());
@@ -183,126 +204,87 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // Block Rendering folder
   const blockRenderingFolder = gui.addFolder("Block Rendering");
-  blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
-    syncFolders();
+  blockRenderingFolder.add(blockRenderState, "style", BLOCK_STYLES).name("Block Style").onChange((value) => {
+    CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, value);
+    console.log('value: ', value)
   }).listen();
-  blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor") {
-      recreateScene();
-    }
+  blockRenderingFolder.addColor(blockRenderState, "unifiedColor").name("Unified Color").onChange((value) => {
+    CommandFactory.executeCommand('unifiedColor', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "showDimensionLines").name("Show Dimension Lines").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "showDimensionLines").name("Show Dimension Lines").onChange((value) => {
+    CommandFactory.executeCommand('showDimensionLines', { ...commandContext, state: blockRenderState }, value);
   });
 
   const whdDimensionLinesFolder = blockRenderingFolder.addFolder("WHD Dimension Lines");
-  whdDimensionLinesFolder.add(blockRenderState, "showTopDimensionLines").name("Show Top Dimension Lines").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  whdDimensionLinesFolder.add(blockRenderState, "showTopDimensionLines").name("Show Top Dimension Lines").onChange((value) => {
+    CommandFactory.executeCommand('showTopDimensionLines', { ...commandContext, state: blockRenderState }, value);
   });
-  whdDimensionLinesFolder.add(blockRenderState, "showRightDimensionLines").name("Show Right Dimension Lines").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  whdDimensionLinesFolder.add(blockRenderState, "showRightDimensionLines").name("Show Right Dimension Lines").onChange((value) => {
+    CommandFactory.executeCommand('showRightDimensionLines', { ...commandContext, state: blockRenderState }, value);
   });
-  whdDimensionLinesFolder.add(blockRenderState, "showFrontDimensionLines").name("Show Front Dimension Lines").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  whdDimensionLinesFolder.add(blockRenderState, "showFrontDimensionLines").name("Show Front Dimension Lines").onChange((value) => {
+    CommandFactory.executeCommand('showFrontDimensionLines', { ...commandContext, state: blockRenderState }, value);
   });
-  whdDimensionLinesFolder.add(blockRenderState, "showExtraDimensionLines").name("Show Extra Dimension Lines").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  whdDimensionLinesFolder.add(blockRenderState, "showExtraDimensionLines").name("Show Extra Dimension Lines").onChange((value) => {
+    CommandFactory.executeCommand('showExtraDimensionLines', { ...commandContext, state: blockRenderState }, value);
   });
-  whdDimensionLinesFolder.add(blockRenderState, "showGSGroup").name("Show gaps Group").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  whdDimensionLinesFolder.add(blockRenderState, "showGSGroup").name("Show gaps Group").onChange((value) => {
+    CommandFactory.executeCommand('showGSGroup', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "showVertices").name("Show Vertices").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "showVertices").name("Show Vertices").onChange((value) => {
+    CommandFactory.executeCommand('showVertices', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "showNumbers").name("Show Block Numbers").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "showNumbers").name("Show Block Numbers").onChange((value) => {
+    CommandFactory.executeCommand('showNumbers', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "numberType", ["number", "largestDimension", "both"]).name("Number Type").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "numberType", ["number", "largestDimension", "both"]).name("Number Type").onChange((value) => {
+    CommandFactory.executeCommand('numberType', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "numberSize", 0.1, 5, 0.1).name("Number Size").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "numberSize", 0.1, 5, 0.1).name("Number Size").onChange((value) => {
+    CommandFactory.executeCommand('numberSize', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "isOpaque").name("Is Opaque").onChange((value) => {
+    CommandFactory.executeCommand('isOpaque', { ...commandContext, state: blockRenderState }, value);
   }).listen();
 
-  blockRenderingFolder.add(blockRenderState, "showXYPlaneSquare").name("Show XY Plane Square").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "showXYPlaneSquare").name("Show XY Plane Square").onChange((value) => {
+    CommandFactory.executeCommand('showXYPlaneSquare', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "showBox").name("Show Box").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "showBox").name("Show Box").onChange((value) => {
+    CommandFactory.executeCommand('showBox', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "scale", 0.1, 10, 0.1).name('Scale').onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "scale", 0.1, 10, 0.1).name('Scale').onChange((value) => {
+    CommandFactory.executeCommand('scale', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "x", -10, 10, 0.1).name('X').onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "x", -10, 10, 0.1).name('X').onChange((value) => {
+    CommandFactory.executeCommand('x', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "y", -10, 10, 0.1).name('Y').onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "y", -10, 10, 0.1).name('Y').onChange((value) => {
+    CommandFactory.executeCommand('y', { ...commandContext, state: blockRenderState }, value);
   });
-  blockRenderingFolder.add(blockRenderState, "z", -10, 10, 0.1).name('Z').onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    recreateScene();
+  blockRenderingFolder.add(blockRenderState, "z", -10, 10, 0.1).name('Z').onChange((value) => {
+    CommandFactory.executeCommand('z', { ...commandContext, state: blockRenderState }, value);
   });
 
   // Clone Colors folder
   const cloneColorsFolder = gui.addFolder("Clone Colors");
-  cloneColorsFolder.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor") {
-      recreateScene();
-    }
+  cloneColorsFolder.add(blockRenderState, "useCloneColors").name("Use Clone Colors").onChange((value) => {
+    CommandFactory.executeCommand('useCloneColors', { ...commandContext, state: blockRenderState }, value);
   });
-  cloneColorsFolder.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-      recreateScene();
-    }
+  cloneColorsFolder.addColor(blockRenderState, "cloneColor1").name("Clone 1 Color").onChange((value) => {
+    CommandFactory.executeCommand('cloneColor1', { ...commandContext, state: blockRenderState }, value);
   });
-  cloneColorsFolder.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-      recreateScene();
-    }
+  cloneColorsFolder.addColor(blockRenderState, "cloneColor2").name("Clone 2 Color").onChange((value) => {
+    CommandFactory.executeCommand('cloneColor2', { ...commandContext, state: blockRenderState }, value);
   });
-  cloneColorsFolder.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-      recreateScene();
-    }
+  cloneColorsFolder.addColor(blockRenderState, "cloneColor3").name("Clone 3 Color").onChange((value) => {
+    CommandFactory.executeCommand('cloneColor3', { ...commandContext, state: blockRenderState }, value);
   });
-  cloneColorsFolder.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-      recreateScene();
-    }
+  cloneColorsFolder.addColor(blockRenderState, "cloneColor4").name("Clone 4 Color").onChange((value) => {
+    CommandFactory.executeCommand('cloneColor4', { ...commandContext, state: blockRenderState }, value);
   });
-  cloneColorsFolder.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange(() => {
-    saveBlockRenderState(blockRenderState);
-    if (blockRenderState.style === "unifiedColor" && blockRenderState.useCloneColors) {
-      recreateScene();
-    }
+  cloneColorsFolder.addColor(blockRenderState, "cloneColor5").name("Clone 5 Color").onChange((value) => {
+    CommandFactory.executeCommand('cloneColor5', { ...commandContext, state: blockRenderState }, value);
   });
 
   // Camera Settings folder
@@ -335,53 +317,63 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     });
   };
 
-  cameraSettingsFolder.add(cameraStateProxy, "type", Object.values(CAMERA_TYPES)).name("Camera Type").onChange(() => {
-    const state = getItem("cameraState") || {};
-    state.type = cameraStateProxy.type;
-    setItem("cameraState", state);
-    location.reload();
+  // Update command context with updateCameraProjection
+  commandContext.updateCameraProjection = updateCameraProjection;
+
+  // Update command context with cameraStateProxy
+  commandContext.cameraStateProxy = cameraStateProxy;
+
+  cameraSettingsFolder.add(cameraStateProxy, "type", Object.values(CAMERA_TYPES)).name("Camera Type").onChange((value) => {
+    CommandFactory.executeCommand('type', { ...commandContext, state: cameraStateProxy }, value);
   });
 
-  cameraSettingsFolder.add(cameraSettings, "fov", 1, 150).name("FOV (Perspective)").onChange(updateCameraProjection);
-  cameraSettingsFolder.add(cameraSettings, "frustumSize", 1, 100).name("Frustum Size (Ortho)").onChange(updateCameraProjection);
-  cameraSettingsFolder.add(cameraSettings, "near", 0.001, 10).name("Near").onChange(updateCameraProjection);
-  cameraSettingsFolder.add(cameraSettings, "far", 10, 10000).name("Far").onChange(updateCameraProjection);
-  cameraSettingsFolder.add(cameraSettings, "zoom", 0.1, 10).name("Zoom").onChange(updateCameraProjection).listen();
+  cameraSettingsFolder.add(cameraSettings, "fov", 1, 150).name("FOV (Perspective)").onChange((value) => {
+    CommandFactory.executeCommand('fov', { ...commandContext, state: cameraSettings }, value);
+  });
+  cameraSettingsFolder.add(cameraSettings, "frustumSize", 1, 100).name("Frustum Size (Ortho)").onChange((value) => {
+    CommandFactory.executeCommand('frustumSize', { ...commandContext, state: cameraSettings }, value);
+  });
+  cameraSettingsFolder.add(cameraSettings, "near", 0.001, 10).name("Near").onChange((value) => {
+    CommandFactory.executeCommand('near', { ...commandContext, state: cameraSettings }, value);
+  });
+  cameraSettingsFolder.add(cameraSettings, "far", 10, 10000).name("Far").onChange((value) => {
+    CommandFactory.executeCommand('far', { ...commandContext, state: cameraSettings }, value);
+  });
+  cameraSettingsFolder.add(cameraSettings, "zoom", 0.1, 10).name("Zoom").onChange((value) => {
+    CommandFactory.executeCommand('zoom', { ...commandContext, state: cameraSettings }, value);
+  }).listen();
 
   // Multi-Color Palette folder
   const multiColorFolder = gui.addFolder("Multi-Color Palette");
-  const updateMultiColor = () => {
-    saveBlockRenderState(blockRenderState);
-    if (["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(blockRenderState.style)) {
-      recreateScene();
-    }
-  };
-  multiColorFolder.addColor(blockRenderState, "multiColor1").name("Color 1").onChange(updateMultiColor);
-  multiColorFolder.addColor(blockRenderState, "multiColor2").name("Color 2").onChange(updateMultiColor);
-  multiColorFolder.addColor(blockRenderState, "multiColor3").name("Color 3").onChange(updateMultiColor);
-  multiColorFolder.addColor(blockRenderState, "multiColor4").name("Color 4").onChange(updateMultiColor);
+  multiColorFolder.addColor(blockRenderState, "multiColor1").name("Color 1").onChange((value) => {
+    CommandFactory.executeCommand('multiColor1', { ...commandContext, state: blockRenderState }, value);
+  });
+  multiColorFolder.addColor(blockRenderState, "multiColor2").name("Color 2").onChange((value) => {
+    CommandFactory.executeCommand('multiColor2', { ...commandContext, state: blockRenderState }, value);
+  });
+  multiColorFolder.addColor(blockRenderState, "multiColor3").name("Color 3").onChange((value) => {
+    CommandFactory.executeCommand('multiColor3', { ...commandContext, state: blockRenderState }, value);
+  });
+  multiColorFolder.addColor(blockRenderState, "multiColor4").name("Color 4").onChange((value) => {
+    CommandFactory.executeCommand('multiColor4', { ...commandContext, state: blockRenderState }, value);
+  });
 
   // Clone Visibility folder
   const visibilityFolder = gui.addFolder("Clone Visibility");
   visibilityFolder.add(cloneVisibilityState, "groupClone1").name("Clone 1").onChange((vis) => {
-    if (clones.groupClone1) clones.groupClone1.visible = vis;
-    saveCloneVisibilityState(cloneVisibilityState);
+    CommandFactory.executeCommand('groupClone1', { ...commandContext, state: cloneVisibilityState }, vis);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone2").name("Clone 2").onChange((vis) => {
-    if (clones.groupClone2) clones.groupClone2.visible = vis;
-    saveCloneVisibilityState(cloneVisibilityState);
+    CommandFactory.executeCommand('groupClone2', { ...commandContext, state: cloneVisibilityState }, vis);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone3").name("Clone 3").onChange((vis) => {
-    if (clones.groupClone3) clones.groupClone3.visible = vis;
-    saveCloneVisibilityState(cloneVisibilityState);
+    CommandFactory.executeCommand('groupClone3', { ...commandContext, state: cloneVisibilityState }, vis);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone4").name("Clone 4").onChange((vis) => {
-    if (clones.groupClone4) clones.groupClone4.visible = vis;
-    saveCloneVisibilityState(cloneVisibilityState);
+    CommandFactory.executeCommand('groupClone4', { ...commandContext, state: cloneVisibilityState }, vis);
   }).listen();
   visibilityFolder.add(cloneVisibilityState, "groupClone5").name("Clone 5").onChange((vis) => {
-    if (clones.groupClone5) clones.groupClone5.visible = vis;
-    saveCloneVisibilityState(cloneVisibilityState);
+    CommandFactory.executeCommand('groupClone5', { ...commandContext, state: cloneVisibilityState }, vis);
   }).listen();
 
   visibilityFolder.add({
@@ -485,6 +477,9 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Position and rotation manager (returns folder and switch function)
   const positionRotationManager = positionAndRotationManager(clones, cloneSelectorState, gui);
 
+  // Update command context with positionRotationManager
+  commandContext.positionRotationManager = positionRotationManager;
+
   // Clone Selector folder - only visible in development
   const cloneSelectorFolder = gui.addFolder("Clone Selector");
   if (import.meta.env.PROD) {
@@ -492,9 +487,8 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   }
   cloneSelectorFolder.add(cloneSelectorState, "selectedCloneIndex", [1, 2, 3, 4, 5])
     .name("Selected Clone")
-    .onChange(() => {
-      saveCloneSelectorState(cloneSelectorState);
-      positionRotationManager.switchClone(cloneSelectorState.selectedCloneIndex);
+    .onChange((value) => {
+      CommandFactory.executeCommand('selectedCloneIndex', { ...commandContext, state: cloneSelectorState }, value);
     });
 
   // Collect all folders for UI state management
@@ -530,6 +524,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   return {
     gui,
     folders,
-    manager: positionRotationManager
+    manager: positionRotationManager,
+    commandContext
   };
 }
