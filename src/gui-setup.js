@@ -127,16 +127,16 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   const dimensionsFolder = gui.addFolder("Dimensions");
   dimensionsFolder.add(dimensionState, "dimension1", 1, 40, 0.1).name('dimension 1, r').onChange((value) => {
     CommandFactory.executeCommand('dimension1', { ...commandContext, state: dimensionState }, value);
-  });
+  }).listen();
   dimensionsFolder.add(dimensionState, "dimension2", 1, 40, 0.1).name('dimension 2, g').onChange((value) => {
     CommandFactory.executeCommand('dimension2', { ...commandContext, state: dimensionState }, value);
-  });
+  }).listen();
   dimensionsFolder.add(dimensionState, "dimension3", 1, 40, 0.1).name('dimension 3, b').onChange((value) => {
     CommandFactory.executeCommand('dimension3', { ...commandContext, state: dimensionState }, value);
-  });
+  }).listen();
   dimensionsFolder.add(dimensionState, "blockThickness", 0.1, 10, 0.1).name('Block Thickness').onChange((value) => {
     CommandFactory.executeCommand('blockThickness', { ...commandContext, state: dimensionState }, value);
-  });
+  }).listen();
 
   // WHD (Width, Height, Depth) folder
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
@@ -144,13 +144,13 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   const t2 = 2 * blockThickness;
   const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange((value) => {
     CommandFactory.executeCommand('width', { ...commandContext, state: whdState }, value);
-  });
+  }).listen();
   const whdHeightController = whdFolder.add(whdState, "height", t2, 40, 0.1).name('Height').onChange((value) => {
     CommandFactory.executeCommand('height', { ...commandContext, state: whdState }, value);
-  });
+  }).listen();
   const whdDepthController = whdFolder.add(whdState, "depth", t2, 40, 0.1).name('Depth').onChange((value) => {
     CommandFactory.executeCommand('depth', { ...commandContext, state: whdState }, value);
-  });
+  }).listen();
 
   // Update command context with WHD controllers
   commandContext.whdWidthController = whdWidthController;
@@ -159,10 +159,10 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   const whdBlockThicknessController = whdFolder.add(whdState, "blockThickness", 0.1, whdState.gap, 0.1).name('Block Thickness').onChange((value) => {
     CommandFactory.executeCommand('whdBlockThickness', { ...commandContext, state: whdState }, value);
-  });
+  }).listen();
   const whdGapController = whdFolder.add(whdState, "gap", whdState.blockThickness, 5, 0.1).name('Gap').onChange((value) => {
     CommandFactory.executeCommand('gap', { ...commandContext, state: whdState }, value);
-  });
+  }).listen();
 
   // Update command context with remaining WHD controllers
   commandContext.whdBlockThicknessController = whdBlockThicknessController;

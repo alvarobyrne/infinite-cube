@@ -158,6 +158,8 @@ setupKeyboardHandlers({
   cloneVisibilityState,
   blockRenderState,
   viewState,
+  dimensionState,
+  whdState,
   recreateSceneWrapper,
   folders,
   commandContext

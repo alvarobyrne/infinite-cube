@@ -4,7 +4,7 @@ import { BLOCK_STYLES } from "./blockRenderState.js";
 import { clearWHDState } from "./width_height_depth/whdState.js";
 import { toggleInstructions } from "./instructions-manager.js";
 import { CommandFactory } from "./commands/CommandFactory.js";
-import { STRATEGY_TYPES } from "./scene-decorators.js";
+import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
 
 /**
  * Helper to set visibility for all clones
@@ -35,10 +35,10 @@ export class BaseKeyboardStrategy {
      * @param {string} key - Lowercase key pressed
      * @param {KeyboardEvent} event - Original keyboard event
      * @param {Object} context - Handler context with state and callbacks
-     * @returns {boolean} - True if the key was handled
+     * @returns {boolean} - True if key was handled
      */
     handleKeydown(key, event, context) {
-        const { blockRenderState, viewState, commandContext } = context;
+        const { blockRenderState, viewState, dimensionState, whdState, commandContext } = context;
 
         if (key === "q") {
             // Cycle block styles
@@ -68,6 +68,84 @@ export class BaseKeyboardStrategy {
             const newDimensionLines = !blockRenderState.showDimensionLines;
             blockRenderState.showDimensionLines = newDimensionLines;
             CommandFactory.executeCommand('showDimensionLines', { ...commandContext, state: blockRenderState }, newDimensionLines);
+            return true;
+        } else if (key === "a" || key === "z") {
+            // Increase/Decrease dimension 1 (U-shape) / width (other strategies)
+            const isUshape = activeStrategyType === STRATEGY_TYPES.USHAPE_BASE;
+            const state = isUshape ? dimensionState : whdState;
+            const property = isUshape ? "dimension1" : "width";
+            const currentValue = state[property];
+            
+            // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
+            const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
+            const step = event.shiftKey ? 1 : 0.1;
+            const min = isUshape ? blockThickness * 2 : 0.1;
+            const max = isUshape ? blockThickness * 2 : 40;
+            
+            // Determine direction and new value
+            const isIncrease = (key === "a");
+            const newValue = isIncrease ? 
+                Math.min(max, currentValue + step) : 
+                Math.max(min, currentValue - step);
+            
+            // Update state first
+            state[property] = newValue;
+            
+            // Execute appropriate command
+            const commandName = isUshape ? "dimension1" : "width";
+            CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
+            return true;
+        } else if (key === "s" || key === "x") {
+            // Increase/Decrease dimension 2 (U-shape) / height (other strategies)
+            const isUshape = activeStrategyType === STRATEGY_TYPES.USHAPE_BASE;
+            const state = isUshape ? dimensionState : whdState;
+            const property = isUshape ? "dimension2" : "height";
+            const currentValue = state[property];
+            
+            // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
+            const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
+            const step = event.shiftKey ? 1 : 0.1;
+            const min = isUshape ? blockThickness * 2 : 0.1;
+            const max = isUshape ? blockThickness * 2 : 40;
+            
+            // Determine direction and new value
+            const isIncrease = (key === "s");
+            const newValue = isIncrease ? 
+                Math.min(max, currentValue + step) : 
+                Math.max(min, currentValue - step);
+            
+            // Update state first
+            state[property] = newValue;
+            
+            // Execute appropriate command
+            const commandName = isUshape ? "dimension2" : "height";
+            CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
+            return true;
+        } else if (key === "d" || key === "c") {
+            // Increase/Decrease dimension 3 (U-shape) / depth (other strategies)
+            const isUshape = activeStrategyType === STRATEGY_TYPES.USHAPE_BASE;
+            const state = isUshape ? dimensionState : whdState;
+            const property = isUshape ? "dimension3" : "depth";
+            const currentValue = state[property];
+            
+            // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
+            const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
+            const step = event.shiftKey ? 1 : 0.1;
+            const min = isUshape ? blockThickness * 2 : 0.1;
+            const max = isUshape ? blockThickness * 2 : 40;
+            
+            // Determine direction and new value
+            const isIncrease = (key === "d");
+            const newValue = isIncrease ? 
+                Math.min(max, currentValue + step) : 
+                Math.max(min, currentValue - step);
+            
+            // Update state first
+            state[property] = newValue;
+            
+            // Execute appropriate command
+            const commandName = isUshape ? "dimension3" : "depth";
+            CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
             return true;
         } else if (key === "e") {
             // Cycle themes
@@ -100,7 +178,7 @@ export class BaseKeyboardStrategy {
  */
 export class UshapeKeyboardStrategy extends BaseKeyboardStrategy {
     handleKeydown(key, event, context) {
-        const { clones, cloneVisibilityState, commandContext } = context;
+        const { clones, cloneVisibilityState, commandContext, dimensionState, whdState } = context;
 
         if (key >= "1" && key <= "5") {
             const cloneIndex = parseInt(key);

@@ -91,6 +91,8 @@ export const keyboardHandlerManager = new KeyboardHandlerManager();
  * @param {Object} params.cloneVisibilityState - Current visibility state
  * @param {Object} params.blockRenderState - Current block render state
  * @param {Object} params.viewState - Current view state
+ * @param {Object} params.dimensionState - Current dimension state
+ * @param {Object} params.whdState - Current WHD state
  * @param {Function} params.recreateSceneWrapper - Function to recreate the scene
  * @param {Object} params.folders - GUI folders object
  * @param {Object} params.commandContext - Command context for command pattern
@@ -100,6 +102,8 @@ export function setupKeyboardHandlers({
     cloneVisibilityState,
     blockRenderState,
     viewState,
+    dimensionState,
+    whdState,
     recreateSceneWrapper,
     folders,
     commandContext
@@ -109,6 +113,8 @@ export function setupKeyboardHandlers({
         cloneVisibilityState,
         blockRenderState,
         viewState,
+        dimensionState,
+        whdState,
         recreateSceneWrapper,
         folders,
         commandContext
