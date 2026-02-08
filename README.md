@@ -2,19 +2,31 @@
 
 ## Instructions
 
-Start dragging in order to remove the instructions. Press the **H** key to toggle instructions visibility.
+Start dragging in order to remove the instructions. Press the **H** key to toggle instructions visibility. There is also a **GUI** checkboxto control the instructions visibility.
 
 ### Keyboard Shortcuts
 
-- **H** - Toggle instructions visibility
+#### Universal Controls (All Strategies)
 - **Q** - Cycle through all Block Style rendering styles
-- **Z** - Toggle opacity for the relevant block styling
+- **M** - Toggle opacity for the relevant block styling
+- **I** - Toggle dimension lines visibility
+- **H** - Toggle instructions visibility
 - **W** - Clear the Width/Height/Depth (WHD) parameterization
-- **1-5** - Show/Hide specific dimension parameterization clones (only works in Dimension Parameterization mode)
-- **A** - Show all dimension parameterization clones
-- **S** - Hide all dimension parameterization clones
-- **D** - Toggle dimension lines visibility
 - **E** - Cycle through themes (Light/Dark)
+- **O** - Set orthographic camera
+- **P** - Set perspective camera
+
+#### Dimension Controls (All Strategies)
+- **A/Z** - Increase/Decrease dimension 1 (U-shape) or width (other strategies)
+- **S/X** - Increase/Decrease dimension 2 (U-shape) or height (other strategies)  
+- **D/C** - Increase/Decrease dimension 3 (U-shape) or depth (other strategies)
+- **Shift + Keys** - Use larger step (1.0) instead of fine step (0.1) for dimension controls
+
+#### U-Shape Strategy Exclusive Controls
+- **1-5** - Toggle visibility of individual clones (1-5)
+- **L** - Toggle all clones visibility (replaces A/S keys)
+
+**Note:** The keyboard shortcuts automatically adapt based on the current rendering strategy. Dimension controls work with different properties depending on whether you're using U-shape, WHD, or Nodes strategies.
 
 ### Mouse Controls
 
@@ -51,7 +63,7 @@ The cube supports two types of parameterization that can be selected in the **Bl
 
 ## Reference
 
-[Nice YouTube build](https://www.youtube.com/watch?v=hBBkVgotIH8)
+This [Nice YouTube build](https://www.youtube.com/watch?v=hBBkVgotIH8) made me realize that the infinite cube can be built using 6 u-shapes; 'u' shapes with one 'branch' longer that the other.
 
 - Video name: DIY Impossible Cube/ Infinity Cube 自製無限立方 (DIY/Wood Working/Laser Cutting)
 - Channel name: Coffreedom
