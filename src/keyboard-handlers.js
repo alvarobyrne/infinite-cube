@@ -67,14 +67,8 @@ export function setupKeyboardHandlers({
             // Update state first (like GUI dropdown does)
             blockRenderState.style = nextStyle;
             
-            console.log('Keyboard: q pressed');
-            console.log('Current style:', blockRenderState.style);
-            console.log('Next style:', nextStyle);
-            console.log('CommandContext:', commandContext);
-            
             // Use command pattern for style change
-            const success = CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, nextStyle);
-            console.log('Command executed, success:', success);
+            CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, nextStyle);
         } else if (key === "w") {
             clearWHDState();
             location.reload();
