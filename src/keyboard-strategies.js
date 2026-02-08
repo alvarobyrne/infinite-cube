@@ -54,7 +54,7 @@ export class BaseKeyboardStrategy {
             clearWHDState();
             location.reload();
             return true;
-        } else if (key === "z") {
+        } else if (key === "m") {
             // Toggle opacity
             const newOpacity = !blockRenderState.isOpaque;
             blockRenderState.isOpaque = newOpacity;
