@@ -217,6 +217,141 @@ gui.add(animationState, "animationSpeed", 0.1, 5.0)
 
 That's it! Your new property now works with GUI, keyboard, and MIDI controls using the same command.
 
+## How to Understand Any Command: Step-by-Step Guide
+
+When you encounter a command like `CommandFactory.executeCommand('width', { ...commandContext, state: whdState }, value)`, follow these steps to understand it completely.
+
+### Example: Understanding the `width` Command
+
+Let's trace the `width` command from GUI to execution:
+
+#### Step 1: Find the Command Registration
+**File:** `src/commands/CommandRegistry.js`
+**Search:** Look for `'width'` in the `initializeWithContext()` method
+
+```javascript
+// Found in CommandRegistry.js line ~275
+this.register('width', new SaveStateWithRecreateCommand(context.saveWHDState));
+```
+
+**What we learn:**
+- **Command Type:** `SaveStateWithRecreateCommand`
+- **Save Function:** `context.saveWHDState`
+- **Behavior:** Will save state + recreate scene
+
+#### Step 2: Understand the Command Class
+**File:** `src/commands/StateCommands.js`
+**Search:** Look for `SaveStateWithRecreateCommand` class
+
+```javascript
+export class SaveStateWithRecreateCommand extends Command {
+  constructor(saveFunction) {
+    super();
+    this.saveFunction = saveFunction;
+  }
+
+  execute(context, value) {
+    this.saveFunction(context.state);
+    context.recreateScene();
+  }
+}
+```
+
+**What we learn:**
+- **Constructor:** Takes a `saveFunction` (in this case `saveWHDState`)
+- **Execute method:** 
+  1. Calls `saveFunction(context.state)` → saves current state to localStorage
+  2. Calls `context.recreateScene()` → recreates the 3D scene
+
+#### Step 3: Find the Save Function Implementation
+**File:** `src/width_height_depth/whdState.js`
+**Search:** Look for `saveWHDState` export
+
+```javascript
+export function saveWHDState(state) {
+  setItem(WHD_STATE_KEY, state);
+}
+```
+
+**What we learn:**
+- **Purpose:** Saves WHD state to localStorage using a key
+- **Storage:** Uses `setItem` from storage-manager.js
+
+#### Step 4: Find the GUI Controller
+**File:** `src/gui-setup.js`
+**Search:** Look for `'width'` in GUI setup
+
+```javascript
+// Found in gui-setup.js line ~146
+const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange((value) => {
+  CommandFactory.executeCommand('width', { ...commandContext, state: whdState }, value);
+});
+```
+
+**What we learn:**
+- **GUI Element:** Slider in "Width, Height, Depth (WHD)" folder
+- **Range:** `t2` to 40, step 0.1
+- **State Object:** `whdState`
+- **Trigger:** `onChange` calls the command
+
+#### Step 5: Find the Keyboard Handler (if applicable)
+**File:** `src/keyboard-strategies.js`
+**Search:** Look for `'width'` in keyboard strategies
+
+```javascript
+// No direct width keyboard handler found
+// Width is typically controlled via GUI only
+```
+
+**What we learn:**
+- **Keyboard Support:** None (GUI-only control)
+
+#### Step 6: Find the MIDI Handler (if applicable)
+**File:** `src/midi-adapters.js` (if it exists)
+**Search:** Look for `'width'` in MIDI mappings
+
+```javascript
+// Check if width has MIDI mapping
+```
+
+### Complete Command Understanding Template
+
+For any command, use this checklist:
+
+| Step | What to Look For | Where to Look | What You Learn |
+|------|------------------|----------------|-----------------|
+| 1 | Command Registration | `CommandRegistry.js` | Command type, save function, behavior |
+| 2 | Command Class | `StateCommands.js`, `UICommands.js`, `ComplexCommands.js` | Execute logic, constructor parameters |
+| 3 | Save Function | State files (e.g., `whdState.js`) | How state is persisted |
+| 4 | GUI Controller | `gui-setup.js` | UI element, range, user interaction |
+| 5 | Keyboard Handler | `keyboard-strategies.js` | Keyboard shortcuts |
+| 6 | MIDI Handler | MIDI adapter files | MIDI controller mapping |
+| 7 | State Object | State files | What data is being modified |
+
+### Common Command Patterns
+
+#### SaveStateWithRecreateCommand (Most Common)
+- **Use Case:** Simple state changes that need scene recreation
+- **Flow:** Save state → Recreate scene
+- **Examples:** `width`, `height`, `depth`, `dimension1-3`, `isOpaque`
+
+#### SaveStateWithCallbackCommand
+- **Use Case:** State changes with additional side effects
+- **Flow:** Save state → Execute callback → (Optional) Recreate scene
+- **Examples:** `style` (with `syncFolders` callback)
+
+#### ConditionalSaveCommand
+- **Use Case:** State changes that only apply under certain conditions
+- **Flow:** Check condition → Save state if true
+- **Examples:** `unifiedColor`, `multiColor1-4` (style-dependent)
+
+#### UIUpdateCommand
+- **Use Case:** Changes that update UI elements
+- **Flow:** Save state → Update UI → (Optional) Recreate scene
+- **Examples:** `whdBlockThickness`, `gap` (update controller ranges)
+
+This systematic approach helps you understand any command's complete lifecycle from user interaction to state persistence and visual updates.
+
 ## Future Enhancements
 
 1. **Undo/Redo** - Commands already have undo() method placeholders
