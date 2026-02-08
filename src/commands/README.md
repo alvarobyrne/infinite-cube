@@ -98,6 +98,125 @@ Default MIDI CC mappings:
 - CC 30-34: Clone visibility toggles
 - CC 40-45: Boolean toggles (dimension lines, vertices, etc.)
 
+## How to Add a New Command
+
+Adding a new command is straightforward. Follow these steps:
+
+### Step 1: Choose the Right Command Type
+
+Pick the appropriate command class based on your needs:
+
+- **SaveStateCommand** - Just save state, no scene recreation
+- **SaveStateWithRecreateCommand** - Save state + recreate scene (most common)
+- **ConditionalSaveCommand** - Save state + conditionally recreate scene
+- **UIUpdateCommand** - Save state + update UI elements + optionally recreate scene
+- **SaveStateWithCallbackCommand** - Save state + custom callback + optionally recreate scene
+
+### Step 2: Register the Command in CommandRegistry.js
+
+Add your command to the `initializeWithContext()` method:
+
+```javascript
+// For a simple state save with scene recreation
+this.register('yourProperty', new SaveStateWithRecreateCommand(context.saveYourState));
+
+// For a conditional save
+this.register('yourProperty', new ConditionalSaveCommand(
+  context.saveYourState,
+  (context) => context.state.someCondition === true
+));
+
+// For UI updates
+this.register('yourProperty', new UIUpdateCommand(
+  context.saveYourState,
+  (context, value) => {
+    // Custom UI update logic here
+    if (context.yourController) {
+      context.yourController.updateDisplay();
+    }
+  },
+  true // recreate scene
+));
+```
+
+### Step 3: Update GUI Setup
+
+In `gui-setup.js`, replace the old onChange handler:
+
+```javascript
+// Before
+gui.add(yourState, "yourProperty").onChange(() => {
+  saveYourState(yourState);
+  recreateScene();
+});
+
+// After
+gui.add(yourState, "yourProperty").onChange((value) => {
+  CommandFactory.executeCommand('yourProperty', { ...commandContext, state: yourState }, value);
+}).listen(); // Add .listen() if you want UI to update from keyboard/MIDI
+```
+
+### Step 4: Add Keyboard Support (Optional)
+
+In `keyboard-handlers.js`, add your key handler:
+
+```javascript
+} else if (key === "yourKey") {
+  // Update state first (like GUI dropdown does)
+  yourState.yourProperty = newValue;
+  
+  // Use command pattern
+  CommandFactory.executeCommand('yourProperty', { ...commandContext, state: yourState }, newValue);
+}
+```
+
+### Step 5: Add MIDI Support (Optional)
+
+In `MidiCommandAdapter.js`, add your MIDI mapping:
+
+```javascript
+setupDefaultMappings() {
+  // Add your mapping
+  this.midiMappings.set(ccNumber, { 
+    property: 'yourProperty', 
+    state: 'yourState', 
+    scale: { min: 0, max: 100 } 
+  });
+}
+```
+
+### Complete Example
+
+Let's say you want to add a new property `animationSpeed`:
+
+1. **Register in CommandRegistry.js:**
+```javascript
+this.register('animationSpeed', new SaveStateWithRecreateCommand(context.saveAnimationState));
+```
+
+2. **Update GUI:**
+```javascript
+gui.add(animationState, "animationSpeed", 0.1, 5.0)
+  .onChange((value) => {
+    CommandFactory.executeCommand('animationSpeed', { ...commandContext, state: animationState }, value);
+  }).listen();
+```
+
+3. **Add keyboard shortcut:**
+```javascript
+} else if (key === "a") {
+  const newSpeed = Math.max(0.1, animationState.animationSpeed - 0.1);
+  animationState.animationSpeed = newSpeed;
+  CommandFactory.executeCommand('animationSpeed', { ...commandContext, state: animationState }, newSpeed);
+} else if (key === "s") {
+  const newSpeed = Math.min(5.0, animationState.animationSpeed + 0.1);
+  animationState.animationSpeed = newSpeed;
+  CommandFactory.executeCommand('animationSpeed', { ...commandContext, state: animationState }, newSpeed);
+}
+```
+
+That's it! Your new property now works with GUI, keyboard, and MIDI controls using the same command.
+
 ## Future Enhancements
 
 1. **Undo/Redo** - Commands already have undo() method placeholders
