@@ -63,7 +63,7 @@ export class BaseKeyboardStrategy {
         } else if (key === "h") {
             toggleInstructions();
             return true;
-        } else if (key === "d") {
+        } else if (key === "i") {
             // Toggle dimension lines
             const newDimensionLines = !blockRenderState.showDimensionLines;
             blockRenderState.showDimensionLines = newDimensionLines;
