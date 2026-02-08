@@ -231,7 +231,7 @@ class CommandRegistry {
     // Block rendering commands
     this.register('style', new SaveStateWithCallbackCommand(
       context.saveBlockRenderState,
-      (context) => context.syncFolders && context.syncFolders(),
+      (context) => {}, // No callback needed - syncFolders is now a listener
       true
     ));
     this.register('unifiedColor', new ConditionalSaveCommand(

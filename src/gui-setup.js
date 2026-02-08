@@ -9,7 +9,7 @@ import { saveBlockRenderState, clearBlockRenderState, BLOCK_STYLES } from "./blo
 import { saveCloneVisibilityState, clearCloneVisibilityState } from "./cloneVisibilityState.js";
 import { cloneSelectorState, saveCloneSelectorState, clearCloneSelectorState } from "./cloneSelectorState.js";
 import { instructionsState } from "./instructions-manager.js";
-import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
+import { STRATEGY_TYPES, activeStrategyType, onStrategyTypeChange } from "./scene-decorators.js";
 import { setItem, removeItem, getItem } from "./storage-manager.js";
 import { RENDERER_TYPES } from "./viewState.js";
 import { themeManager } from "./theme-manager.js";
@@ -186,6 +186,9 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
       whdDimensionLinesFolder.hide();
     }
   };
+
+  // Listen for strategy type changes and sync folders immediately
+  onStrategyTypeChange(syncFolders);
 
   configState.syncFolders = syncFolders;
 
