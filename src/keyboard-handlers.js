@@ -1,9 +1,6 @@
-import { themeManager } from "./theme-manager.js";
+import { STRATEGY_TYPES, activeStrategyType, onStrategyTypeChange } from "./scene-decorators.js";
+import { getKeyboardStrategy } from "./keyboard-strategies.js";
 import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
-import { saveBlockRenderState, BLOCK_STYLES } from "./blockRenderState.js";
-import { clearWHDState } from "./width_height_depth/whdState.js";
-import { toggleInstructions } from "./instructions-manager.js";
-import { CommandFactory } from "./commands/CommandFactory.js";
 
 /**
  * Helper to set visibility for all clones
@@ -22,6 +19,70 @@ export function setAllClonesVisibility(clones, cloneVisibilityState, visible) {
     }
     saveCloneVisibilityState(cloneVisibilityState);
 }
+
+/**
+ * Manages keyboard handlers and swaps strategies based on activeStrategyType.
+ */
+class KeyboardHandlerManager {
+    constructor() {
+        this.context = null;
+        this.currentStrategy = null;
+        this.boundHandler = this.handleKeydown.bind(this);
+        this.isInitialized = false;
+    }
+
+    /**
+     * Initialize the manager with the handler context
+     * @param {Object} context - Context with clones, states, and callbacks
+     */
+    initialize(context) {
+        this.context = context;
+
+        // Set initial strategy based on current activeStrategyType
+        this.setStrategy(activeStrategyType);
+
+        // Subscribe to strategy type changes
+        onStrategyTypeChange((newType) => {
+            this.setStrategy(newType);
+        });
+
+        // Register global keydown listener
+        if (!this.isInitialized) {
+            window.addEventListener("keydown", this.boundHandler);
+            this.isInitialized = true;
+        }
+    }
+
+    /**
+     * Set the current keyboard strategy
+     * @param {string} strategyType - Strategy type from STRATEGY_TYPES
+     */
+    setStrategy(strategyType) {
+        this.currentStrategy = getKeyboardStrategy(strategyType);
+    }
+
+    /**
+     * Handle keydown events by delegating to current strategy
+     * @param {KeyboardEvent} event - Keyboard event
+     */
+    handleKeydown(event) {
+        if (!this.currentStrategy || !this.context) return;
+
+        const key = event.key.toLowerCase();
+        this.currentStrategy.handleKeydown(key, event, this.context);
+    }
+
+    /**
+     * Update the context (useful when clones or state objects change)
+     * @param {Object} newContext - Updated context
+     */
+    updateContext(newContext) {
+        this.context = { ...this.context, ...newContext };
+    }
+}
+
+// Singleton instance
+export const keyboardHandlerManager = new KeyboardHandlerManager();
 
 /**
  * Setup keyboard handlers for the application
@@ -43,69 +104,13 @@ export function setupKeyboardHandlers({
     folders,
     commandContext
 }) {
-    window.addEventListener("keydown", (event) => {
-        const key = event.key.toLowerCase();
-
-        if (key >= "1" && key <= "5") {
-            const cloneIndex = parseInt(key);
-            const cloneName = `groupClone${cloneIndex}`;
-            
-            // Use command pattern for clone visibility
-            const currentVisibility = cloneVisibilityState[cloneName];
-            const newVisibility = !currentVisibility;
-            
-            CommandFactory.executeCommand(cloneName, { ...commandContext, state: cloneVisibilityState }, newVisibility);
-        } else if (key === "a") {
-            setAllClonesVisibility(clones, cloneVisibilityState, true);
-        } else if (key === "s") {
-            setAllClonesVisibility(clones, cloneVisibilityState, false);
-        } else if (key === "q") {
-            // Cycle block styles
-            const currentIndex = BLOCK_STYLES.indexOf(blockRenderState.style);
-            const direction = event.shiftKey ? -1 : 1;
-            const nextIndex = (currentIndex + direction + BLOCK_STYLES.length) % BLOCK_STYLES.length;
-            const nextStyle = BLOCK_STYLES[nextIndex];
-            
-            // Update state first (like GUI dropdown does)
-            blockRenderState.style = nextStyle;
-            
-            // Use command pattern for style change
-            CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, nextStyle);
-        } else if (key === "w") {
-            clearWHDState();
-            location.reload();
-        } else if (key === "z") {
-            // Use command pattern for opacity toggle
-            const currentOpacity = blockRenderState.isOpaque;
-            const newOpacity = !currentOpacity;
-            
-            // Update state first (like GUI dropdown does)
-            blockRenderState.isOpaque = newOpacity;
-            
-            CommandFactory.executeCommand('isOpaque', { ...commandContext, state: blockRenderState }, newOpacity);
-        } else if (key === "h") {
-            toggleInstructions();
-        } else if (key === "d") {
-            // Use command pattern for dimension lines toggle
-            const currentDimensionLines = blockRenderState.showDimensionLines;
-            const newDimensionLines = !currentDimensionLines;
-            
-            // Update state first (like GUI dropdown does)
-            blockRenderState.showDimensionLines = newDimensionLines;
-            
-            CommandFactory.executeCommand('showDimensionLines', { ...commandContext, state: blockRenderState }, newDimensionLines);
-        } else if (key === "e") {
-            // Cycle themes
-            const themes = Object.keys(themeManager.themes);
-            const currentIndex = themes.indexOf(themeManager.currentTheme);
-            const nextIndex = (currentIndex + 1) % themes.length;
-            const nextTheme = themes[nextIndex];
-
-            // Update viewState first (like GUI dropdown does)
-            viewState.theme = nextTheme;
-
-            // Use command pattern for theme change
-            CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, nextTheme);
-        }
+    keyboardHandlerManager.initialize({
+        clones,
+        cloneVisibilityState,
+        blockRenderState,
+        viewState,
+        recreateSceneWrapper,
+        folders,
+        commandContext
     });
 }

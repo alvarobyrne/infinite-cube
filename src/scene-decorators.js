@@ -39,6 +39,33 @@ export const STRATEGY_TYPES = {
 
 export let activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
 
+// Listeners for strategy type changes
+const strategyTypeListeners = [];
+
+/**
+ * Subscribe to activeStrategyType changes
+ * @param {Function} callback - Called with the new strategy type when it changes
+ * @returns {Function} - Unsubscribe function
+ */
+export function onStrategyTypeChange(callback) {
+    strategyTypeListeners.push(callback);
+    return () => {
+        const index = strategyTypeListeners.indexOf(callback);
+        if (index > -1) strategyTypeListeners.splice(index, 1);
+    };
+}
+
+/**
+ * Set the active strategy type and notify listeners
+ * @param {string} newType - New strategy type value
+ */
+function setActiveStrategyType(newType) {
+    if (activeStrategyType !== newType) {
+        activeStrategyType = newType;
+        strategyTypeListeners.forEach(cb => cb(newType));
+    }
+}
+
 // --- Decorator Pattern for Scene Additives ---
 
 export class SceneRecreator {
@@ -111,13 +138,13 @@ export class BaseRecreator extends SceneRecreator {
 
         // Set the active strategy type based on the instance's class hierarchy
         if (strategy instanceof WHDBaseStrategy) {
-            activeStrategyType = STRATEGY_TYPES.WHD_BASE;
+            setActiveStrategyType(STRATEGY_TYPES.WHD_BASE);
         } else if (strategy instanceof UshapeBaseStrategy) {
-            activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
+            setActiveStrategyType(STRATEGY_TYPES.USHAPE_BASE);
         } else if (strategy instanceof WHDNodesBaseStrategy) {
-            activeStrategyType = STRATEGY_TYPES.NODES_BASE;
+            setActiveStrategyType(STRATEGY_TYPES.NODES_BASE);
         } else {
-            activeStrategyType = STRATEGY_TYPES.USHAPE_BASE;
+            setActiveStrategyType(STRATEGY_TYPES.USHAPE_BASE);
             console.log("🔍 ~ recreate ~ src/scene-decorators.js:116 ~ activeStrategyType:", activeStrategyType);
         }
 
