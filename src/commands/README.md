@@ -299,12 +299,28 @@ const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('W
 **Search:** Look for `'width'` in keyboard strategies
 
 ```javascript
-// No direct width keyboard handler found
-// Width is typically controlled via GUI only
+// Keyboard controls for width and dimensions are now implemented
+// Found in BaseKeyboardStrategy.handleKeydown() in keyboard-strategies.js
+    ...
+    const newValue = isIncrease ? 
+        Math.min(max, currentValue + step) : 
+        Math.max(min, currentValue - step);
+    
+    // Update state first
+    state[property] = newValue;
+    
+    // Execute appropriate command
+    const commandName = isUshape ? "dimension1" : "width";
+    CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
+    return true;
+}
 ```
 
 **What we learn:**
-- **Keyboard Support:** None (GUI-only control)
+- **Keyboard Support:** Yes - A/Z keys increase/decrease width (WHD strategy) or dimension1 (U-shape)
+- **Strategy-Aware:** Different behavior based on activeStrategyType
+- **Dynamic Bounds:** Uses blockThickness * 2 for U-shape, 0.1-40 for WHD
+- **Shift Modifier:** Shift+A/Z uses step=1.0, normal uses step=0.1
 
 #### Step 6: Find the MIDI Handler (if applicable)
 **File:** `src/midi-adapters.js` (if it exists)
