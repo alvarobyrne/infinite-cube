@@ -113,11 +113,11 @@ export class UshapeKeyboardStrategy extends BaseKeyboardStrategy {
 
             CommandFactory.executeCommand(cloneName, { ...commandContext, state: cloneVisibilityState }, newVisibility);
             return true;
-        } else if (key === "a") {
-            setAllClonesVisibility(clones, cloneVisibilityState, true);
-            return true;
-        } else if (key === "s") {
-            setAllClonesVisibility(clones, cloneVisibilityState, false);
+        } else if (key === "l") {
+            // Toggle all clones visibility
+            const anyVisible = Object.values(cloneVisibilityState).some(visible => visible);
+            const newVisibility = !anyVisible;
+            setAllClonesVisibility(clones, cloneVisibilityState, newVisibility);
             return true;
         }
 
