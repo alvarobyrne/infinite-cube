@@ -157,6 +157,7 @@ setupKeyboardHandlers({
   clones,
   cloneVisibilityState,
   blockRenderState,
+  viewState,
   recreateSceneWrapper,
   folders,
   commandContext

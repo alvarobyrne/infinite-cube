@@ -29,6 +29,7 @@ export function setAllClonesVisibility(clones, cloneVisibilityState, visible) {
  * @param {Object} params.clones - Object containing all clones
  * @param {Object} params.cloneVisibilityState - Current visibility state
  * @param {Object} params.blockRenderState - Current block render state
+ * @param {Object} params.viewState - Current view state
  * @param {Function} params.recreateSceneWrapper - Function to recreate the scene
  * @param {Object} params.folders - GUI folders object
  * @param {Object} params.commandContext - Command context for command pattern
@@ -37,6 +38,7 @@ export function setupKeyboardHandlers({
     clones,
     cloneVisibilityState,
     blockRenderState,
+    viewState,
     recreateSceneWrapper,
     folders,
     commandContext
@@ -99,8 +101,11 @@ export function setupKeyboardHandlers({
             const nextIndex = (currentIndex + 1) % themes.length;
             const nextTheme = themes[nextIndex];
 
+            // Update viewState first (like GUI dropdown does)
+            viewState.theme = nextTheme;
+
             // Use command pattern for theme change
-            CommandFactory.executeCommand('theme', { ...commandContext, state: { theme: nextTheme } }, nextTheme);
+            CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, nextTheme);
         }
     });
 }

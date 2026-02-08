@@ -115,7 +115,7 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     .name("Theme")
     .onChange((value) => {
       CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, value);
-    });
+    }).listen();
 
   themeSettingsFolder.add(viewState, "transparentUI")
     .name("Transparent GUI")
