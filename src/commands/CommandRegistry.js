@@ -171,58 +171,154 @@ class CommandRegistry {
    * This should be called after all dependencies are available
    */
   initializeWithContext(context) {
-    // Update all registered commands with proper context
-    for (const [property, command] of this.commands) {
-      // Re-create command with proper context
-      if (command.saveFunction) {
-        command.saveFunction = context.saveBlockRenderState;
-      }
-      if (command.clones) {
-        command.clones = context.clones;
-      }
-      if (command.saveCloneVisibilityState) {
-        command.saveCloneVisibilityState = context.saveCloneVisibilityState;
-      }
-      if (command.themeManager) {
-        command.themeManager = context.themeManager;
-      }
-      if (command.getItem) {
-        command.getItem = context.getItem;
-      }
-      if (command.setItem) {
-        command.setItem = context.setItem;
-      }
-      if (command.instructionsState) {
-        command.instructionsState = context.instructionsState;
-      }
-      if (command.recreateScene) {
-        command.recreateScene = context.recreateScene;
-      }
-      if (command.syncFolders) {
-        command.syncFolders = context.syncFolders;
-      }
-      if (command.positionRotationManager) {
-        command.positionRotationManager = context.positionRotationManager;
-      }
-      if (command.updateCameraProjection) {
-        command.updateCameraProjection = context.updateCameraProjection;
-      }
-      if (command.whdWidthController) {
-        command.whdWidthController = context.whdWidthController;
-      }
-      if (command.whdHeightController) {
-        command.whdHeightController = context.whdHeightController;
-      }
-      if (command.whdDepthController) {
-        command.whdDepthController = context.whdDepthController;
-      }
-      if (command.whdBlockThicknessController) {
-        command.whdBlockThicknessController = context.whdBlockThicknessController;
-      }
-      if (command.whdGapController) {
-        command.whdGapController = context.whdGapController;
-      }
-    }
+    // Re-register all commands with proper context
+    this.commands.clear();
+    
+    // View and renderer commands
+    this.register('mode', new ViewModeCommand(context.saveViewState));
+    this.register('rendererType', new RendererTypeCommand(context.saveViewState));
+    this.register('type', new CameraTypeCommand(context.clones, context.saveCameraSettings, context.recreateScene));
+    this.register('theme', new ThemeCommand(context.themeManager, context.setItem, true));
+    this.register('transparentUI', new TransparencyCommand(context.themeManager, context.setItem));
+
+    // Instructions command
+    this.register('visible', new InstructionsCommand(context.instructionsState, context.setItem));
+
+    // Dimension commands
+    this.register('dimension1', new SaveStateWithRecreateCommand(context.saveDimensionState));
+    this.register('dimension2', new SaveStateWithRecreateCommand(context.saveDimensionState));
+    this.register('dimension3', new SaveStateWithRecreateCommand(context.saveDimensionState));
+    this.register('blockThickness', new SaveStateWithRecreateCommand(context.saveDimensionState));
+
+    // WHD commands
+    this.register('width', new SaveStateWithRecreateCommand(context.saveWHDState));
+    this.register('height', new SaveStateWithRecreateCommand(context.saveWHDState));
+    this.register('depth', new SaveStateWithRecreateCommand(context.saveWHDState));
+    this.register('whdBlockThickness', new UIUpdateCommand(
+      context.saveWHDState,
+      (context, value) => {
+        const t2 = 2 * value;
+        if (context.whdWidthController) {
+          context.whdWidthController.min(t2);
+          context.whdWidthController.updateDisplay();
+        }
+        if (context.whdHeightController) {
+          context.whdHeightController.min(t2);
+          context.whdHeightController.updateDisplay();
+        }
+        if (context.whdDepthController) {
+          context.whdDepthController.min(t2);
+          context.whdDepthController.updateDisplay();
+        }
+        if (context.whdGapController) {
+          context.whdGapController.min(value);
+          context.whdGapController.updateDisplay();
+        }
+      },
+      true
+    ));
+    this.register('gap', new UIUpdateCommand(
+      context.saveWHDState,
+      (context, value) => {
+        if (context.whdBlockThicknessController) {
+          context.whdBlockThicknessController.max(value);
+          context.whdBlockThicknessController.updateDisplay();
+        }
+      },
+      true
+    ));
+
+    // Block rendering commands
+    this.register('style', new SaveStateWithCallbackCommand(
+      context.saveBlockRenderState,
+      (context) => context.syncFolders && context.syncFolders(),
+      true
+    ));
+    this.register('unifiedColor', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor"
+    ));
+    this.register('useCloneColors', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor"
+    ));
+    this.register('cloneColor1', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
+    ));
+    this.register('cloneColor2', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
+    ));
+    this.register('cloneColor3', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
+    ));
+    this.register('cloneColor4', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
+    ));
+    this.register('cloneColor5', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => context.state.style === "unifiedColor" && context.state.useCloneColors
+    ));
+
+    // Multi-color commands
+    this.register('multiColor1', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
+    ));
+    this.register('multiColor2', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
+    ));
+    this.register('multiColor3', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
+    ));
+    this.register('multiColor4', new ConditionalSaveCommand(
+      context.saveBlockRenderState,
+      (context) => ["multiColorPlanes", "multiColorBox", "granularColor", "granularColorWHD"].includes(context.state.style)
+    ));
+
+    // Dimension lines and display commands
+    this.register('showDimensionLines', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showTopDimensionLines', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showRightDimensionLines', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showFrontDimensionLines', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showExtraDimensionLines', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showGSGroup', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showVertices', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showNumbers', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('numberType', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('numberSize', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('isOpaque', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showXYPlaneSquare', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('showBox', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('scale', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('x', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('y', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+    this.register('z', new SaveStateWithRecreateCommand(context.saveBlockRenderState));
+
+    // Camera commands
+    this.register('fov', new CameraProjectionCommand(context.updateCameraProjection));
+    this.register('frustumSize', new CameraProjectionCommand(context.updateCameraProjection));
+    this.register('near', new CameraProjectionCommand(context.updateCameraProjection));
+    this.register('far', new CameraProjectionCommand(context.updateCameraProjection));
+    this.register('zoom', new CameraProjectionCommand(context.updateCameraProjection));
+
+    // Clone visibility commands
+    this.register('groupClone1', new CloneVisibilityCommand('groupClone1', context.clones, context.saveCloneVisibilityState));
+    this.register('groupClone2', new CloneVisibilityCommand('groupClone2', context.clones, context.saveCloneVisibilityState));
+    this.register('groupClone3', new CloneVisibilityCommand('groupClone3', context.clones, context.saveCloneVisibilityState));
+    this.register('groupClone4', new CloneVisibilityCommand('groupClone4', context.clones, context.saveCloneVisibilityState));
+    this.register('groupClone5', new CloneVisibilityCommand('groupClone5', context.clones, context.saveCloneVisibilityState));
+
+    // Clone selector
+    this.register('selectedCloneIndex', new SaveStateWithCallbackCommand(
+      context.saveCloneSelectorState,
+      (context) => context.positionRotationManager && context.positionRotationManager.switchClone(context.state.selectedCloneIndex)
+    ));
   }
 }
 

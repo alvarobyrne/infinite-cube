@@ -158,12 +158,27 @@ export class CommandFactory {
    * @returns {boolean} True if command was executed, false if not found
    */
   static executeCommand(property, context, value) {
+    console.log('CommandFactory.executeCommand called for:', property);
+    console.log('Context:', context);
+    console.log('Value:', value);
+    
     const command = commandRegistry.get(property);
+    console.log('Command found:', command);
+    
     if (command) {
-      command.execute(context, value);
-      return true;
+      try {
+        console.log('Executing command...');
+        command.execute(context, value);
+        console.log('Command executed successfully');
+        return true;
+      } catch (error) {
+        console.error('Error executing command:', error);
+        return false;
+      }
+    } else {
+      console.warn('No command found for property:', property);
+      return false;
     }
-    return false;
   }
 
   /**

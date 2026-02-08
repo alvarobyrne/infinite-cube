@@ -24,6 +24,11 @@ export class SaveStateWithRecreateCommand extends Command {
   }
 
   execute(context, value) {
+    console.log('SaveStateWithRecreateCommand.execute called');
+    console.log('Context:', context);
+    console.log('Value:', value);
+    console.log('saveFunction:', this.saveFunction);
+    
     this.saveFunction(context.state);
     context.recreateScene();
   }
@@ -59,6 +64,13 @@ export class SaveStateWithCallbackCommand extends Command {
   }
 
   execute(context, value) {
+    console.log('SaveStateWithCallbackCommand.execute called');
+    console.log('Context:', context);
+    console.log('Value:', value);
+    console.log('saveFunction:', this.saveFunction);
+    console.log('callback:', this.callback);
+    console.log('recreateScene:', this.recreateScene);
+    
     this.saveFunction(context.state);
     this.callback(context, value);
     if (this.recreateScene) {

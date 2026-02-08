@@ -64,21 +64,40 @@ export function setupKeyboardHandlers({
             const nextIndex = (currentIndex + direction + BLOCK_STYLES.length) % BLOCK_STYLES.length;
             const nextStyle = BLOCK_STYLES[nextIndex];
             
+            // Update state first (like GUI dropdown does)
+            blockRenderState.style = nextStyle;
+            
+            console.log('Keyboard: q pressed');
+            console.log('Current style:', blockRenderState.style);
+            console.log('Next style:', nextStyle);
+            console.log('CommandContext:', commandContext);
+            
             // Use command pattern for style change
-            CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, nextStyle);
+            const success = CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, nextStyle);
+            console.log('Command executed, success:', success);
         } else if (key === "w") {
             clearWHDState();
             location.reload();
         } else if (key === "z") {
             // Use command pattern for opacity toggle
             const currentOpacity = blockRenderState.isOpaque;
-            CommandFactory.executeCommand('isOpaque', { ...commandContext, state: blockRenderState }, !currentOpacity);
+            const newOpacity = !currentOpacity;
+            
+            // Update state first (like GUI dropdown does)
+            blockRenderState.isOpaque = newOpacity;
+            
+            CommandFactory.executeCommand('isOpaque', { ...commandContext, state: blockRenderState }, newOpacity);
         } else if (key === "h") {
             toggleInstructions();
         } else if (key === "d") {
             // Use command pattern for dimension lines toggle
             const currentDimensionLines = blockRenderState.showDimensionLines;
-            CommandFactory.executeCommand('showDimensionLines', { ...commandContext, state: blockRenderState }, !currentDimensionLines);
+            const newDimensionLines = !currentDimensionLines;
+            
+            // Update state first (like GUI dropdown does)
+            blockRenderState.showDimensionLines = newDimensionLines;
+            
+            CommandFactory.executeCommand('showDimensionLines', { ...commandContext, state: blockRenderState }, newDimensionLines);
         } else if (key === "e") {
             // Cycle themes
             const themes = Object.keys(themeManager.themes);
