@@ -195,17 +195,18 @@ class CommandRegistry {
     this.register('whdBlockThickness', new UIUpdateCommand(
       context.saveWHDState,
       (context, value) => {
-        const t2 = 2 * value;
+        const { whdState } = context;
+        const min = whdState.gap + value;
         if (context.whdWidthController) {
-          context.whdWidthController.min(t2);
+          context.whdWidthController.min(min);
           context.whdWidthController.updateDisplay();
         }
         if (context.whdHeightController) {
-          context.whdHeightController.min(t2);
+          context.whdHeightController.min(min);
           context.whdHeightController.updateDisplay();
         }
         if (context.whdDepthController) {
-          context.whdDepthController.min(t2);
+          context.whdDepthController.min(min);
           context.whdDepthController.updateDisplay();
         }
         if (context.whdGapController) {
@@ -218,6 +219,21 @@ class CommandRegistry {
     this.register('gap', new UIUpdateCommand(
       context.saveWHDState,
       (context, value) => {
+        console.log("🚀 ~ CommandRegistry ~ initializeWithContext ~ context:", context)
+        const { whdState } = context;
+        const min = whdState.blockThickness + value;
+        if (context.whdWidthController) {
+          context.whdWidthController.min(min);
+          context.whdWidthController.updateDisplay();
+        }
+        if (context.whdHeightController) {
+          context.whdHeightController.min(min);
+          context.whdHeightController.updateDisplay();
+        }
+        if (context.whdDepthController) {
+          context.whdDepthController.min(min);
+          context.whdDepthController.updateDisplay();
+        }
         if (context.whdBlockThicknessController) {
           context.whdBlockThicknessController.max(value);
           context.whdBlockThicknessController.updateDisplay();
