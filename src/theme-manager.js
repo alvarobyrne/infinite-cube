@@ -33,6 +33,7 @@ export class ThemeManager {
                         default: 'gray'
                     },
                     text: 0x000000,
+                    textCss: "black",
                     palette: {
                         red: '#cc0000',
                         green: '#00cc00',
@@ -75,6 +76,7 @@ export class ThemeManager {
                         default: 'white'
                     },
                     text: 0xffffff,
+                    textCss: "white",
                     palette: {
                         red: 'red',
                         green: 'green',
