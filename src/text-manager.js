@@ -181,3 +181,29 @@ export function updateBlockNumbers(blocks, camera) {
         numberMesh.lookAt(lookTarget);
     });
 }
+/**
+ * Creates a THREE.Sprite with text rendered on a canvas texture.
+ * @param {string} label - The text to display.
+ * @param {Object} options - Options object.
+ * @param {string} [options.textColor='#000'] - CSS color for the text.
+ * @param {number} [options.textSize=32] - Font size in px.
+ * @param {number} [options.canvasSize=64] - Size of the canvas (square).
+ * @returns {THREE.Sprite}
+ */
+export function createTextSprite(label, { textColor = "#000", textSize = 32, canvasSize = 64 } = {}) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+    const ctx = canvas.getContext("2d");
+    ctx.font = `${textSize}px Arial`;
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, canvas.width * 0.5, canvas.height * 0.5);
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+    });
+    return new THREE.Sprite(spriteMat);
+}
