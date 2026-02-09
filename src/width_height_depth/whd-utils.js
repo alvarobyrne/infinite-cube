@@ -48,24 +48,24 @@ export function getWHDConfigs(whdState) {
     const cDepth = themeManager.colors.dimensionLine.depth;
 
     return {
-        b1: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false },
-        b2: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false },
-        b3: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false },
-        b4: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false },
-        b5: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false },
-        b6: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false },
-        b7: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false },
-        b8: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false },
-        b9: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false },
-        b10: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false },
-        b11: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false },
-        b12: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false },
-        b13: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false },
-        b14: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false },
-        b15: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false },
-        b16: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false },
-        b17: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false },
-        b18: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false },
+        b1: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false, maxKey: "height" },
+        b2: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false, maxKey: "width" },
+        b3: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false, maxKey: "height" },
+        b4: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false, maxKey: "width" },
+        b5: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false, maxKey: "depth" },
+        b6: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false, maxKey: "width" },
+        b7: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false, maxKey: "depth" },
+        b8: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false, maxKey: "height" },
+        b9: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false, maxKey: "depth" },
+        b10: { width: t, height: h_prime, depth: t, t, color: cHeight, isWireframe: false, maxKey: "height" },
+        b11: { width: w, height: t, depth: t, t, color: cWidth, isWireframe: false, maxKey: "width" },
+        b12: { width: t, height: reducedHeight, depth: t, t, color: cDepth, isWireframe: false, maxKey: "height" },
+        b13: { width: w_prime, height: t, depth: t, t, color: cHeight, isWireframe: false, maxKey: "width" },
+        b14: { width: t, height: t, depth: d, t, color: cWidth, isWireframe: false, maxKey: "depth" },
+        b15: { width: reducedWidth, height: t, depth: t, t, color: cDepth, isWireframe: false, maxKey: "width" },
+        b16: { width: t, height: t, depth: d_prime, t, color: cHeight, isWireframe: false, maxKey: "depth" },
+        b17: { width: t, height: h, depth: t, t, color: cWidth, isWireframe: false, maxKey: "height" },
+        b18: { width: t, height: t, depth: reducedDepth, t, color: cDepth, isWireframe: false, maxKey: "depth" },
     };
 }
 /**
@@ -112,9 +112,8 @@ export function getWHDNodesConfigs(whdState) {
         b18: -1
     }
     Object.keys(configs).forEach(key => {
-        const { p, maxKey } = getEnd(configs[key], factors[key]);
+        const { p } = getEnd(configs[key], factors[key]);
         configs[key].nodePosition = p;
-        configs[key].maxKey = maxKey;
     });
     return configs;
 }
@@ -129,24 +128,17 @@ export function getWHDNodesConfigs(whdState) {
 function getEnd(config, factor) {
     const keys = Object.keys(config);
     let max = 0;
-    let maxKey = '';
     for (let i = 0; i < keys.length; i++) {
         if (config[keys[i]] > max) {
             max = config[keys[i]];
-            maxKey = keys[i];
         }
     }
     const p = { x: 0, y: 0, z: 0 }
     const dict = { width: 'x', height: 'y', depth: 'z' }
     const thickness = config.t;
-    if (factor === undefined) {
-        p[dict[maxKey]] = 0
 
-    } else {
-
-        p[dict[maxKey]] = factor * (max / 2 + thickness / 2);
-    }
-    return { p, maxKey };
+    p[dict[config.maxKey]] = factor * (max / 2 + thickness / 2);
+    return { p };
 }
 
 /**
