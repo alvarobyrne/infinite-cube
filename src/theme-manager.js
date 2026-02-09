@@ -45,7 +45,8 @@ export class ThemeManager {
                         white: 'black', // Invert for light theme contrast against background? Or keep standard? Using 'black' for 'white' lines feels semantic invert.
                         black: 'white',
                         gray: 'gray'
-                    }
+                    },
+                    getPaletteColorByIndex: null
                 }
             },
             dark: {
@@ -88,10 +89,18 @@ export class ThemeManager {
                         white: 'white',
                         black: 'black',
                         gray: 'gray'
-                    }
+                    },
+                    getPaletteColorByIndex: null
                 }
             }
         };
+        Object.keys(this.themes).forEach(themeName => {
+            this.themes[themeName].colors.getPaletteColorByIndex = (index) => {
+                const palette = this.themes[themeName].colors.palette;
+                const paletteKeys = Object.keys(palette);
+                return palette[paletteKeys[index % paletteKeys.length]];
+            };
+        });
     }
 
     get colors() {
