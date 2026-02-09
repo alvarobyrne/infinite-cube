@@ -1,4 +1,6 @@
 import * as THREE from "three/webgpu";
+import { createTextSprite } from "./text-manager.js";
+
 
 /**
  * Adds a dimension line with arrows, perpendicular ticks, and a label.
@@ -105,21 +107,8 @@ export function addDimensionLine({
   });
 
   // Add label as a sprite
-  const canvas = document.createElement("canvas");
-  canvas.width = 64;
-  canvas.height = 64;
-  const ctx = canvas.getContext("2d");
-  ctx.font = `${textSize}px Arial`;
-  ctx.fillStyle = textColor;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(label, canvas.width * 0.5, canvas.height * 0.5);
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMat = new THREE.SpriteMaterial({
-    map: texture,
-    transparent: true,
-  });
-  const sprite = new THREE.Sprite(spriteMat);
+  const sprite = createTextSprite(label, { textColor, textSize });
+
   sprite.position.copy(mid);
   group.add(sprite);
   return group;
