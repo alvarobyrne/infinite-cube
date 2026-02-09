@@ -6,6 +6,7 @@ import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
 import { PathManager } from "./node_based/PathManager.js";
 import { themeManager } from "./theme-manager.js";
 import { createGeometryFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
+import { createTextSprite } from "./text-manager.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -547,7 +548,7 @@ export function createMultiColorPlaneBlock({
   return group;
 }
 
-export function createLine(node0, node1) {
+export function createLine(node0, node1, index = null) {
   const group = new THREE.Group();
   const material = new THREE.LineBasicMaterial({ color: themeManager.colors.block.secondary });
   const points = [];
@@ -556,6 +557,12 @@ export function createLine(node0, node1) {
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, material);
   group.add(line);
+  if (index !== null) {
+    const textColor = themeManager.colors.textCss;
+    const textMesh = createTextSprite(index, { textColor, textSize: 72 });
+    textMesh.position.copy(node0);
+    group.add(textMesh);
+  }
   return group;
 }
 
