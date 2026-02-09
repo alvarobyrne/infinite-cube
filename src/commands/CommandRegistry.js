@@ -18,6 +18,26 @@ import {
 } from './ComplexCommands.js';
 
 /**
+ * Helper function to update WHD controller bounds
+ * @param {Object} context - Command context with controllers
+ * @param {number} min - New minimum value for width/height/depth controllers
+ */
+function updateWHDControllerBounds(context, min) {
+  if (context.whdWidthController) {
+    context.whdWidthController.min(min);
+    context.whdWidthController.updateDisplay();
+  }
+  if (context.whdHeightController) {
+    context.whdHeightController.min(min);
+    context.whdHeightController.updateDisplay();
+  }
+  if (context.whdDepthController) {
+    context.whdDepthController.min(min);
+    context.whdDepthController.updateDisplay();
+  }
+}
+
+/**
  * Command Registry - maps GUI properties to appropriate command instances
  */
 class CommandRegistry {
@@ -197,18 +217,8 @@ class CommandRegistry {
       (context, value) => {
         const { whdState } = context;
         const min = whdState.gap + value;
-        if (context.whdWidthController) {
-          context.whdWidthController.min(min);
-          context.whdWidthController.updateDisplay();
-        }
-        if (context.whdHeightController) {
-          context.whdHeightController.min(min);
-          context.whdHeightController.updateDisplay();
-        }
-        if (context.whdDepthController) {
-          context.whdDepthController.min(min);
-          context.whdDepthController.updateDisplay();
-        }
+        updateWHDControllerBounds(context, min);
+        
         if (context.whdGapController) {
           context.whdGapController.min(value);
           context.whdGapController.updateDisplay();
@@ -222,18 +232,8 @@ class CommandRegistry {
         console.log("🚀 ~ CommandRegistry ~ initializeWithContext ~ context:", context)
         const { whdState } = context;
         const min = whdState.blockThickness + value;
-        if (context.whdWidthController) {
-          context.whdWidthController.min(min);
-          context.whdWidthController.updateDisplay();
-        }
-        if (context.whdHeightController) {
-          context.whdHeightController.min(min);
-          context.whdHeightController.updateDisplay();
-        }
-        if (context.whdDepthController) {
-          context.whdDepthController.min(min);
-          context.whdDepthController.updateDisplay();
-        }
+        updateWHDControllerBounds(context, min);
+        
         if (context.whdBlockThicknessController) {
           context.whdBlockThicknessController.max(value);
           context.whdBlockThicknessController.updateDisplay();
