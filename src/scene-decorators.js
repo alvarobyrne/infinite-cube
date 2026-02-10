@@ -752,7 +752,8 @@ export class BlockNumberDecorator extends RecreatorDecorator {
 
                 const numRaw = identifier.replace('block', '').replace('b', '');
                 const num = (numRaw && !isNaN(numRaw)) ? numRaw : null;
-                const size = mesh.userData.largestDimension?.size;
+                const sizeRaw = mesh.userData.largestDimension?.size;
+                const size = sizeRaw ? toFixedIfNeeded(sizeRaw) : null;
                 let text = null;
 
                 if (labelType === 'number') {
@@ -790,6 +791,13 @@ export class BlockNumberDecorator extends RecreatorDecorator {
                     });
                 }
             });
+        };
+        // if the number has a decimal point, round it to `decimals` decimal places
+        const toFixedIfNeeded = (value, decimals = 1) => {
+            if (typeof value === 'number' && value % 1 !== 0) {
+                return value.toFixed(decimals);
+            }
+            return value;
         };
 
         attachNumbers(result);
