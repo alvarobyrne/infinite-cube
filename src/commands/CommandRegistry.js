@@ -195,7 +195,7 @@ class CommandRegistry {
     // View and renderer commands
     this.register('mode', new ViewModeCommand(context.saveViewState));
     this.register('rendererType', new RendererTypeCommand(context.saveViewState));
-    this.register('type', new CameraTypeCommand(context.clones, context.saveCameraSettings, context.recreateScene));
+    this.register('type', new CameraTypeCommand(context.saveCameraSettings));
     this.register('theme', new ThemeCommand(context.themeManager, context.setItem, true));
     this.register('transparentUI', new TransparencyCommand(context.themeManager, context.setItem));
 
@@ -229,7 +229,6 @@ class CommandRegistry {
     this.register('gap', new UIUpdateCommand(
       context.saveWHDState,
       (context, value) => {
-        console.log("🚀 ~ CommandRegistry ~ initializeWithContext ~ context:", context)
         const { whdState } = context;
         const min = whdState.blockThickness + value;
         updateWHDControllerBounds(context, min);

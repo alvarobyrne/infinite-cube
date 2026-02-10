@@ -5,6 +5,7 @@ import { clearWHDState } from "./width_height_depth/whdState.js";
 import { toggleInstructions } from "./instructions-manager.js";
 import { CommandFactory } from "./commands/CommandFactory.js";
 import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
+import { CAMERA_TYPES } from "./cameraState.js";
 
 /**
  * Helper to set visibility for all clones
@@ -75,22 +76,22 @@ export class BaseKeyboardStrategy {
             const state = isUshape ? dimensionState : whdState;
             const property = isUshape ? "dimension1" : "width";
             const currentValue = state[property];
-            
+
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
             const min = isUshape ? blockThickness * 2 : 0.1;
             const max = isUshape ? blockThickness * 2 : 40;
-            
+
             // Determine direction and new value
             const isIncrease = (key === "a");
-            const newValue = isIncrease ? 
-                Math.min(max, currentValue + step) : 
+            const newValue = isIncrease ?
+                Math.min(max, currentValue + step) :
                 Math.max(min, currentValue - step);
-            
+
             // Update state first
             state[property] = newValue;
-            
+
             // Execute appropriate command
             const commandName = isUshape ? "dimension1" : "width";
             CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
@@ -101,22 +102,22 @@ export class BaseKeyboardStrategy {
             const state = isUshape ? dimensionState : whdState;
             const property = isUshape ? "dimension2" : "height";
             const currentValue = state[property];
-            
+
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
             const min = isUshape ? blockThickness * 2 : 0.1;
             const max = isUshape ? blockThickness * 2 : 40;
-            
+
             // Determine direction and new value
             const isIncrease = (key === "s");
-            const newValue = isIncrease ? 
-                Math.min(max, currentValue + step) : 
+            const newValue = isIncrease ?
+                Math.min(max, currentValue + step) :
                 Math.max(min, currentValue - step);
-            
+
             // Update state first
             state[property] = newValue;
-            
+
             // Execute appropriate command
             const commandName = isUshape ? "dimension2" : "height";
             CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
@@ -127,22 +128,22 @@ export class BaseKeyboardStrategy {
             const state = isUshape ? dimensionState : whdState;
             const property = isUshape ? "dimension3" : "depth";
             const currentValue = state[property];
-            
+
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
             const min = isUshape ? blockThickness * 2 : 0.1;
             const max = isUshape ? blockThickness * 2 : 40;
-            
+
             // Determine direction and new value
             const isIncrease = (key === "d");
-            const newValue = isIncrease ? 
-                Math.min(max, currentValue + step) : 
+            const newValue = isIncrease ?
+                Math.min(max, currentValue + step) :
                 Math.max(min, currentValue - step);
-            
+
             // Update state first
             state[property] = newValue;
-            
+
             // Execute appropriate command
             const commandName = isUshape ? "dimension3" : "depth";
             CommandFactory.executeCommand(commandName, { ...commandContext, state }, newValue);
@@ -156,15 +157,9 @@ export class BaseKeyboardStrategy {
             viewState.theme = nextTheme;
             CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, nextTheme);
             return true;
-        } else if (key === "o") {
-            // Set orthographic camera
-            viewState.type = "orthographic";
-            CommandFactory.executeCommand('type', { ...commandContext, state: viewState }, "orthographic");
-            return true;
-        } else if (key === "p") {
-            // Set perspective camera
-            viewState.type = "perspective";
-            CommandFactory.executeCommand('type', { ...commandContext, state: viewState }, "perspective");
+        } else if (key === "o" || key === "p") {
+            const value =   key === "o" ? CAMERA_TYPES.ORTHOGRAPHIC : CAMERA_TYPES.PERSPECTIVE;
+            CommandFactory.executeCommand('type', { ...commandContext }, value);
             return true;
         }
 

@@ -67,7 +67,6 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
     updateCameraProjection: null // Will be set later
   };
 
-  commandRegistry.initializeWithContext(commandContext);
 
   // Reload page control (outside folders, at the top)
   gui.add({
@@ -322,11 +321,8 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   // Update command context with updateCameraProjection
   commandContext.updateCameraProjection = updateCameraProjection;
 
-  // Update command context with cameraStateProxy
-  commandContext.cameraStateProxy = cameraStateProxy;
-
   cameraSettingsFolder.add(cameraStateProxy, "type", Object.values(CAMERA_TYPES)).name("Camera Type").onChange((value) => {
-    CommandFactory.executeCommand('type', { ...commandContext, state: cameraStateProxy }, value);
+    CommandFactory.executeCommand('type', { ...commandContext }, value);
   });
 
   cameraSettingsFolder.add(cameraSettings, "fov", 1, 150).name("FOV (Perspective)").onChange((value) => {
@@ -522,6 +518,9 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   window.addEventListener("beforeunload", () => {
     saveUIState(folders);
   });
+
+  // Initialize command registry with complete context
+  commandRegistry.initializeWithContext(commandContext);
 
   return {
     gui,

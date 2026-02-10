@@ -48,17 +48,19 @@ export class RendererTypeCommand extends Command {
  * Command for camera type changes that require page reload
  */
 export class CameraTypeCommand extends Command {
-  constructor(cameraStateProxy, getItem, setItem) {
+  constructor(saveCameraSettings) {
     super();
-    this.cameraStateProxy = cameraStateProxy;
-    this.getItem = getItem;
-    this.setItem = setItem;
+    this.saveCameraSettings = saveCameraSettings;
   }
 
   execute(context, value) {
-    const state = this.getItem("cameraState") || {};
-    state.type = this.cameraStateProxy.type;
-    this.setItem("cameraState", state);
+    const currentCameraSettings = context.cameraSettings;
+    if(currentCameraSettings.type === value) {
+      return;
+    }
+    const cameraSettings = { ...currentCameraSettings, type: value }
+    this.saveCameraSettings(cameraSettings);
+
     location.reload();
   }
 }
