@@ -14,18 +14,17 @@ export const DEFAULT_CAMERA_SETTINGS = {
   far: 1000,
   frustumSize: 20,
   zoom: 1,
+  type: CAMERA_TYPES.PERSPECTIVE,
 };
 
 /**
  * Save camera position and controls target to localStorage
  */
 export function saveCameraState(camera, controls) {
-  const type = camera.isPerspectiveCamera ? CAMERA_TYPES.PERSPECTIVE : CAMERA_TYPES.ORTHOGRAPHIC;
   const state = getItem(CAMERA_STATE_KEY) || {};
 
   state.position = camera.position.toArray();
   state.target = controls.target.toArray();
-  state.type = type;
   // Zoom is often changed via controls, so we keep it here
   state.zoom = camera.zoom;
 
@@ -72,7 +71,7 @@ export function loadCameraSettings() {
  * Get the saved camera type
  */
 export function getSavedCameraType() {
-  const state = getItem(CAMERA_STATE_KEY);
+  const state = getItem(CAMERA_SETTINGS_KEY);
   return state?.type || CAMERA_TYPES.PERSPECTIVE;
 }
 
