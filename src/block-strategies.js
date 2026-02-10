@@ -379,8 +379,8 @@ export class PerDimensionColorWHDStrategy extends WHDBaseStrategy {
 
         //object with keys b1 to b18 in which the colors are distributed 
         const colors = {
-            b1: widthColor,
-            b2: heightColor,
+            b1: heightColor,
+            b2: widthColor,
             b3: heightColor,
             b4: widthColor,
             b5: depthColor,
@@ -443,8 +443,8 @@ export class PerBarTypeLightenColorWHDStrategy extends WHDBaseStrategy {
 
         //object with keys b1 to b18 in which the colors are distributed 
         const colors = {
-            b1: widthColor | darkener1,
-            b2: heightColor | darkener1,
+            b1: heightColor | darkener1,
+            b2: widthColor | darkener1,
             b3: heightColor | darkener2,
             b4: widthColor | darkener2,
             b5: depthColor | darkener1,
@@ -512,8 +512,8 @@ export class PerBarTypeColorWHDStrategy extends WHDBaseStrategy {
             b7: color7,
             b8: color8,
             b9: color9,
-            b10: color2,
-            b11: color1,
+            b10: color1,
+            b11: color2,
             b12: color3,
             b13: color4,
             b14: color5,
