@@ -491,15 +491,15 @@ export class PerBarTypeColorWHDStrategy extends WHDBaseStrategy {
         const opacity = blockRenderState.isOpaque ? 1 : 0.4;
         const transparent = !blockRenderState.isOpaque;
 
-        const color1 = 'red';
-        const color2 = 'green';
-        const color3 = 'blue';
-        const color4 = 'cyan';
-        const color5 = 'magenta';
-        const color6 = 'yellow';
-        const color7 = 'orange';
-        const color8 = 'purple';
-        const color9 = 'pink';
+        const color1 = themeManager.colors.palette.red;
+        const color2 = themeManager.colors.palette.green;
+        const color3 = themeManager.colors.palette.blue;
+        const color4 = themeManager.colors.palette.cyan;
+        const color5 = themeManager.colors.palette.magenta;
+        const color6 = themeManager.colors.palette.yellow;
+        const color7 = themeManager.colors.palette.orange;
+        const color8 = themeManager.colors.palette.purple;
+        const color9 = themeManager.colors.palette.pink;
 
         //object with keys b1 to b18 in which the colors are distributed 
         const colors = {
