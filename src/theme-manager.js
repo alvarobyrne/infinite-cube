@@ -42,6 +42,8 @@ export class ThemeManager {
                         magenta: '#cc00cc',
                         cyan: '#00cccc',
                         orange: '#cc6600',
+                        purple: '#7b1fa2',
+                        pink: '#d81b60',
                         white: 'black', // Invert for light theme contrast against background? Or keep standard? Using 'black' for 'white' lines feels semantic invert.
                         black: 'white',
                         gray: 'gray'
@@ -86,6 +88,8 @@ export class ThemeManager {
                         magenta: 'magenta',
                         cyan: 'cyan',
                         orange: 'orange',
+                        purple: 'purple',
+                        pink: 'pink',
                         white: 'white',
                         black: 'black',
                         gray: 'gray'
