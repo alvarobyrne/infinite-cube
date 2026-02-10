@@ -26,7 +26,7 @@ export class ThemeManager {
                         tertiary: 0x07aacf
                     },
                     dimensionLine: {
-                        width: 'orange', // W
+                        width: 'red', // W
                         height: 'green', // H
                         depth: 'blue',   // D
                         text: 'black',
