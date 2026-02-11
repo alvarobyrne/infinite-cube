@@ -11,7 +11,7 @@ import { recreateScene } from "./scene-recreation.js";
 import { setupGUI } from "./gui-setup.js";
 import { loadAllClonesState } from "./object3DState.js";
 import { cloneSelectorState } from "./cloneSelectorState.js";
-import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard-handlers.js";
+import { setAllClonesVisibility, setupKeyboardHandlers } from "./keyboard/keyboard-handlers.js";
 import { viewState, saveViewState, VIEW_MODES, RENDERER_TYPES } from "./viewState.js";
 
 import { views, setupViews } from "./scene-setup.js";

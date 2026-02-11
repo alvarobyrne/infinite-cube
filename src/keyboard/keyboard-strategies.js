@@ -1,11 +1,11 @@
-import { themeManager } from "./theme-manager.js";
-import { saveCloneVisibilityState } from "./cloneVisibilityState.js";
-import { BLOCK_STYLES } from "./blockRenderState.js";
-import { clearWHDState } from "./width_height_depth/whdState.js";
-import { toggleInstructions } from "./instructions-manager.js";
-import { CommandFactory } from "./commands/CommandFactory.js";
-import { STRATEGY_TYPES, activeStrategyType } from "./scene-decorators.js";
-import { CAMERA_TYPES } from "./cameraState.js";
+import { themeManager } from "../theme-manager.js";
+import { saveCloneVisibilityState } from "../cloneVisibilityState.js";
+import { BLOCK_STYLES } from "../blockRenderState.js";
+import { clearWHDState } from "../width_height_depth/whdState.js";
+import { toggleInstructions } from "../instructions-manager.js";
+import { CommandFactory } from "../commands/CommandFactory.js";
+import { STRATEGY_TYPES, activeStrategyType } from "../scene-decorators.js";
+import { CAMERA_TYPES } from "../cameraState.js";
 
 /**
  * Helper to set visibility for all clones
@@ -133,7 +133,7 @@ export class BaseKeyboardStrategy {
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
             const min = isUshape ? blockThickness * 2 : whdState.lowerLimit;
-            const max =  40;
+            const max = 40;
 
             // Determine direction and new value
             const isIncrease = (key === "d");
@@ -158,7 +158,7 @@ export class BaseKeyboardStrategy {
             CommandFactory.executeCommand('theme', { ...commandContext, state: viewState }, nextTheme);
             return true;
         } else if (key === "o" || key === "p") {
-            const value =   key === "o" ? CAMERA_TYPES.ORTHOGRAPHIC : CAMERA_TYPES.PERSPECTIVE;
+            const value = key === "o" ? CAMERA_TYPES.ORTHOGRAPHIC : CAMERA_TYPES.PERSPECTIVE;
             CommandFactory.executeCommand('type', { ...commandContext }, value);
             return true;
         }
