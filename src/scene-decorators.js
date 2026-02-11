@@ -841,7 +841,7 @@ export class XYPlaneSquareDecorator extends RecreatorDecorator {
 export class BoxDecorator extends RecreatorDecorator {
     recreate(params) {
         const result = super.recreate(params);
-        if (params.blockRenderState.showBoxHelper) {
+        if (params.blockRenderState.showBox) {
             const box = new THREE.BoxHelper(result.group, themeManager.colors.palette.yellow);
             params.scene.add(box);
         }
