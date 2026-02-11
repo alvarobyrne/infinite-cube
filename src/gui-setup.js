@@ -443,6 +443,8 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
   reportsFolder.add(reportState, "h_prime").name("H' (Height Prime)").disable().listen().decimals(2);
   reportsFolder.add(reportState, "reducedDepth").name("Reduced Depth").disable().listen().decimals(2);
   reportsFolder.add(reportState, "d_prime").name("D' (Depth Prime)").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "t2").name("2t").disable().listen().decimals(2);
+  reportsFolder.add(reportState, "g_t").name("g+t").disable().listen().decimals(2);
 
   // Saved Configurations folder
   const configsFolder = gui.addFolder("Saved Configurations");

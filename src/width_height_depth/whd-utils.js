@@ -17,6 +17,8 @@ export function getWHDDimensions(whdState) {
         reducedDepth: d - t2,
         d_prime: d - g_t, 
         lowerLimit: g + t2,
+        t2: t2, 
+        g_t: g_t, 
     };
 }
 
