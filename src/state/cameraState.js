@@ -1,4 +1,4 @@
-import { getItem, setItem, removeItem } from "./storage-manager.js";
+import { getItem, setItem, removeItem } from "../storage-manager.js";
 
 const CAMERA_STATE_KEY = "cameraState";
 const CAMERA_SETTINGS_KEY = "cameraSettings";

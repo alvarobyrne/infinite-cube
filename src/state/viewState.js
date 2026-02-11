@@ -1,4 +1,4 @@
-import { getItem, setItem, removeItem } from "./storage-manager.js";
+import { getItem, setItem, removeItem } from "../storage-manager.js";
 
 const VIEWSTATE_KEY = "viewState";
 

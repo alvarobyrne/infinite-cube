@@ -1,6 +1,6 @@
 import { activeStrategyType, onStrategyTypeChange } from "../scene-decorators.js";
 import { getKeyboardStrategy } from "./keyboard-strategies.js";
-import { saveCloneVisibilityState } from "../cloneVisibilityState.js";
+import { saveCloneVisibilityState } from "../state/cloneVisibilityState.js";
 
 /**
  * Helper to set visibility for all clones

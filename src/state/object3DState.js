@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { getItem, setItem, removeItem } from "./storage-manager.js";
+import { getItem, setItem, removeItem } from "../storage-manager.js";
 
 const OBJECT3DSTATE_KEY_PREFIX = "object3DState_clone";
 

@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { CAMERA_TYPES, getSavedCameraType } from "./cameraState.js";
+import { CAMERA_TYPES, getSavedCameraType } from "./state/cameraState.js";
 import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
 import { BoxLineGeometry } from "three-stdlib";
 import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";

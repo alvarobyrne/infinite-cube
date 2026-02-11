@@ -1,4 +1,4 @@
-import { getItem, setItem, removeItem } from "./storage-manager.js";
+import { getItem, setItem, removeItem } from "../storage-manager.js";
 
 export const BLOCK_STYLES = [
   "singleColor",

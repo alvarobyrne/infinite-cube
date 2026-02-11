@@ -1,4 +1,4 @@
-import { getItem, setItem, removeItem } from "./storage-manager.js";
+import { getItem, setItem, removeItem } from "../storage-manager.js";
 
 /**
  * Clone selector state - tracks which clone is currently selected for position/rotation management

@@ -1,13 +1,13 @@
 import { migrateFromLegacyKeys } from "./storage-manager.js";
-import { loadDimensionState } from "./dimensionState.js";
+import { loadDimensionState } from "./state/dimensionState.js";
 import { loadWHDState } from "./width_height_depth/whdState.js";
 import { getWHDDimensionsSum, getWHDDimensions } from "./width_height_depth/whd-utils.js";
-import { blockRenderState, loadBlockRenderState } from "./blockRenderState.js";
-import { cloneVisibilityState, loadCloneVisibilityState } from "./cloneVisibilityState.js";
-import { cloneSelectorState, loadCloneSelectorState } from "./cloneSelectorState.js";
-import { viewState, loadViewState } from "./viewState.js";
-import { loadCameraSettings } from "./cameraState.js";
-import { loadAllConfigs } from "./configState.js";
+import { blockRenderState, loadBlockRenderState } from "./state/blockRenderState.js";
+import { cloneVisibilityState, loadCloneVisibilityState } from "./state/cloneVisibilityState.js";
+import { cloneSelectorState, loadCloneSelectorState } from "./state/cloneSelectorState.js";
+import { viewState, loadViewState } from "./state/viewState.js";
+import { loadCameraSettings } from "./state/cameraState.js";
+import { loadAllConfigs } from "./state/configState.js";
 
 /**
  * Initializes all state variables by loading them from storage or using defaults.
@@ -37,7 +37,7 @@ export function initStates() {
         gap: savedWHDState?.gap || 2.5,
     };
     if (!whdState.lowerLimit) {
-        whdState.lowerLimit = whdState.gap + 2* whdState.blockThickness;
+        whdState.lowerLimit = whdState.gap + 2 * whdState.blockThickness;
     }
 
     // Initialize report state

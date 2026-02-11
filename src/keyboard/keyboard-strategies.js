@@ -1,11 +1,11 @@
 import { themeManager } from "../theme-manager.js";
-import { saveCloneVisibilityState } from "../cloneVisibilityState.js";
-import { BLOCK_STYLES } from "../blockRenderState.js";
+import { saveCloneVisibilityState } from "../state/cloneVisibilityState.js";
+import { BLOCK_STYLES } from "../state/blockRenderState.js";
 import { clearWHDState } from "../width_height_depth/whdState.js";
 import { toggleInstructions } from "../instructions-manager.js";
 import { CommandFactory } from "../commands/CommandFactory.js";
 import { STRATEGY_TYPES, activeStrategyType } from "../scene-decorators.js";
-import { CAMERA_TYPES } from "../cameraState.js";
+import { CAMERA_TYPES } from "../state/cameraState.js";
 
 /**
  * Helper to set visibility for all clones

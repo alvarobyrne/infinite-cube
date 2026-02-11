@@ -1,5 +1,5 @@
-import { getItem, setItem } from "./storage-manager.js";
-import { activeStrategyType, STRATEGY_TYPES } from "./scene-decorators.js";
+import { getItem, setItem } from "../storage-manager.js";
+import { activeStrategyType, STRATEGY_TYPES } from "../scene-decorators.js";
 
 const SAVED_CONFIGS_KEY = "savedConfigurations";
 
