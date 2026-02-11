@@ -114,7 +114,8 @@ export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
                 colorBack: multiColor1,
                 colorLeft: multiColor2,
                 colorRight: multiColor4,
-                exclude: ["top", "bottom"],
+                colorTop: multiColor4,//
+                exclude: ["bottom"],
             }),
             block3: createMultiColorPlaneBlock({
                 ...b3,
