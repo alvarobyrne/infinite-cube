@@ -139,17 +139,17 @@ export function setupGUI({ dimensionState, whdState, blockRenderState, cloneVisi
 
   // WHD (Width, Height, Depth) folder
   const whdFolder = gui.addFolder("Width, Height, Depth (WHD)");
-  const { blockThickness } = whdState;
-  const t2 = 2 * blockThickness;
-  const whdWidthController = whdFolder.add(whdState, "width", t2, 40, 0.1).name('Width').onChange((value) => {
+  const {  lowerLimit} = whdState;
+  const whdWidthController = whdFolder.add(whdState, "width", lowerLimit, 40, 0.1).name('Width').onChange((value) => {
     CommandFactory.executeCommand('width', { ...commandContext, state: whdState }, value);
   }).listen();
-  const whdHeightController = whdFolder.add(whdState, "height", t2, 40, 0.1).name('Height').onChange((value) => {
+  const whdHeightController = whdFolder.add(whdState, "height", lowerLimit, 40, 0.1).name('Height').onChange((value) => {
     CommandFactory.executeCommand('height', { ...commandContext, state: whdState }, value);
   }).listen();
-  const whdDepthController = whdFolder.add(whdState, "depth", t2, 40, 0.1).name('Depth').onChange((value) => {
+  const whdDepthController = whdFolder.add(whdState, "depth", lowerLimit, 40, 0.1).name('Depth').onChange((value) => {
     CommandFactory.executeCommand('depth', { ...commandContext, state: whdState }, value);
   }).listen();
+  const lowerLimitController = whdFolder.add(whdState, "lowerLimit").name('Lower Limit').disable().decimals(1).listen();
 
   // Update command context with WHD controllers
   commandContext.whdWidthController = whdWidthController;

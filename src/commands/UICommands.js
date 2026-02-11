@@ -12,8 +12,8 @@ export class UIUpdateCommand extends Command {
   }
 
   execute(context, value) {
-    this.saveFunction(context.state);
     this.uiUpdateCallback(context, value);
+    this.saveFunction(context.state);
     if (this.recreateScene) {
       context.recreateScene();
     }

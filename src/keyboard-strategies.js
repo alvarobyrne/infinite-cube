@@ -80,8 +80,8 @@ export class BaseKeyboardStrategy {
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
-            const min = isUshape ? blockThickness * 2 : 0.1;
-            const max = isUshape ? blockThickness * 2 : 40;
+            const min = isUshape ? blockThickness * 2 : whdState.lowerLimit;
+            const max = 40;
 
             // Determine direction and new value
             const isIncrease = (key === "a");
@@ -106,8 +106,8 @@ export class BaseKeyboardStrategy {
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
-            const min = isUshape ? blockThickness * 2 : 0.1;
-            const max = isUshape ? blockThickness * 2 : 40;
+            const min = isUshape ? blockThickness * 2 : whdState.lowerLimit;
+            const max = 40;
 
             // Determine direction and new value
             const isIncrease = (key === "s");
@@ -132,8 +132,8 @@ export class BaseKeyboardStrategy {
             // Use dynamic bounds like GUI (blockThickness * 2 for U-shape, 0.1 for others)
             const blockThickness = isUshape ? dimensionState.blockThickness : whdState.blockThickness;
             const step = event.shiftKey ? 1 : 0.1;
-            const min = isUshape ? blockThickness * 2 : 0.1;
-            const max = isUshape ? blockThickness * 2 : 40;
+            const min = isUshape ? blockThickness * 2 : whdState.lowerLimit;
+            const max =  40;
 
             // Determine direction and new value
             const isIncrease = (key === "d");

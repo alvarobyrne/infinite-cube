@@ -12,7 +12,11 @@ export function saveWHDState(whd) {
         depth: whd.depth,
         blockThickness: whd.blockThickness,
         gap: whd.gap || 1,
+        lowerLimit: whd.lowerLimit || null,
     };
+    if (!state.lowerLimit) {
+        state.lowerLimit = state.gap + 2 * state.blockThickness;
+    }
     setItem(WHD_STATE_KEY, state);
 }
 

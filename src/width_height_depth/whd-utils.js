@@ -7,13 +7,16 @@ import { themeManager } from "../theme-manager.js";
  */
 export function getWHDDimensions(whdState) {
     const { blockThickness: t, gap: g, width: w, height: h, depth: d } = whdState;
+    const t2 = 2 * t;
+    const g_t = g + t;
     return {
-        reducedWidth: w - 2 * t,
-        w_prime: w - g - t,
-        reducedHeight: h - 2 * t,
-        h_prime: h - g - t,
-        reducedDepth: d - 2 * t,
-        d_prime: d - g - t
+        reducedWidth: w - t2,
+        w_prime: w - g_t,
+        reducedHeight: h - t2,
+        h_prime: h - g_t,
+        reducedDepth: d - t2,
+        d_prime: d - g_t, 
+        lowerLimit: g + t2,
     };
 }
 

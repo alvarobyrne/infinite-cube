@@ -33,8 +33,12 @@ export function initStates() {
         height: savedWHDState?.height || 8,
         depth: savedWHDState?.depth || 10,
         blockThickness: savedWHDState?.blockThickness || 2,
+        lowerLimit: savedWHDState?.lowerLimit || null,
         gap: savedWHDState?.gap || 2.5,
     };
+    if (!whdState.lowerLimit) {
+        whdState.lowerLimit = whdState.gap + 2* whdState.blockThickness;
+    }
 
     // Initialize report state
     const reportState = {

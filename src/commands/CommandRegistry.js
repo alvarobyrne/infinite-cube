@@ -20,21 +20,35 @@ import {
 /**
  * Helper function to update WHD controller bounds
  * @param {Object} context - Command context with controllers
- * @param {number} min - New minimum value for width/height/depth controllers
+ * @param {number} lowerLimit - New minimum value for width/height/depth controllers
  */
-function updateWHDControllerBounds(context, min) {
+function updateWHDControllerBounds(context, lowerLimit) {
   if (context.whdWidthController) {
-    context.whdWidthController.min(min);
+    context.whdWidthController.min(lowerLimit);
     context.whdWidthController.updateDisplay();
   }
   if (context.whdHeightController) {
-    context.whdHeightController.min(min);
+    context.whdHeightController.min(lowerLimit);
     context.whdHeightController.updateDisplay();
   }
   if (context.whdDepthController) {
-    context.whdDepthController.min(min);
+    context.whdDepthController.min(lowerLimit);
     context.whdDepthController.updateDisplay();
   }
+}
+/**
+ * Helper function to update WHD state bounds
+ * @param {Object} context - Command context with whdState
+ * @param {number} lowerLimit - New minimum value for width/height/depth
+ */
+function updateWHDState(context, lowerLimit) {
+  const { whdState } = context;
+  const { width, height, depth } = whdState;
+  whdState.width = Math.max(width, lowerLimit);
+  whdState.height = Math.max(height, lowerLimit);
+  whdState.depth = Math.max(depth, lowerLimit);
+  whdState.lowerLimit = lowerLimit;
+
 }
 
 /**
@@ -196,8 +210,8 @@ class CommandRegistry {
     this.register('mode', new ViewModeCommand(context.saveViewState));
     this.register('rendererType', new RendererTypeCommand(context.saveViewState));
     this.register('type', new CameraTypeCommand(context.saveCameraSettings));
-    this.register('theme', new ThemeCommand(context.themeManager, context.setItem, true));
-    this.register('transparentUI', new TransparencyCommand(context.themeManager, context.setItem));
+    this.register('theme', new ThemeCommand(context.themeManager, context.saveViewState, true));
+    this.register('transparentUI', new TransparencyCommand(context.themeManager, context.saveViewState));
 
     // Instructions command
     this.register('visible', new InstructionsCommand(context.instructionsState, context.setItem));
@@ -216,8 +230,9 @@ class CommandRegistry {
       context.saveWHDState,
       (context, value) => {
         const { whdState } = context;
-        const min = whdState.gap + value;
-        updateWHDControllerBounds(context, min);
+        const lowerLimit = whdState.gap + 2*value;
+        updateWHDControllerBounds(context, lowerLimit);
+        updateWHDState(context, lowerLimit);
         
         if (context.whdGapController) {
           context.whdGapController.min(value);
@@ -230,8 +245,9 @@ class CommandRegistry {
       context.saveWHDState,
       (context, value) => {
         const { whdState } = context;
-        const min = whdState.blockThickness + value;
-        updateWHDControllerBounds(context, min);
+        const lowerLimit = 2*whdState.blockThickness + value;
+        updateWHDControllerBounds(context, lowerLimit);
+        updateWHDState(context, lowerLimit);
         
         if (context.whdBlockThicknessController) {
           context.whdBlockThicknessController.max(value);
