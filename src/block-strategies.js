@@ -605,7 +605,7 @@ export class WHDNodesStrategy extends WHDNodesBaseStrategy {
         group.add(new THREE.AxesHelper(6));
 
         const configs = getWHDNodesConfigs(whdState);
-        const positions = getNodesWHDPositions(configs, whdState).positions;
+        const positions = getNodesWHDPositions(whdState).positions;
 
         const blocks = {};
         for (const key in configs) {
@@ -629,19 +629,17 @@ export class WHDNodesLineStrategy extends WHDNodesBaseStrategy {
         scene.add(group);
         group.add(new THREE.AxesHelper(6));
 
-        const configs = getWHDNodesConfigs(whdState);
-        const nodes = getNodesWHDPositions(configs, whdState).nodes;
+        const nodes = getNodesWHDPositions(whdState).nodes;
 
         const blocks = {};
 
 
-        const keys = Object.keys(configs)
+        const keys = Object.keys(nodes)
         const length = keys.length;
         let stringOfVector3 = "\n[\n"
         keys.forEach((key, i) => {
             const nextKey = keys[(i + 1) % length];
             const n0 = nodes[key];
-            // console.log("🔍 ~ execute ~ src/block-strategies.js:641 ~ n0:", n0);
             stringOfVector3 += `    new THREE.Vector3(${n0.x.toFixed(2)}, ${n0.y.toFixed(2)}, ${n0.z.toFixed(2)}),\n`
             const n1 = nodes[nextKey];
             const line = createLine(n0, n1, i);
@@ -664,7 +662,7 @@ export class WHDNodesHollowStrategy extends WHDNodesBaseStrategy {
         group.add(new THREE.AxesHelper(6));
 
         const configs = getWHDNodesConfigs(whdState);
-        const { positions, nodes } = getNodesWHDPositions(configs, whdState);
+        const { positions } = getNodesWHDPositions(whdState);
         const faceExclusion = {
             b1: { exclude: 'laterals' },
             b2: { exclude: 'horizontals', isTrapezoid: true, direction: 1 },
@@ -712,8 +710,7 @@ export class WHD45DegreeEndsBarStrategy extends WHDNodesBaseStrategy {
         scene.add(group);
         group.add(new THREE.AxesHelper(6));
 
-        const configs = getWHDNodesConfigs(whdState);
-        const { positions, nodes } = getNodesWHDPositions(configs, whdState);
+        const { nodes } = getNodesWHDPositions(whdState);
 
         // turn the nodes object into an array
         const nodesArray = []
@@ -738,8 +735,7 @@ export class WHDWedgesAtBarEndsStrategy extends WHDNodesBaseStrategy {
         scene.add(group);
         group.add(new THREE.AxesHelper(6));
 
-        const configs = getWHDNodesConfigs(whdState);
-        const { positions, nodes } = getNodesWHDPositions(configs, whdState);
+        const { nodes } = getNodesWHDPositions(whdState);
 
         // turn the nodes object into an array
         const nodesArray = []

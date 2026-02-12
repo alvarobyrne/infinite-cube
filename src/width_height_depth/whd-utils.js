@@ -15,10 +15,10 @@ export function getWHDDimensions(whdState) {
         reducedHeight: h - t2,
         h_prime: h - g_t,
         reducedDepth: d - t2,
-        d_prime: d - g_t, 
+        d_prime: d - g_t,
         lowerLimit: g + t2,
-        t2: t2, 
-        g_t: g_t, 
+        t2: t2,
+        g_t: g_t,
     };
 }
 
@@ -307,11 +307,10 @@ export function getWHDPositions(configs, whdState) {
 }
 /**
  * Calculates the positions for the 18 blocks based on their configurations.
- * @param {Object} configs - The configurations returned by getWHDConfigs.
  * @param {Object} whdState - The width, height, depth state.
  * @returns {Object} An object containing x, y, z positions for 18 blocks (b1 to b18).
  */
-export function getNodesWHDPositions(configs, whdState) {
+export function getNodesWHDPositions(whdState) {
     const { blockThickness: t, width: w, height: h, depth: d } = whdState;
 
     // Abstracted divisions for optimization
@@ -320,6 +319,7 @@ export function getNodesWHDPositions(configs, whdState) {
     const H2 = h * 0.5;
     const D2 = d * 0.5;
 
+    const configs = getWHDNodesConfigs(whdState);
     // Block-specific half-dimensions
     const HB1 = configs.b1.height * 0.5;
     const HB3 = configs.b3.height * 0.5;
@@ -339,7 +339,6 @@ export function getNodesWHDPositions(configs, whdState) {
     const HB17 = configs.b17.height * 0.5;
     const DB18 = configs.b18.depth * 0.5;
 
-    const posWHD = getWHDPositions(configs, whdState);
 
     const pos = {};
 
