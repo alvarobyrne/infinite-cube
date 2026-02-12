@@ -117,8 +117,8 @@ export function getWHDNodesConfigs(whdState) {
         b18: -1
     }
     Object.keys(configs).forEach(key => {
-        const { p } = getEnd(configs[key], factors[key]);
-        configs[key].nodePosition = p;
+        const p = getRelativeEnd(configs[key], factors[key]);
+        configs[key].relativeNodePosition = p;
     });
     return configs;
 }
@@ -130,7 +130,7 @@ export function getWHDNodesConfigs(whdState) {
  * @param {number} config.depth 
  * @param {number} factor : orientation factor
  */
-function getEnd(config, factor) {
+function getRelativeEnd(config, factor) {
     const keys = Object.keys(config);
     let max = 0;
     for (let i = 0; i < keys.length; i++) {
@@ -478,7 +478,11 @@ export function getNodesWHDPositions(configs, whdState) {
     keys.forEach((key, i) => {
         const c0 = configs[key];
         const p0 = pos[key];
-        const absoluteNodePosition = { x: p0.x + c0.nodePosition.x, y: p0.y + c0.nodePosition.y, z: p0.z + c0.nodePosition.z };
+        const absoluteNodePosition = {
+            x: p0.x + c0.relativeNodePosition.x,
+            y: p0.y + c0.relativeNodePosition.y,
+            z: p0.z + c0.relativeNodePosition.z
+        };
         nodes[key] = absoluteNodePosition;
     });
     return { positions: pos, nodes };

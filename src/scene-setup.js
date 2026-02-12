@@ -252,10 +252,10 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = themeMan
  * @param {number} params.height - Height of the cube
  * @param {number} params.depth - Depth of the cube
  * @param {number} params.color - Color of the cube
- * @param {Object} params.nodePosition - End position of the block
+ * @param {Object} params.relativeNodePosition - End position of the block
  * @param {number} params.t - thicknes of the block, i.e., dimension of the square section of the block
  */
-export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePosition, t } = {}) {
+export function createLinesBlock({ width = 5, height = 1, depth = 1, relativeNodePosition, t } = {}) {
   // console.log("🔍 ~ createLinesBlock ~ src/scene-setup.js:214 ~ end:", end);
   const geometry = new BoxLineGeometry(width, height, depth);
 
@@ -264,12 +264,12 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
   //draw a box of size t*t*t
   const g = new THREE.Group();
   g.add(lines);
-  if (nodePosition) {
+  if (relativeNodePosition) {
     let thickness = t;
     const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
     const material2 = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
     const lines2 = new THREE.LineSegments(geometry2, material2);
-    lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
+    lines2.position.set(relativeNodePosition.x, relativeNodePosition.y, relativeNodePosition.z);
     g.add(lines2);
   }
   return g;
@@ -282,10 +282,10 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, nodePositio
  * @param {number} params.height - Height of the cube
  * @param {number} params.depth - Depth of the cube
  * @param {number} params.color - Color of the cube
- * @param {Object} params.nodePosition - End position of the block
+ * @param {Object} params.relativeNodePosition - End position of the block
  * @param {number} params.t - thicknes of the block, i.e., dimension of the square section of the block
  */
-export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePosition, t, isTrapezoid, direction } = {}) {
+export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, relativeNodePosition, t, isTrapezoid, direction } = {}) {
   const geometry = new BoxLineGeometry(width, height, depth);
 
   const material = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
@@ -298,7 +298,7 @@ export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePos
     const geometry2 = new BoxLineGeometry(thickness, thickness, thickness);
     const material2 = new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary });
     const lines2 = new THREE.LineSegments(geometry2, material2);
-    lines2.position.set(nodePosition.x, nodePosition.y, nodePosition.z);
+    lines2.position.set(relativeNodePosition.x, relativeNodePosition.y, relativeNodePosition.z);
     g.add(lines2);
     const triangleShapeRight = new THREE.Shape();
     triangleShapeRight.moveTo(-t / 2, -t / 2);
@@ -319,13 +319,13 @@ export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, nodePos
       new THREE.EdgesGeometry(triangleRightGeometry),
       material
     );
-    triangleRightLines.position.set(nodePosition.x, nodePosition.y, nodePosition.z - t / 2);
+    triangleRightLines.position.set(relativeNodePosition.x, relativeNodePosition.y, relativeNodePosition.z - t / 2);
     g.add(triangleRightLines);
     const triangleLeftLines = new THREE.LineSegments(
       new THREE.EdgesGeometry(triangleLeftGeometry),
       material2
     );
-    triangleLeftLines.position.set(direction * (width / 2 + t / 2), nodePosition.y, nodePosition.z - t / 2);
+    triangleLeftLines.position.set(direction * (width / 2 + t / 2), relativeNodePosition.y, relativeNodePosition.z - t / 2);
     g.add(triangleLeftLines);
 
   }
