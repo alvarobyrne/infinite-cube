@@ -551,8 +551,8 @@ export class GranularColorWHDStrategy extends WHDBaseStrategy {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
 
         const granularConfigs = {
-            b1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: 0, colorLeft: multiColor4, colorRight: multiColor4 },
-            b2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
+            b1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: 0, colorLeft: multiColor3, colorRight: multiColor4 },
+            b2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
             b3: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor3 },
             b4: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor4, colorRight: 0 },
             b5: { colorFront: multiColor2, colorBack: multiColor2, colorTop: multiColor4, colorBottom: multiColor3, colorLeft: multiColor1, colorRight: multiColor2 },
