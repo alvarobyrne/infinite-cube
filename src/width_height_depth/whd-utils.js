@@ -132,18 +132,13 @@ export function getWHDNodesConfigs(whdState) {
  */
 function getRelativeEnd(config, factor) {
     const keys = Object.keys(config);
-    let max = 0;
-    for (let i = 0; i < keys.length; i++) {
-        if (config[keys[i]] > max) {
-            max = config[keys[i]];
-        }
-    }
+    const maxKey = config.maxKey;
+    const max = config[maxKey];
     const p = { x: 0, y: 0, z: 0 }
     const dict = { width: 'x', height: 'y', depth: 'z' }
     const thickness = config.t;
-
     p[dict[config.maxKey]] = factor * (max / 2 + thickness / 2);
-    return { p };
+    return p;
 }
 
 /**
