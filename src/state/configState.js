@@ -90,7 +90,7 @@ export function loadConfig(name) {
     Object.assign(configState.blockRenderState, config.blockRenderState);
 
     // Restore dimensions based on strategy type
-    if (config.strategyType === STRATEGY_TYPES.WHD_BASE) {
+    if (config.strategyType === STRATEGY_TYPES.WHD_BASE || config.strategyType === STRATEGY_TYPES.NODES_BASE) {
         Object.assign(configState.whdState, config.dimensions);
         if (configState.saveWHDState) configState.saveWHDState(configState.whdState);
     } else {
