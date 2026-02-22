@@ -5,7 +5,7 @@ import { BoxLineGeometry } from "three-stdlib";
 import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
 import { PathManager } from "./node_based/PathManager.js";
 import { themeManager } from "./theme-manager.js";
-import { createGeometryFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
+import { createGeometryFromPoints, createMeshFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
 import { createTextSprite } from "./text-manager.js";
 
 /**
@@ -642,8 +642,39 @@ export function createWedgeAtBarEnds(whdState, nodes) {
       edgeWedgeMesh.add(line);
 
       group.add(edgeWedgeMesh);
+
+export function createWedgeMeshAtBarEnds(whdState, nodes) {
+  const { blockThickness } = whdState;
+  const configurations = generateWedgeConfigurations(nodes);
+  const configValues = Object.values(configurations);
+  const group = new THREE.Group();
+
+  const material = new THREE.MeshStandardMaterial({
+    color: themeManager.colors.block.primary,
+    // transparent: true,
+    // opacity: 0.5,
+    side: THREE.DoubleSide,
+    flatShading: true
+  });
+
+  for (let i = 0; i < configValues.length; i++) {
+    const currentConfiguration = configValues[i];
+    const nextConfiguration = configValues[(i + 1) % configValues.length];
+
+    const wedgeMesh = createMeshFromPoints(currentConfiguration, nextConfiguration, blockThickness, material);
+    
+    if (wedgeMesh) {
+      // Add edges for visual clarity
+      const edges = new THREE.EdgesGeometry(wedgeMesh.geometry);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary }));
+      wedgeMesh.add(line);
+
+      group.add(wedgeMesh);
+      wedgeMesh.name = `b${i+1}`;
+      wedgeMesh.userData.isNumbered = true;
     }
   }
+  
   return group;
 }
 

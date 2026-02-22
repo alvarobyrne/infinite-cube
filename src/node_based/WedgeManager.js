@@ -78,6 +78,33 @@ export function createGeometryFromPoints(startParams, endParams, barThickness) {
 
 
 /**
+ * Creates a THREE.Mesh from wedge points instead of just geometry.
+ * 
+ * @param {Object} startParams - { basis, position } for the start corner
+ * @param {Object} endParams - { basis, position } for the end corner  
+ * @param {number} barThickness - The thickness of the bar
+ * @param {THREE.Material} material - Optional material for the mesh (defaults to basic mesh material)
+ * @returns {THREE.Mesh|null} The generated mesh or null if no points.
+ */
+export function createMeshFromPoints(startParams, endParams, barThickness, material = null) {
+    const geometry = createGeometryFromPoints(startParams, endParams, barThickness);
+    
+    if (!geometry) return null;
+    
+    // Use provided material or create a default one
+    const meshMaterial = material || new THREE.MeshBasicMaterial({ 
+        color: 0x888888,
+        side: THREE.DoubleSide
+    });
+    
+    const mesh = new THREE.Mesh(geometry, meshMaterial);
+    mesh.userData.position = startParams.position.clone().add(endParams.position).multiplyScalar(0.5);
+    mesh.userData.isWedge = true;
+    mesh.userData.isBar = true;
+    return mesh;
+}
+
+/**
  * Generates the key points of the wedge and transforms them.
  * These are just the points that lie on the inclined plane of the wedge, the corners of the inclined plane.
  * 

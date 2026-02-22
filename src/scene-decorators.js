@@ -24,7 +24,8 @@ import {
     WHDNodesLineStrategy,
     WHDNodesHollowStrategy,
     WHD45DegreeEndsBarStrategy,
-    WHDWedgesAtBarEndsStrategy
+    WHDWedgesAtBarEndsStrategy,
+    WHDWedgeMeshesAtBarEndsStrategy
 } from "./block-strategies.js";
 import { createTextNumberMesh } from "./text-manager.js";
 import { themeManager } from "./theme-manager.js";
@@ -130,6 +131,8 @@ export class BaseRecreator extends SceneRecreator {
             strategy = new WHD45DegreeEndsBarStrategy();
         } else if (blockRenderState.style === "whdNodesWedgesAtBarEnds") {
             strategy = new WHDWedgesAtBarEndsStrategy();
+        } else if (blockRenderState.style === "whdNodesWedgeMeshesAtBarEnds") {
+            strategy = new WHDWedgeMeshesAtBarEndsStrategy();
         } else {
             strategy = new SingleColorStrategy();
             console.warn("Invalid block render style, using singleColor");
