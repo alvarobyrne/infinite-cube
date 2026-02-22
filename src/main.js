@@ -250,6 +250,7 @@ async function init() {
     requestAnimationFrame(animate);
   }
   animate();
+  if(import.meta.env.DEV) window.animate = animate;
 }
 
 init();

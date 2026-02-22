@@ -162,8 +162,46 @@ export class BaseKeyboardStrategy {
             CommandFactory.executeCommand('type', { ...commandContext }, value);
             return true;
         }
+        if(import.meta.env.DEV) this.developmentHandleKeydown(key, event, context);
 
         return false;
+    }
+    developmentHandleKeydown(key, _, context) {
+        // Add any development-only key handlers here
+        // For example, toggling wireframe mode, showing debug info, etc.
+        const { blockRenderState, commandContext } = context;
+
+        if (key==='6'){
+            setBlockRenderStyle('unifiedColor');
+            return true;
+        } else if (key==='7'){
+            setBlockRenderStyle('coloredFacedWHD');
+            return true;
+        } else if (key==='8'){
+            setBlockRenderStyle('whdNodes');
+            return true;
+        } else if (key==='9'){
+            setBlockRenderStyle('whdNodesLine');
+            return true;
+        } else if (key==='0'){
+            setBlockRenderStyle('whdNodesHollow');
+            return true;
+        } else if (key==='-'||key==="'"){
+            setBlockRenderStyle('whdNodes45AngleCornerBar');
+            return true;
+        } else if (key==='='||key==='¿'){
+            setBlockRenderStyle('whdNodesWedgesAtBarEnds');
+            return true;
+        } else if (key==='`'||key==='|'){             
+            console.clear();
+            window.animate?.();        
+            return true;
+        }        
+        function setBlockRenderStyle(style) {
+            blockRenderState.style = style;
+            CommandFactory.executeCommand('style', { ...commandContext, state: blockRenderState }, blockRenderState.style);
+        }
+        return false; // Return true if handled
     }
 }
 
