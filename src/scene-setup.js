@@ -491,13 +491,15 @@ export function createMultiColorPlaneBlock({
   colorBottom = themeManager.colors.dimensionLine.width,
   colorLeft = themeManager.colors.dimensionLine.depth,
   colorRight = themeManager.colors.dimensionLine.depth,
-  exclude = []
+  exclude = [],
+  transparent = false,
+  opacity = 1
 } = {}) {
   const group = new THREE.Group();
 
   // Front (+Z)
   if (!exclude.includes("front")) {
-    const material = new THREE.MeshToonMaterial({ color: colorFront, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorFront, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(width, height);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.z = depth / 2;
@@ -506,7 +508,7 @@ export function createMultiColorPlaneBlock({
 
   // Back (-Z)
   if (!exclude.includes("back")) {
-    const material = new THREE.MeshToonMaterial({ color: colorBack, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorBack, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(width, height);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.z = -depth / 2;
@@ -516,7 +518,7 @@ export function createMultiColorPlaneBlock({
 
   // Top (+Y)
   if (!exclude.includes("top")) {
-    const material = new THREE.MeshToonMaterial({ color: colorTop, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorTop, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(width, depth);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.y = height / 2;
@@ -526,7 +528,7 @@ export function createMultiColorPlaneBlock({
 
   // Bottom (-Y)
   if (!exclude.includes("bottom")) {
-    const material = new THREE.MeshToonMaterial({ color: colorBottom, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorBottom, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(width, depth);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.y = -height / 2;
@@ -536,7 +538,7 @@ export function createMultiColorPlaneBlock({
 
   // Left (-X)
   if (!exclude.includes("left")) {
-    const material = new THREE.MeshToonMaterial({ color: colorLeft, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorLeft, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(depth, height);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.x = -width / 2;
@@ -546,7 +548,7 @@ export function createMultiColorPlaneBlock({
 
   // Right (+X)
   if (!exclude.includes("right")) {
-    const material = new THREE.MeshToonMaterial({ color: colorRight, side: THREE.DoubleSide });
+    const material = new THREE.MeshToonMaterial({ color: colorRight, side: THREE.DoubleSide , transparent, opacity});
     const plane = new THREE.PlaneGeometry(depth, height);
     const mesh = new THREE.Mesh(plane, material);
     mesh.position.x = width / 2;

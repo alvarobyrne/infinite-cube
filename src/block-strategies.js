@@ -119,6 +119,8 @@ export class HollowStrategy extends UshapeBaseStrategy {
 export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
     createBlocks({ b1, b2, b3 }, blockRenderState) {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
+        const opacity = blockRenderState.isOpaque ? 1 : 0.4;
+        const transparent = !blockRenderState.isOpaque;
         return {
             block1: createMultiColorPlaneBlock({
                 ...b1,
@@ -128,6 +130,8 @@ export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
                 colorBottom: multiColor4,
                 colorLeft: multiColor4,
                 colorRight: multiColor4,
+                transparent,
+                opacity,
             }),
             block2: createMultiColorPlaneBlock({
                 ...b2,
@@ -137,6 +141,8 @@ export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
                 colorRight: multiColor4,
                 colorTop: multiColor4,//
                 exclude: ["bottom"],
+                transparent,
+                opacity,
             }),
             block3: createMultiColorPlaneBlock({
                 ...b3,
@@ -145,6 +151,8 @@ export class MultiColorPlaneStrategy extends UshapeBaseStrategy {
                 colorLeft: multiColor4,
                 colorRight: multiColor2,
                 exclude: ["top", "bottom"],
+                transparent,
+                opacity,
             }),
         };
     }
