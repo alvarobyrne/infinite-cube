@@ -108,7 +108,11 @@ export function updateBlockNumbers(blocks, camera) {
 
         // Get block world info
         const blockPos = new THREE.Vector3();
-        block.getWorldPosition(blockPos);
+        if(block.userData?.isWedge){
+            blockPos.copy(block.userData.position);
+        } else {
+            block.getWorldPosition(blockPos);
+        }
 
         const blockRot = new THREE.Quaternion();
         block.getWorldQuaternion(blockRot);
@@ -147,18 +151,18 @@ export function updateBlockNumbers(blocks, camera) {
 
         // Adjust offset based on block dimensions
         // We need to account for world scale here because we are in world space
+        const faceOffset = block.userData.isBar ? 0.7 : 0.005;
         if (block.geometry && block.geometry.parameters) {
             const params = block.geometry.parameters;
             const size = new THREE.Vector3(params.width, params.height, params.depth);
             size.multiply(blockScale); // Apply world scale
-
             // The offset is in local axis direction. We need to multiply by the corresponding half-dimension
-            if (bestFace.normal.x !== 0) offset.x *= (size.x / 2 + 0.005);
-            if (bestFace.normal.y !== 0) offset.y *= (size.y / 2 + 0.005);
-            if (bestFace.normal.z !== 0) offset.z *= (size.z / 2 + 0.005);
+            if (bestFace.normal.x !== 0) offset.x *= (size.x / 2 + faceOffset);
+            if (bestFace.normal.y !== 0) offset.y *= (size.y / 2 + faceOffset);
+            if (bestFace.normal.z !== 0) offset.z *= (size.z / 2 + faceOffset);
         } else {
             // Fallback for groups or non-standard blocks
-            offset.multiplyScalar(0.505).multiply(blockScale);
+            offset.multiplyScalar(0.5+faceOffset).multiply(blockScale);
         }
 
         // Apply block rotation to the offset

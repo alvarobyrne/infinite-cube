@@ -73,7 +73,7 @@ function recreateSceneWrapper() {
   // Collect blocks with numbers
   blocksWithNumbers = [];
   scene.traverse((child) => {
-    if (child instanceof THREE.Mesh && child.userData.numberMesh) {
+    if ( child.userData.numberMesh) {
       blocksWithNumbers.push(child);
     }
   });

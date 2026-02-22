@@ -243,6 +243,7 @@ export function createBlock({ width = 5, height = 1, depth = 1, color = themeMan
     height,
     depth,
   });
+  cube.userData.isNumbered = true;
   return cube;
 }
 /**
@@ -272,6 +273,7 @@ export function createLinesBlock({ width = 5, height = 1, depth = 1, relativeNod
     lines2.position.set(relativeNodePosition.x, relativeNodePosition.y, relativeNodePosition.z);
     g.add(lines2);
   }
+  g.userData.isNumbered = true;
   return g;
 }
 
@@ -329,6 +331,7 @@ export function createTrapezoidBlock({ width = 5, height = 1, depth = 1, relativ
     g.add(triangleLeftLines);
 
   }
+  g.userData.isNumbered = true;
   return g;
 }
 
@@ -355,6 +358,7 @@ export function createBlock1({ width = 5, height = 1, depth = 1, opacity = 1, tr
     height,
     depth,
   });
+  cube.userData.isNumbered = true;
   return cube;
 }
 
@@ -381,7 +385,9 @@ export function createMultiColorBoxBlock({
     new THREE.MeshToonMaterial({ color: colorFront }),
     new THREE.MeshToonMaterial({ color: colorBack }),
   ];
-  return new THREE.Mesh(geometry, materials);
+  const m = new THREE.Mesh(geometry, materials);
+  m.userData.isNumbered = true;
+  return m
 }
 
 
@@ -449,6 +455,9 @@ export function createHollowBlock({ width = 5, height = 1, depth = 1, color = th
     right.rotation.y = Math.PI / 2;
     group.add(right);
   }
+
+  group.userData.isNumbered = true;
+  group.userData.isBar = true;
 
   return group;
 }
@@ -545,6 +554,8 @@ export function createMultiColorPlaneBlock({
     group.add(mesh);
   }
 
+  group.userData.isNumbered = true;
+
   return group;
 }
 
@@ -563,6 +574,7 @@ export function createLine(node0, node1, index = null) {
     textMesh.position.copy(node0);
     group.add(textMesh);
   }
+  group.userData.isNumbered = true;
   return group;
 }
 
@@ -600,6 +612,8 @@ export function create45AngleCornerBar(whdState, nodes) {
     if (bar.quaternion) mesh.setRotationFromQuaternion(bar.quaternion);
 
     group.add(mesh);
+    mesh.name=`b${index+1}`;
+    mesh.userData.isBar = true;
 
     // Wireframe for debugging
     const wireframe = new THREE.WireframeGeometry(geometry);
@@ -626,6 +640,7 @@ export function createWedgeAtBarEnds(whdState, nodes) {
     const nextConfiguration = configValues[(i + 1) % configValues.length];
 
     const convexGeo = createGeometryFromPoints(currentConfiguration, nextConfiguration, blockThickness);
+    convexGeo.parameters={ ...whdState };
     if (convexGeo) {
       const material = new THREE.MeshStandardMaterial({
         color: themeManager.colors.block.primary,
@@ -642,6 +657,13 @@ export function createWedgeAtBarEnds(whdState, nodes) {
       edgeWedgeMesh.add(line);
 
       group.add(edgeWedgeMesh);
+      edgeWedgeMesh.name = `b${i+1}`;
+      edgeWedgeMesh.userData.isNumbered = true;
+    }
+  }
+  // group.userData.isNumbered = true;
+  return group;
+}
 
 export function createWedgeMeshAtBarEnds(whdState, nodes) {
   const { blockThickness } = whdState;

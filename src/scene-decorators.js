@@ -737,10 +737,12 @@ export class BlockNumberDecorator extends RecreatorDecorator {
         if (!params.blockRenderState.showNumbers) return result;
 
         const attachNumbers = (obj) => {
-            if (!obj || typeof obj !== 'object') return;
+            const cond1 = !obj;
+            const cond2 = typeof obj !== 'object';
+            if (cond1 || cond2) return;
 
             // List of objects to check for blocks
-            const objectsToCheck = [obj];
+            const objectsToCheck = [];
             if (obj.group) objectsToCheck.push(obj.group);
 
             // Add all clones to check list
@@ -751,7 +753,10 @@ export class BlockNumberDecorator extends RecreatorDecorator {
             const labelType = params.blockRenderState.numberType || "largestDimension";
 
             const processMesh = (mesh, identifier) => {
-                if (!(mesh instanceof THREE.Mesh) || mesh.userData.numberMesh) return;
+                const condA = !(mesh instanceof THREE.Mesh)&& !mesh.userData?.isNumbered;
+                const condB = mesh.userData.numberMesh;
+                const cond = condA || condB;
+                if (cond) return;
 
                 const numRaw = identifier.replace('block', '').replace('b', '');
                 const num = (numRaw && !isNaN(numRaw)) ? numRaw : null;
@@ -788,11 +793,13 @@ export class BlockNumberDecorator extends RecreatorDecorator {
                 }
 
                 // Also check top-level properties of the result object
+                /*
                 if (container === obj) {
                     Object.keys(obj).forEach(key => {
                         processMesh(obj[key], key);
                     });
                 }
+                */
             });
         };
         // if the number has a decimal point, round it to `decimals` decimal places
