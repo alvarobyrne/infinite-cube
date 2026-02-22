@@ -22,10 +22,7 @@ export function generateWedgeConfigurations(pathOfNodes) {
 
         const dCurr = new THREE.Vector3().subVectors(pNext, pCurr).normalize();
 
-        const cfg = {
-            left: { isLeft: true, rotationX: 0 },
-            right: { isLeft: false, rotationX: 0 }
-        };
+        const cfg = {};
 
         cfg.basis = { y: dCurr.clone().normalize() }
 
