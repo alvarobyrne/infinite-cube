@@ -26,9 +26,9 @@ export class UshapeBaseStrategy extends RenderingStrategy {
     execute(params) {
         const { scene, dimensionState, blockRenderState, blockThickness, gapSize } = params;
 
-        const group = new THREE.Group();
-        scene.add(group);
-        group.add(new THREE.AxesHelper(6));
+        const clonedGroup = new THREE.Group();
+        scene.add(clonedGroup);
+        clonedGroup.add(new THREE.AxesHelper(6));
 
         const configs = {
             b1: { width: dimensionState.dimension1, height: blockThickness, depth: blockThickness, color: themeManager.colors.dimensionLine.width },
@@ -37,14 +37,14 @@ export class UshapeBaseStrategy extends RenderingStrategy {
         };
 
         const { block1, block2, block3 } = this.createBlocks(configs, blockRenderState);
-        block1.name = "block1";
-        block2.name = "block2";
-        block3.name = "block3";
-        group.add(block1);
-        group.add(block2);
-        group.add(block3);
+        block1.name = "b2";
+        block2.name = "b1";
+        block3.name = "b3";
+        clonedGroup.add(block1);
+        clonedGroup.add(block2);
+        clonedGroup.add(block3);
 
-        this.applyMainGroup(group, blockRenderState);
+        this.applyMainGroup(clonedGroup, blockRenderState);
 
         block2.position.x = dimensionState.dimension1 / 2 - blockThickness / 2;
         block2.position.y = dimensionState.dimension2 / 2 + blockThickness / 2 + gapSize;
@@ -54,10 +54,31 @@ export class UshapeBaseStrategy extends RenderingStrategy {
         block3.position.y = dimensionState.dimension3 / 2 + blockThickness / 2 + gapSize;
         block3.position.z = 0;
 
-        const clones = createCloneGroups(group, scene, dimensionState, blockThickness, gapSize);
+        const clones = createCloneGroups(clonedGroup, scene, dimensionState, blockThickness, gapSize);
         this.applyClones(clones, blockRenderState);
-
-        return { group, ...clones };
+        let count = 3;
+        for (let i = 1; i <= 5; i++) {
+            const g = clones[`groupClone${i}`]
+            if (g.children && g.children.length > 0) {
+                g.children.forEach((child,i) => {
+                    if(!child.isMesh) return;
+                    count++;
+                    const name = child.name;
+                    if(name ==='b1'){
+                        child.name = `b${count-1}`;
+                    } else if(name ==='b2'){
+                        child.name = `b${count+1}`;
+                    } else {
+                        child.name = `b${count}`;
+                    }
+                });
+            }
+        }
+        const output = new THREE.Group();
+        output.add(clonedGroup);
+        Object.values(clones).forEach(clone => output.add(clone));
+        // return {group:clonedGroup, clones};
+        return {group: output}
     }
 }
 
@@ -186,24 +207,24 @@ export class GranularColorStrategy extends MultiColorBoxStrategy {
         const { multiColor1, multiColor2, multiColor3, multiColor4 } = blockRenderState;
         const config = {
             groupClone1: {
-                block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
-                block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
-                block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+                b1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+                b2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+                b3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
             },
             groupClone2: {
-                block1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
-                block2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: 0, colorLeft: multiColor3, colorRight: multiColor4 },
-                block3: { colorFront: multiColor1, colorBack: multiColor2, colorTop: 0, colorBottom: 0, colorLeft: multiColor4, colorRight: multiColor3 },
+                b1: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor2, colorBottom: 0, colorLeft: multiColor3, colorRight: multiColor4 },
+                b2: { colorFront: multiColor1, colorBack: multiColor2, colorTop: multiColor3, colorBottom: multiColor4, colorLeft: multiColor4, colorRight: multiColor4 },
+                b3: { colorFront: multiColor1, colorBack: multiColor2, colorTop: 0, colorBottom: 0, colorLeft: multiColor4, colorRight: multiColor3 },
             },
             groupClone3: {
-                block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
-                block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
-                block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+                b1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+                b2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+                b3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
             },
             groupClone5: {
-                block1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
-                block2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
-                block3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
+                b1: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor4, colorBottom: 0, colorLeft: multiColor1, colorRight: multiColor2 },
+                b2: { colorFront: multiColor4, colorBack: multiColor3, colorTop: multiColor1, colorBottom: multiColor2, colorLeft: multiColor2, colorRight: multiColor2 },
+                b3: { colorFront: multiColor4, colorBack: multiColor3, colorTop: 0, colorBottom: 0, colorLeft: multiColor2, colorRight: multiColor1 },
             },
         };
 
@@ -609,7 +630,7 @@ export class WHDNodesStrategy extends WHDNodesBaseStrategy {
 
         const blocks = {};
         for (const key in configs) {
-            const block = createLinesBlock({ ...configs[key] });
+            const block = createLinesBlock({ ...configs[key], ...positions[key] });
             block.name = key;
             const pos = positions[key];
             block.position.set(pos.x, pos.y, pos.z);
@@ -648,7 +669,7 @@ export class WHDNodesLineStrategy extends WHDNodesBaseStrategy {
             blocks[key] = line;
         });
         stringOfVector3 += "]"
-        console.log("🔍 ~ execute ~ src/block-strategies.js:644 ~ stringOfVector3:", stringOfVector3);
+        // console.log("🔍 ~ execute ~ src/block-strategies.js:644 ~ stringOfVector3:", stringOfVector3);
 
         return { group };
     }
@@ -746,8 +767,11 @@ export class WHDWedgesAtBarEndsStrategy extends WHDNodesBaseStrategy {
         nodesArray.push(nodesArray[0])
 
         const block = createWedgeAtBarEnds(whdState, nodesArray);
-        group.add(block);
+        // group.add(block);
 
+        return { group:block };
+    }
+}
 
 export class WHDWedgeMeshesAtBarEndsStrategy extends WHDNodesBaseStrategy {
     execute(params) {
