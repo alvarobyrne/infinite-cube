@@ -1,5 +1,5 @@
 import * as THREE from "three/webgpu";
-import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createLine, create45AngleCornerBar, createWedgeAtBarEnds, createWedgeMeshAtBarEnds } from "./scene-setup.js";
+import { createBlock, createBlock1, createHollowBlock, createMultiColorPlaneBlock, createMultiColorBoxBlock, createLinesBlock, createTrapezoidBlock, createLine, create45AngleCornerBar, createWedgeAtBarEnds, createWedgeMeshAtBarEnds, createWedgeMeshAtBarEnds0 } from "./scene-setup.js";
 import { changeGroupColor, changeGroupFaceColors, granularGroupFacesColorsChange, createCloneGroups } from "./scene-utils.js";
 import { getNodesWHDPositions, getWHDConfigs, getWHDNodesConfigs, getWHDPositions } from "./width_height_depth/whd-utils.js";
 import { themeManager } from "./theme-manager.js";
@@ -799,7 +799,31 @@ export class WHDWedgeMeshesAtBarEndsStrategy extends WHDNodesBaseStrategy {
         }
         nodesArray.push(nodesArray[0])
 
-        const block = createWedgeMeshAtBarEnds(whdState, nodesArray);
+        const block = createWedgeMeshAtBarEnds0(whdState, nodesArray);
+        // group.add(block);
+
+        return { group:block };
+    }
+}
+export class WHDBarStrategy extends WHDNodesBaseStrategy {
+    execute(params) {
+        const { scene, whdState, blockRenderState } = params;
+
+        // const group = new THREE.Group();
+        // scene.add(group);
+        // group.add(new THREE.AxesHelper(6));
+
+        const { nodes } = getNodesWHDPositions(whdState);
+
+        // turn the nodes object into an array
+        const nodesArray = []
+        for (const key in nodes) {
+            const obj = nodes[key];
+            nodesArray.push(new THREE.Vector3(obj.x, obj.y, obj.z));
+        }
+        nodesArray.push(nodesArray[0])
+
+        const block = createWedgeMeshAtBarEnds(whdState, nodesArray,blockRenderState.isOpaque?1:0.4, !blockRenderState.isOpaque);
         // group.add(block);
 
         return { group:block };

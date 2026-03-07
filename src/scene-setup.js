@@ -5,8 +5,9 @@ import { BoxLineGeometry } from "three-stdlib";
 import { BarGeometryGenerator } from "./node_based/HalfSpaceGeometry.js";
 import { PathManager } from "./node_based/PathManager.js";
 import { themeManager } from "./theme-manager.js";
-import { createGeometryFromPoints, createMeshFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
+import { createGeometryFromPoints, createMeshFromCorners, createMeshFromPoints, generateWedgeConfigurations } from "./node_based/WedgeManager.js";
 import { createTextSprite } from "./text-manager.js";
+import { euclideanModulo } from "three/src/math/MathUtils.js";
 
 /**
  * Create and setup the scene with camera, renderer, and lighting
@@ -595,6 +596,7 @@ export function create45AngleCornerBar(whdState, nodes) {
   const bars = PathManager.generateBars(nodes, blockThickness, blockThickness);
   // return group
   bars.forEach((bar, index) => {
+    // console.log('%c  bar:', 'color: #0e93e0;background: #aaefe5;', bar);
     // Generate Geometry
     const geometry = BarGeometryGenerator.generate(bar);
     geometry.computeVertexNormals(); // For smooth shading if needed, but we use flat
@@ -667,22 +669,41 @@ export function createWedgeAtBarEnds(whdState, nodes) {
   return group;
 }
 
-export function createWedgeMeshAtBarEnds(whdState, nodes) {
+export function createWedgeMeshAtBarEnds0(whdState, nodes) {
   const { blockThickness } = whdState;
   const configurations = generateWedgeConfigurations(nodes);
+  console.log('%c  nodes:', 'color: #0e93e0;background: #aaefe5;', nodes);
   const configValues = Object.values(configurations);
   const group = new THREE.Group();
 
   const material = new THREE.MeshStandardMaterial({
     color: themeManager.colors.block.primary,
-    // transparent: true,
-    // opacity: 0.5,
+    transparent: true,
+    opacity: 0.1,
     side: THREE.DoubleSide,
     flatShading: true
   });
 
   for (let i = 0; i < configValues.length; i++) {
     const currentConfiguration = configValues[i];
+    console.log('-----------');
+    const basisValues = Object.values(currentConfiguration.basis)
+    const basisKeys = Object.keys(currentConfiguration.basis)
+    basisValues.forEach((basis, index) => {
+      const dimension = basisKeys[index];
+      let color=''
+      if(dimension === 'x') color = 'red'
+      else if(dimension === 'y') color = 'green'
+      else if(dimension === 'z') color = 'blue'
+      // console.log('%c  basis:', 'color: #0e93e0;background: #aaefe5;', basis);
+      const position = currentConfiguration.position;
+      console.log('%c  position:', 'color: #0e93e0;background: #aaefe5;', position);
+      const node = nodes[i];
+      console.log('%c  node:', 'color: #0e93e0;background: #aaefe5;', node);
+      // console.log('%c  position:', 'color: #0e93e0;background: #aaefe5;', position);
+      group.add(new THREE.ArrowHelper(basis,position,2, color))
+    })
+
     const nextConfiguration = configValues[(i + 1) % configValues.length];
 
     const wedgeMesh = createMeshFromPoints(currentConfiguration, nextConfiguration, blockThickness, material);
@@ -691,7 +712,7 @@ export function createWedgeMeshAtBarEnds(whdState, nodes) {
       // Add edges for visual clarity
       const edges = new THREE.EdgesGeometry(wedgeMesh.geometry);
       const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary }));
-      wedgeMesh.add(line);
+      // wedgeMesh.add(line);
 
       group.add(wedgeMesh);
       wedgeMesh.name = `b${i+1}`;
@@ -701,7 +722,167 @@ export function createWedgeMeshAtBarEnds(whdState, nodes) {
   
   return group;
 }
+/**
+ * In this version we ara using the PathManager.generateBars instead
+ * @param {*} whdState 
+ * @param {*} nodes 
+ * @returns 
+ */
+export function createWedgeMeshAtBarEnds(whdState, nodes, opacity, transparent) {
+  const { blockThickness } = whdState;
+  const bars = PathManager.generateBars(nodes, blockThickness, blockThickness);
+  // console.log('%c  bars:', 'color: #0e93e0;background: #aaefe5;', bars);
 
+  const group = new THREE.Group();
+
+  const material = new THREE.MeshStandardMaterial({
+    color: themeManager.colors.block.primary,
+    transparent: transparent,
+    opacity:0.1,
+    side: THREE.DoubleSide,
+    flatShading: true
+  });
+  let offset = 0,prevOffset=0;
+  let offset0 = 0, offset1 = 0;
+  const offsets0 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1]
+  const offsets1 = [0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0]
+  const colors = ['magenta', 'lime', 'cyan', 'yellow']
+  const surfaces=[[],[],[],[]]
+  for (let i = 0; i < bars.length; i++) {
+    const currentBar = bars[i];
+    const nextBar = bars[(i + 1) % bars.length];
+    // console.log('-----------');
+    const basisValues = Object.values(currentBar.basis)
+    const basisKeys = Object.keys(currentBar.basis)
+    basisValues.forEach((baseVector, index) => {
+      const dimension = basisKeys[index];
+      let color=''
+      if(dimension === 'x') color = 'orange'
+      else if(dimension === 'y') color = 'lime'
+      else if(dimension === 'z') color = 'cyan'
+      // console.log('%c  basis:', 'color: #0e93e0;background: #aaefe5;', basis);
+      const position = currentBar.p0;
+      // console.log('%c  position:', 'color: #0e93e0;background: #aaefe5;', position);
+      // const node = nodes[i];
+      // console.log('%c  node:', 'color: #0e93e0;background: #aaefe5;', node);
+      // console.log('%c  position:', 'color: #0e93e0;background: #aaefe5;', position);
+      // group.add(new THREE.ArrowHelper(baseVector,position,2, color))
+    })
+
+    const cornerPointsCurrent = currentBar.wedgePoints;
+    const cornerPointsNext = nextBar.wedgePoints;
+    const zdot = currentBar.basis.z.dot(nextBar.basis.z);
+    if(zdot<1e-6) {offset++}
+    const diffOffset = offset - prevOffset;
+    let a = ''
+    offset = 0;
+    // console.log('%c  zdot:', 'color: #0e93e0;background: #aaefe5;', zdot);
+    const length = currentBar.length
+    // console.log('%c  zdot:', 'color: #0e93e0;background: #aaefe5;', zdot, zdot<1e-6);
+    offset0=offsets0[i]||0;
+    offset1=offsets1[i]||0;
+    const preFaces = []
+    for(let j=0,k,l; j<cornerPointsCurrent.length; j++) {
+      k = j+offset
+      const cp = cornerPointsCurrent[(j+offset0)%4];
+      const np = cornerPointsNext[(j+offset1)%4];
+      // copy each edge twice but in different order to create two triangles for each face of the wedge
+      preFaces.push([cp.clone(), np.clone()])
+      preFaces.push([np.clone(), cp.clone()])
+      const diff = new THREE.Vector3().subVectors(np, cp);
+      const dotY = diff.dot(currentBar.basis.y);
+      // console.log('%cdiff:', 'color:  #ff93e0;background: #0000e5;', diff);
+      const edgeGeometry = new THREE.BufferGeometry().setFromPoints([cp, np]);
+      const edgeMaterial = new THREE.LineBasicMaterial({ color: colors[j % colors.length] });
+      const edgeLine = new THREE.Line(edgeGeometry, edgeMaterial);
+      // group.add(edgeLine);
+    }
+    //////////////////////////////////////
+    preFaces.push(preFaces.shift());
+    //////////////////////////////////////
+    //console.log('%c  preFaces:', 'color: #0e93e0;background: #aaefe5;', preFaces);
+    // const b =  new Array();
+    // b.flat()
+    const faces = []
+    for(let j=0; j<4; j++) {
+      const vertices=[]
+      vertices.push(...preFaces.shift(),...preFaces.shift())
+      // 0--------1
+      // |      / |
+      // |    /   |
+      // |  /     |
+      // |/       |
+      // 3--------2
+
+
+
+      const verticesFloat32Array = new Float32Array([
+        ...vertices[0],
+        ...vertices[1],
+        ...vertices[3],
+        ...vertices[1],
+        ...vertices[2],
+        ...vertices[3]
+      ])
+      surfaces[j].push(...new Float32Array(verticesFloat32Array))
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(verticesFloat32Array, 3));
+      geometry.computeVertexNormals();
+      const material = new THREE.MeshStandardMaterial({
+        color: colors[j],
+        transparent: true,
+        opacity: 0.5,
+        // side: THREE.DoubleSide,
+        flatShading: true
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      // group.add(mesh);
+      // faces.push(face.flat())
+
+    }
+
+    // const faces2 = faces.flat()
+//    console.log('%c  faces:', 'color: #0e93e0;background: #aaefe5;', faces);
+
+    prevOffset = offset;
+
+
+    // const nextConfiguration = configValues[(i + 1) % configValues.length];
+
+    const wedgeMesh = createMeshFromCorners(currentBar.wedgePoints, nextBar.wedgePoints, blockThickness, material);
+    wedgeMesh.userData.position = currentBar.position;
+    
+    if (wedgeMesh) {
+      // Add edges for visual clarity
+      const edges = new THREE.EdgesGeometry(wedgeMesh.geometry);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: themeManager.colors.block.primary }));
+      // wedgeMesh.add(line);
+
+      // group.add(wedgeMesh);
+      wedgeMesh.name = `b${i+1}`;
+      wedgeMesh.userData.isNumbered = true;
+    }
+  }
+      console.log('%c  surfaces:', 'color: #0e93e0;background: #aaefe5;', surfaces);
+
+  for(let i=0; i<4; i++) {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(surfaces[i]), 3));
+    geometry.computeVertexNormals();
+    const material = new THREE.MeshStandardMaterial({
+      color: colors[i],
+      transparent,
+      opacity: 0.5,
+      // side: THREE.DoubleSide,
+      flatShading: true,
+      wireframe: true
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    group.add(mesh);
+  }
+  
+  return group;
+}
 /**
  * Create the cube geometry and materials
  * @param {Object} params - Parameters object
