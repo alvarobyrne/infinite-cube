@@ -1,45 +1,50 @@
 import * as THREE from 'three';
 import { Bar } from './Bar';
+import { getWedgePoints } from './WedgeManager';
 
 export class PathManager {
     /**
-     * @param {THREE.Vector3[]} points 
+     * @param {THREE.Vector3[]} pointsInPath 
      * @param {number} width 
      * @param {number} height 
      */
-    static generateBars(points, width, height) {
-        if (points.length < 2) return [];
+    static generateBars(pointsInPath, width, height) {
+        if (pointsInPath.length < 2) return [];
 
         const bars = [];
 
-        for (let i = 0; i < points.length - 1; i++) {
-            const p0 = points[i];
-            const p1 = points[i + 1];
+        for (let i = 0; i < pointsInPath.length - 1; i++) {
+            const p0 = pointsInPath[i];
+            const p1 = pointsInPath[i + 1];
 
             // 1. Calculate length and World Direction
             const segmentVec = new THREE.Vector3().subVectors(p1, p0);
             const length = segmentVec.length();
+            // console.log('%c  length:', 'color: #0e93e0;background: #aaefe5;', length);
             const dir = segmentVec.clone().normalize();
 
             // 2. Determine Cut Planes (World Space Normals logic -> Local Space)
 
             // Check if path is closed
-            const isClosed = points[0].distanceToSquared(points[points.length - 1]) < 0.000001;
+            const isClosed = pointsInPath[0].distanceToSquared(pointsInPath[pointsInPath.length - 1]) < 0.000001;
 
             // Start Cut (at p0)
             let cutStart = null;
             let pPrev = null;
 
+            const basis = {y:dir.clone()};
+
             if (i > 0) {
-                pPrev = points[i - 1];
+                pPrev = pointsInPath[i - 1];
             } else if (isClosed) {
                 // Wrap around: previous point is the one before the last point (since last == first)
-                pPrev = points[points.length - 2];
+                pPrev = pointsInPath[pointsInPath.length - 2];
             }
 
             if (pPrev) {
                 const dirPrev = new THREE.Vector3().subVectors(p0, pPrev).normalize();
-
+                basis.x = dirPrev.clone().multiplyScalar(1);
+                basis.z = new THREE.Vector3().crossVectors(basis.x, basis.y).normalize();
                 // Miter Plane Normal: Bisector
                 let normalWorld = new THREE.Vector3().addVectors(dirPrev, dir).normalize();
 
@@ -52,17 +57,19 @@ export class PathManager {
 
                 cutStart = new THREE.Plane(normalWorld, 0);
                 cutStart.constant = -p0.dot(normalWorld);
+            }else{
+                console.log("No previous node");
             }
 
             // End Cut (at p1)
             let cutEnd = null;
             let pNext = null;
 
-            if (i < points.length - 2) {
-                pNext = points[i + 2];
-            } else if (isClosed && i === points.length - 2) {
+            if (i < pointsInPath.length - 2) {
+                pNext = pointsInPath[i + 2];
+            } else if (isClosed && i === pointsInPath.length - 2) {
                 // Wrap around: next point is the second point (index 1)
-                pNext = points[1];
+                pNext = pointsInPath[1];
             }
 
             if (pNext) {
@@ -76,6 +83,8 @@ export class PathManager {
 
                 cutEnd = new THREE.Plane(normalWorld, 0);
                 cutEnd.constant = -p1.dot(normalWorld);
+            }else{  
+                console.log("No next node");
             }
 
             // 3. Transform Planes to Local Space
