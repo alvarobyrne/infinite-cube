@@ -140,6 +140,12 @@ export class PathManager {
             // Store world transform with the bar for rendering
             bar.position = midPoint;
             bar.quaternion = quat;
+                // console.log('%c  basis:', 'color: #0e93e0;background: #aaefe5;', JSON.stringify(basis));
+            bar.basis = basis; // Store the basis for wedge generation
+            bar.p0 = p0;
+            bar.p1 = p1;
+
+            bar.wedgePoints = getWedgePoints(basis, p0, width);
 
             bars.push(bar);
         }
