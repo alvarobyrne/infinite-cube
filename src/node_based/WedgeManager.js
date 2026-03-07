@@ -111,7 +111,7 @@ export function createMeshFromPoints(startParams, endParams, barThickness, mater
  * @param {number} barThickness - The thickness of the bar
  * @returns {Object} An array containing the key points of the wedge with transformations baked in.
  */
-function getWedgePoints(basis, position, barThickness) {
+export function getWedgePoints(basis, position, barThickness) {
     // 1. Create the key points of the wedge
     const t2 = barThickness / 2;
 
