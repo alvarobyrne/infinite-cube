@@ -73,6 +73,23 @@ export function createGeometryFromPoints(startParams, endParams, barThickness) {
     return new ConvexGeometry(allPoints);
 }
 
+export function createGeometryFromCorners(points1, points2) {
+    const allPoints = [];
+
+    // Wedge from Start Corner (W2)
+    if (points1 && points1.length > 0) {
+        allPoints.push(...points1);
+    }
+
+    // Wedge from End Corner (W1)
+    if (points2 && points2.length > 0) {
+        allPoints.push(...points2);
+    }
+
+    if (allPoints.length === 0) return null;
+
+    return new ConvexGeometry(allPoints);
+}
 
 /**
  * Creates a THREE.Mesh from wedge points instead of just geometry.
@@ -96,6 +113,23 @@ export function createMeshFromPoints(startParams, endParams, barThickness, mater
     
     const mesh = new THREE.Mesh(geometry, meshMaterial);
     mesh.userData.position = startParams.position.clone().add(endParams.position).multiplyScalar(0.5);
+    mesh.userData.isWedge = true;
+    mesh.userData.isBar = true;
+    return mesh;
+}
+export function createMeshFromCorners(points0, points1, barThickness, material = null) {
+    const geometry = createGeometryFromCorners(points0, points1);
+    
+    if (!geometry) return null;
+    
+    // Use provided material or create a default one
+    const meshMaterial = material || new THREE.MeshBasicMaterial({ 
+        color: 0x888888,
+        side: THREE.DoubleSide
+    });
+    
+    const mesh = new THREE.Mesh(geometry, meshMaterial);
+    // mesh.userData.position = points0.position.clone().add(points1.position).multiplyScalar(0.5);
     mesh.userData.isWedge = true;
     mesh.userData.isBar = true;
     return mesh;
