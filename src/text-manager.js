@@ -4,7 +4,7 @@ import { themeManager } from "./theme-manager.js";
 
 let font = null;
 const fontLoader = new FontLoader();
-const FONT_URL = "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json";
+const FONT_URL = new URL("../assets/fonts/helvetiker_regular.typeface.json", import.meta.url).href;
 
 export async function loadFont() {
     return new Promise((resolve, reject) => {
