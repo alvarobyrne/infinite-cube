@@ -24,7 +24,7 @@ export function generateWedgeConfigurations(pathOfNodes) {
 
         const cfg = {};
 
-        cfg.basis = { y: dCurr.clone().normalize() }
+        cfg.basis = { y: dCurr.clone() }
 
         cfg.position = pCurr.clone();
 
