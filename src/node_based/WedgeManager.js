@@ -118,8 +118,8 @@ function getWedgePoints(basis, position, barThickness) {
 
     const p1 = new THREE.Vector3(-t2, t2, -t2);
     const p2 = new THREE.Vector3(-t2, t2, t2);
-    const p3 = new THREE.Vector3(t2, -t2, -t2);
-    const p4 = new THREE.Vector3(t2, -t2, t2);
+    const p3 = new THREE.Vector3(t2, -t2, t2);
+    const p4 = new THREE.Vector3(t2, -t2, -t2);
 
 
 
